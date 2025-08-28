@@ -1,8 +1,13 @@
 
 " ---- PURE VIM MAPPINGS
-
+"  for plugin mappings check plugins.vim
+"  use :verbose map <key> to see where a mapping was defined
+"  or use :Maps to see all mappings
+"  or :nmap, :vmap, :imap, :tmap for specific modes
+"  or :map <leader> to see all leader mappings
+" -----------------------------
 " --- Tabs ---
-" Tabs are useless.
+" Tabs are useless, but here are some mappings anyway
 nnoremap <leader>tn :tabnew<CR>
 nnoremap <leader>to :tabonly<CR>
 nnoremap <leader>tc :tabclose<CR>

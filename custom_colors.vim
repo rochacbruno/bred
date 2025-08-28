@@ -1,3 +1,4 @@
+" This fixes the colors in Mistfly theme for various modes
 " -- Status line 
 function! s:ApplyCustomColors()
     highlight! link MistflyNormal DiffChange

@@ -14,12 +14,13 @@ augroup END
 
 " Automatic reload changed files
 " when files are changes externally automatically reload them
+" TODO: This is not working, needs investigation
 set autoread
 autocmd FocusGained,BufEnter * checktime
 
 
 " -----------------------------
-" Autosave batata
+" Autosave - here as reference, but disabled 
 " -----------------------------
 " set noswapfile
 

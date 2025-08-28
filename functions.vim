@@ -1,4 +1,5 @@
 
+" This is used by LSP
 function! Alert(msg)
   augroup MyAlerts
     autocmd!

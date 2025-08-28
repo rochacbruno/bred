@@ -1,4 +1,6 @@
 " LSP configuration for Vim
+" This config is a WIP and may be incomplete
+
 call LspOptionsSet(#{
         \   aleSupport: v:true,
         \   autoComplete: v:true,
@@ -151,3 +153,4 @@ else
 endif
 
 
+" TODO: Check if a custom.lsp.vim exists and then source it here

@@ -43,3 +43,5 @@ set tabline=%!BufferTabLine()
 
 " Search upwards for a manually created .viminfo file or use a default
 let &viminfofile=findfile('.viminfo','.;') ?? $HOME . '/.vim/viminfo'
+
+" TODO: Check for a custom.options.vim and source it here

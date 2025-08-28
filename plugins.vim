@@ -486,7 +486,7 @@ Plug 'justinmk/vim-gtfo'
 let g:gtfo#terminals = { 'unix': 'kitty @ launch --cwd="%:p:h"' }
 "
 "
-"
+" TODO: Check for a custom.plugins.vim and source it here
 "
 " Why Copilot keeps removing my blank lines?
 " --- PLUGINS END ---

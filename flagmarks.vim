@@ -1,6 +1,10 @@
 " =====================================
 " Flag Marks Manager - Vim9script
 " =====================================
+" This is actually a plygin, but for now kept here for simplicity
+" In the future this will move to a separate repo when complete.
+" See flagmarks.md for documentation.
+
 
 " Global variables
 let g:flag_marks = []
