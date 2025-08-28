@@ -1,27 +1,44 @@
 
-" This is used by LSP
+" =========================================================================
+" Custom Functions
+" =========================================================================
+
+" -------------------------------------------------------------------------
+" Alert Function
+" -------------------------------------------------------------------------
+" Displays a message using autocommand on VimEnter event
+" Used by LSP for displaying notifications
+" Args: msg - The message to display
 function! Alert(msg)
+  \" Create an autocommand group for alerts
   augroup MyAlerts
     autocmd!
     execute 'autocmd VimEnter * echomsg "' . a:msg . '"'
   augroup END
 endfunction
 
-" --- Buffers-as-tabs tabline ---
+" -------------------------------------------------------------------------
+" Buffer Tab Line
+" -------------------------------------------------------------------------
+" Creates a custom tab line that displays all listed buffers as tabs
+" Shows buffer number, name, and modification status (*)
+" Returns: String formatted for use with tabline
 function! BufferTabLine() abort
   let s = ''
+  " Iterate through all buffers
   for i in range(1, bufnr('$'))
     if buflisted(i)
       let name = bufname(i)
       if empty(name)
         let name = '[No Name]'
       else
-        let name = fnamemodify(name, ':t')
+        let name = fnamemodify(name, ':t') " Get just the filename
       endif
       " Add * indicator for modified buffers
       if getbufvar(i, '&modified')
         let name .= '*'
       endif
+      " Highlight current buffer differently
       if i == bufnr('%')
         let s .= '%#TabLineSel#'
       else
@@ -34,10 +51,17 @@ function! BufferTabLine() abort
   return s
 endfunction
 
+" -------------------------------------------------------------------------
+" Delete Hidden Buffers
+" -------------------------------------------------------------------------
+" Clears all hidden buffers when running Vim with the 'hidden' option
+" Keeps only buffers that are visible in tabs, closes all others
 if !exists("*DeleteHiddenBuffers") " Clear all hidden buffers when running 
 	function DeleteHiddenBuffers() " Vim with the 'hidden' option
-		let tpbl=[]
+		let tpbl=[] " List to store buffers visible in tabs
+		" Collect all buffers that are visible in any tab
 		call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+		" Find and delete buffers that exist but are not visible in any tab
 		for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
 			silent execute 'bwipeout' buf
 		endfor
@@ -46,17 +70,21 @@ endif
 command! DeleteHiddenBuffers call DeleteHiddenBuffers()
 
 
-" --- Resize mode (arrows to resize splits, Esc to quit) ---
-
+" -------------------------------------------------------------------------
+" Resize Mode
+" -------------------------------------------------------------------------
+" Interactive mode for resizing window splits using arrow keys or hjkl
+" Press Esc to exit resize mode
 function! ResizeMode()
   echo "Resize mode: arrows resize, <Esc> quits"
 
-  " Temporary buffer-local mappings
+  " Temporary buffer-local mappings for arrow keys
   nnoremap <buffer> <Up>    :resize +2<CR>
   nnoremap <buffer> <Down>  :resize -2<CR>
   nnoremap <buffer> <Left>  :vertical resize -2<CR>
   nnoremap <buffer> <Right> :vertical resize +2<CR>
 
+  " Temporary buffer-local mappings for hjkl keys
   nnoremap <buffer> k    :resize +2<CR>
   nnoremap <buffer> j  :resize -2<CR>
   nnoremap <buffer> h  :vertical resize -2<CR>
@@ -65,6 +93,10 @@ function! ResizeMode()
   nnoremap <buffer> <Esc> :call ResizeModeEnd()<CR>
 endfunction
 
+" -------------------------------------------------------------------------
+" Resize Mode End
+" -------------------------------------------------------------------------
+" Exits resize mode by unmapping temporary keybindings
 function! ResizeModeEnd()
   " Unmap the temporary keys
   silent! nunmap <buffer> <Up>
@@ -80,10 +112,11 @@ function! ResizeModeEnd()
   echo "Exited resize mode"
 endfunction
 
-" ------------------------------------------------------------------------
-" Vim Layouts (pure Vim version)  
-" When opening up to 4 files those open on a grid 
-" ------------------------------------------------------------------------
+" -------------------------------------------------------------------------
+" Vim Layouts (Automatic Grid Layout)
+" -------------------------------------------------------------------------
+" Automatically arranges up to 4 files in an optimal grid layout
+" When opening multiple files, they are arranged as follows:
 " " Usage: vim file1 file2 file3 file4
 "        vim file1 file2 file3
 "        vim file1 file2
@@ -99,30 +132,34 @@ endfunction
 " 4 files: grid (2x2)
 "
 " The current buffer is always kept and placed in the first position.
-" ------------------------------------------------------------------------
-let empty_args = expand("##")
+" -------------------------------------------------------------------------
+" Layout Logic Implementation
+" -------------------------------------------------------------------------
+" Process command line arguments and create the appropriate layout
+let empty_args = expand("##") " Get all command line arguments
 if empty_args != ""
-  let args = split(expand("##"), '\(\\\)\@<!\s')
-  if len(args) < 5
+  let args = split(expand("##"), '\(\\\)\@<!\s') " Split arguments on unescaped spaces
+  if len(args) < 5 " Only apply layout for 4 or fewer files
     let counter = 0
-    argdelete *
-    argadd %
+    argdelete * " Clear existing argument list
+    argadd % " Add current buffer to argument list
+    " Process each file and arrange in grid layout
     for i in args 
-      if counter % 4 == 0
-        if counter == 0
+      if counter % 4 == 0 " First file in each group of 4
+        if counter == 0 " Very first file - just navigate to it
           silent bnext
           silent bprev
-        else
+        else " Start a new tab for files 5, 9, etc.
           silent exe "tabedit" i
         endif
       else
-        if counter % 4 == 1
+        if counter % 4 == 1 " Second file - create vertical split
           silent exe "vsplit" i
         else
-          if counter % 4 == 3
+          if counter % 4 == 3 " Fourth file - move to right pane first
             silent exe "normal \<C-w>l"
           endif
-          silent exe "split" i
+          silent exe "split" i " Third and fourth files - create horizontal split
         endif
       endif
       let counter += 1

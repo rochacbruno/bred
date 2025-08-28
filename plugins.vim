@@ -1,20 +1,35 @@
-" --- Built-in Plugins
+" =========================================================================
+" Plugin Configuration
+" =========================================================================
+" This file manages all plugins using vim-plug and built-in packages
+" =========================================================================
 
-" -------------- File explorer (netrw) --------------------
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_winsize = 25
-let g:netrw_keepdir = 0
-runtime! plugin/netrwPlugin.vim
-nnoremap <leader>e :Lexplore<CR>
-nnoremap <leader>E :Vexplore<CR>
-" ---------------------------------------------------------
+" =========================================================================
+" Built-in Plugin Configuration
+" =========================================================================
 
-" ----------------- LSP --------------------
-"  Ensure you have installed the LSP servers you want to use
-"  https://github.com/yegappan/lsp
+" -------------------------------------------------------------------------
+" Netrw - Built-in File Explorer
+" -------------------------------------------------------------------------
+" Configure Vim's native file browser for better usability
+let g:netrw_banner = 0          " Hide the banner
+let g:netrw_liststyle = 3        " Tree-style listing
+let g:netrw_browse_split = 4     " Open files in previous window
+let g:netrw_altv = 1             " Open splits to the right
+let g:netrw_winsize = 25         " Width of explorer window
+let g:netrw_keepdir = 0          " Keep current directory synced
+runtime! plugin/netrwPlugin.vim " Load netrw plugin
+" Key mappings:
+nnoremap <leader>e :Lexplore<CR>  " ,e - Open explorer on left
+nnoremap <leader>E :Vexplore<CR>  " ,E - Open explorer in vertical split
+
+" -------------------------------------------------------------------------
+" Language Server Protocol (LSP) Support
+" -------------------------------------------------------------------------
+" Provides code intelligence: completion, diagnostics, go-to-definition, etc.
+" Repository: https://github.com/yegappan/lsp
+" Note: LSP servers must be installed separately for each language
+" Auto-install LSP plugin if not present
 if empty(glob('~/.vim/pack/downloads/opt/lsp'))
     echo "Installing LSP plugin..."
     silent !mkdir -p $HOME/.vim/pack/downloads/opt
@@ -22,99 +37,97 @@ if empty(glob('~/.vim/pack/downloads/opt/lsp'))
     silent !vim -u NONE -c "helptags $HOME/.vim/pack/downloads/opt/lsp/doc" -c q
     echo "LSP plugin installed successfully"
 endif
-packadd lsp
-source ~/.vim/lsp.vim
+packadd lsp                        " Load LSP plugin
+source ~/.vim/lsp.vim              " Load LSP configuration
+" Key mappings:
+nnoremap <leader>a :LspCodeAction<CR>      " ,a - Show code actions
+nnoremap <leader>d :LspGotoDefinition<CR>  " ,d - Go to definition
+nnoremap <leader>k :LspHover<CR>           " ,k - Show hover information
 
-nnoremap <leader>a :LspCodeAction<CR>
-nnoremap <leader>d :LspGotoDefinition<CR>
-nnoremap <leader>k :LspHover<CR>
-" -----------------------------------------
-
-"----------------- PLUGINS MANAGED BY VIM-PLUG --------------------
-" Ensure vim-plug is installed
+" =========================================================================
+" Vim-Plug Managed Plugins
+" =========================================================================
+" -------------------------------------------------------------------------
+" Vim-Plug Installation and Setup
+" -------------------------------------------------------------------------
+" Auto-install vim-plug if not present
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+" Begin plugin declarations
 call plug#begin()
 
+" -------------------------------------------------------------------------
+" Core Enhancement Plugins
+" -------------------------------------------------------------------------
 
-" ----------------- VIM SENSIBLE --------------------
-" Basic default settings for a better experience
-"
+" Vim Sensible - Better default settings
+" Provides a universal set of defaults that everyone can agree on
 Plug 'tpope/vim-sensible'
-" ---------------------------------------------------------
 
-" ----------------- Better % matching --------------------
-" % to jump between matching pairs of (), {}, [], <>
-" Also works in visual mode
-" Also works with HTML tags
-" Also works with custom defined pairs, see :help matchit-custom
-"
+" Matchit - Enhanced % matching
+" Jump between matching pairs: (), {}, [], <>, HTML tags
+" Works in normal and visual modes
+" See :help matchit-custom for defining custom pairs
 Plug 'chrisbra/matchit'
-" ---------------------------------------------------------
 
-" ----------------- File searching and navigation --------------------
-" fzf (requires FZF installed)
-" check if fzf is installed
+" -------------------------------------------------------------------------
+" File Search and Navigation
+" -------------------------------------------------------------------------
+
+" FZF - Fuzzy file finder integration
+" Requires: fzf binary installed on system
 if executable('fzf')
   Plug 'junegunn/fzf.vim'
-  nnoremap <silent> <leader>l :Lines<CR>
-  nnoremap <silent> <leader>f :Files<CR>
-  nnoremap <silent> <leader>F :Rg<CR>
-  nnoremap <silent> <leader>b :Buffers<CR>
-  nnoremap <silent> <leader>g :GFiles<CR>
+  " Key mappings:
+  nnoremap <silent> <leader>l :Lines<CR>    " ,l - Search lines in current buffer
+  nnoremap <silent> <leader>f :Files<CR>    " ,f - Find files
+  nnoremap <silent> <leader>F :Rg<CR>       " ,F - Search text with ripgrep
+  nnoremap <silent> <leader>b :Buffers<CR>  " ,b - List open buffers
+  nnoremap <silent> <leader>g :GFiles<CR>   " ,g - Git files
 else
   echo "fzf is not installed, please install it to use fzf.vim"
 endif
 
+" -------------------------------------------------------------------------
+" Linting and Formatting
+" -------------------------------------------------------------------------
 
-" ---------------------------------------------------------
-
-" ----------------- Autocompletion --------------------
-" Requires: npm, nodejs, yarn
-" Linters and formatters
+" ALE - Asynchronous Lint Engine
+" Provides real-time linting and fixing
+" Requires: Various linters/formatters installed for each language
 Plug 'dense-analysis/ale'
-" Disable ALE's LSP in favour of standalone LSP plugin"
-"let g:ale_disable_lsp = 1
-" Show linting errors with highlights" 
-"* Can also be viewed in the loclist with :lope"
-"let g:ale_set_signs = 1
-"let g:ale_set_highlights = 1
-"let g:ale_virtualtext_cursor = 1
-"highlight ALEError ctermbg=none cterm=underline
-" Define when to lint"
-"let g:ale_lint_on_save = 1
-"let g:ale_lint_on_insert_leave = 1
-"let g:ale_lint_on_text_change = 'never'
-" Set linters for individual filetypes"
-"let g:ale_linters_explicit = 1
-"let g:ale_linters = {
-"    \ 'python': ['ruff', 'mypy', 'pylsp'],
-"    \ 'rust': ['analyzer', 'cargo'],
-"    \ 'sh': ['shellcheck'],
-"\ }
-" Specify fixers for individual filetypes"
-"let g:ale_fixers = {
-"    \ '*': ['trim_whitespace'],
-"    \ 'python': ['ruff'],
-"    \ 'rust': ['rustfmt'],
-"\ }
-"Rust specific settings
-"let g:ale_rust_cargo_use_clippy = 1
-"let g:ale_rust_cargo_check_tests = 1 
-"let g:ale_rust_cargo_check_examples = 1
-" Don't warn about trailing whitespace, as it is auto-fixed by '*' above"
-"let g:ale_warn_about_trailing_whitespace = 0
-" Show info, warnings, and errors; Write which linter produced the message"
-"let g:ale_lsp_show_message_severity = 'information'
-"'let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
-" Specify Containerfiles as Dockerfiles"
-"let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
-" Mapping to run fixers on file"
-"nnoremap <leader>L :ALEFix<CR>
-" ---------------------------------------------------------
+" ALE Configuration (currently disabled in favor of LSP)
+" Uncomment the following lines to enable ALE:
+" let g:ale_disable_lsp = 1                           " Disable ALE's LSP features
+" let g:ale_set_signs = 1                             " Show signs in gutter
+" let g:ale_set_highlights = 1                        " Highlight problematic lines
+" let g:ale_virtualtext_cursor = 1                    " Show errors as virtual text
+" highlight ALEError ctermbg=none cterm=underline     " Error highlighting style
+" let g:ale_lint_on_save = 1                          " Lint when saving
+" let g:ale_lint_on_insert_leave = 1                  " Lint when leaving insert mode
+" let g:ale_lint_on_text_change = 'never'             " Don't lint while typing
+" let g:ale_linters_explicit = 1                      " Only use configured linters
+" let g:ale_linters = {
+"     \ 'python': ['ruff', 'mypy', 'pylsp'],
+"     \ 'rust': ['analyzer', 'cargo'],
+"     \ 'sh': ['shellcheck'],
+" \ }
+" let g:ale_fixers = {
+"     \ '*': ['trim_whitespace'],
+"     \ 'python': ['ruff'],
+"     \ 'rust': ['rustfmt'],
+" \ }
+" let g:ale_rust_cargo_use_clippy = 1                 " Use clippy for Rust
+" let g:ale_rust_cargo_check_tests = 1                " Check test code
+" let g:ale_rust_cargo_check_examples = 1             " Check example code
+" let g:ale_warn_about_trailing_whitespace = 0        " Don't warn about whitespace
+" let g:ale_lsp_show_message_severity = 'information' " Show all message levels
+" let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
+" let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
+" nnoremap <leader>L :ALEFix<CR>                      " ,L - Run fixers
 
 " ----------------- GitHub Copilot --------------------
 " <M-]> Cycle next suggestion
@@ -172,297 +185,565 @@ Plug 'chrisbra/Colorizer'
 
 " ---------------------------------------------------------
 
-" ------------------ Multiple Cursors --------------------
-" C-D select words, C-move add cur, Shift move single char,
-" n/N Next/Prev - [] next/prev cur, q skip, Q remove cursor
-" C-d to select word under cursor and then \\A to select all instances
-" then c to change all instances
+" -------------------------------------------------------------------------
+" Multi-Cursor Editing
+" -------------------------------------------------------------------------
 
+" Visual Multi - Multiple cursor support
+" Key mappings:
+" <C-d>       - Select word under cursor
+" <C-d>       - Add next occurrence (visual mode)
+" n/N         - Next/previous occurrence
+" [/]         - Next/previous cursor
+" q           - Skip current and find next
+" Q           - Remove current cursor
+" \\A         - Select all occurrences
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 let g:VM_maps = {}
-let g:VM_maps['Find Under']         = '<C-d>'           " replace C-n
-let g:VM_maps['Find Subword Under'] = '<C-d>'           " replace visual C-n
+let g:VM_maps['Find Under']         = '<C-d>'  " Replace default C-n
+let g:VM_maps['Find Subword Under'] = '<C-d>'  " Replace visual C-n
+" Mouse support:
+nmap   <C-LeftMouse>         <Plug>(VM-Mouse-Cursor)   " Add cursor with Ctrl+Click
+nmap   <C-RightMouse>        <Plug>(VM-Mouse-Word)     " Select word with Ctrl+Right
+nmap   <M-C-RightMouse>      <Plug>(VM-Mouse-Column)   " Column selection
 
-nmap   <C-LeftMouse>         <Plug>(VM-Mouse-Cursor)
-nmap   <C-RightMouse>        <Plug>(VM-Mouse-Word)  
-nmap   <M-C-RightMouse>      <Plug>(VM-Mouse-Column)
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" Git Integration
+" -------------------------------------------------------------------------
+" Comprehensive Git integration for Vim with Fugitive and extensions
+" Provides full Git workflow support within Vim editor
 
-"------------------- Git Integration --------------------
-" Git
-" :Gstatus, :Gblame, :Gdiff, :Gread, :Gwrite, :Gmove, :Gremove, :Gcommit etc
+" Fugitive - Git commands in Vim
+" Repository: https://github.com/tpope/vim-fugitive
+" Commands: :Gstatus, :Gblame, :Gdiff, :Gread, :Gwrite, :Gmove, :Gremove, :Gcommit
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb' " required by fugitive to :Gbrowse
 
-" Show git commit under cursor
+" Rhubarb - GitHub integration for Fugitive
+" Repository: https://github.com/tpope/vim-rhubarb
+" Required by Fugitive for :Gbrowse command to open files/commits on GitHub
+Plug 'tpope/vim-rhubarb'
+
+" Git Messenger - Show commit info under cursor
+" Repository: https://github.com/rhysd/git-messenger.vim
+" Shows git commit message, author, and date for line under cursor
 Plug 'rhysd/git-messenger.vim'
 let g:git_messenger_no_default_mappings = v:true
+" Key mappings:
+nmap <C-g>m <Plug>(git-messenger)  " Ctrl+g,m - Show git commit info
 
-nmap <C-g>m <Plug>(git-messenger)
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" Code Commenting
+" -------------------------------------------------------------------------
+" Provides intelligent commenting/uncommenting for various file types
+" Automatically detects file type and uses appropriate comment syntax
 
-" ------------------ Commenting --------------------
-" gcc to comment/uncomment a line
-" gc in visual mode to comment/uncomment selection
-" gc{motion} to comment/uncomment motion
-" Example: gcip to comment inner paragraph
+" Commentary - Smart commenting plugin
+" Repository: https://github.com/tpope/vim-commentary
+" Supports all major file types with proper comment syntax
 Plug 'tpope/vim-commentary'
+" Key mappings:
+" gcc         - Comment/uncomment current line
+" gc{motion}  - Comment/uncomment motion (e.g., gcip for inner paragraph)
+" gc          - Comment/uncomment selection (visual mode)
+" gcu         - Uncomment adjacent commented lines
 
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" Undo Tree Visualization
+" -------------------------------------------------------------------------
+" Visual undo history browser with branching support
+" Navigate through complex undo/redo history with ease
 
-" " ------------------ Undo Tree --------------------
+" UndoTree - Visual undo history
+" Repository: https://github.com/mbbill/undotree
+" Shows undo history as a tree structure with diff preview
 Plug 'mbbill/undotree'
-let g:undotree_WindowLayout = 2
-let g:undotree_ShortIndicators = 1
-let g:undotree_SetFocusWhenToggle = 1
+let g:undotree_WindowLayout = 2        " Vertical layout with diff window
+let g:undotree_ShortIndicators = 1     " Use short time indicators
+let g:undotree_SetFocusWhenToggle = 1  " Focus undo tree when opened
+" Key mappings:
+" :UndotreeToggle - Toggle undo tree window
+" j/k             - Navigate through undo states
+" <Enter>         - Revert to selected state
 
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" Visual Enhancement Plugins
+" -------------------------------------------------------------------------
+" Collection of plugins that improve visual feedback and code readability
+" Includes indentation guides, highlighting, and window management
 
-" " ------------------ Indentation Guides --------------------
+" IndentLine - Show indentation guides
+" Repository: https://github.com/Yggdroot/indentLine
+" Displays thin vertical lines for each indentation level
 Plug 'Yggdroot/indentLine'
-" ------------------- Highlight on Yank --------------------
+
+" HighlightedYank - Highlight yanked text
+" Repository: https://github.com/machakann/vim-highlightedyank
+" Briefly highlights yanked text for visual feedback
 Plug 'machakann/vim-highlightedyank'
-" ------------------ HIghlight Cursor Word --------------------
+
+" Illuminate - Highlight word under cursor
+" Repository: https://github.com/RRethy/vim-illuminate
+" Highlights all occurrences of word under cursor throughout buffer
 Plug 'RRethy/vim-illuminate'
-" ------------------ Dim Inactive Windows --------------------
+
+" DiminActive - Dim inactive windows
+" Repository: https://github.com/blueyed/vim-diminactive
+" Reduces brightness of inactive windows to focus on current window
 Plug 'blueyed/vim-diminactive'
-" ---------------------------------------------------------
 
 
-" ----------- Alternative fuzzy finder to fzf --------------
+" -------------------------------------------------------------------------
+" Alternative Fuzzy Finder
+" -------------------------------------------------------------------------
+" Modern fuzzy finder with floating windows and fast performance
+" Alternative to FZF with more modern UI and additional features
+
+" Vim Clap - Modern fuzzy finder
+" Repository: https://github.com/liuchengxu/vim-clap
+" Provides floating window interface with previews and icons
 Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
-" ---------------------------------------------------------
+" Key mappings:
+" :Clap files     - Find files
+" :Clap grep      - Search text
+" :Clap buffers   - Switch buffers
+" :Clap history   - Command history
 
-" ------------------ Surround --------------------
-" Manipulate surrounding chars such as quotes and brackets
-" Assuming | as a cursor
-" fo|o - ysiw' - 'foo'
-" 'fo|o' - ds' - foo
-" 'fo|o' - cs'" - "foo"
-" yssb - (surround entire line)
-" Shift + V to enter visual line mode then S{ to surround selection with { line break }
+" -------------------------------------------------------------------------
+" Text Object Manipulation - Surround
+" -------------------------------------------------------------------------
+" Manipulate surrounding characters like quotes, brackets, and tags
+" Essential for efficient text editing and code refactoring
+
+" Surround - Manipulate surrounding characters
+" Repository: https://github.com/tpope/vim-surround
+" Work with quotes, brackets, tags, and custom delimiters
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat' " repeat surround with .
-" ---------------------------------------------------------
+" Repeat - Repeat surround operations with dot
+" Repository: https://github.com/tpope/vim-repeat
+" Enables dot repetition for surround operations
+Plug 'tpope/vim-repeat'
+" Key mappings:
+" ysiw'     - Surround inner word with single quotes (fo|o -> 'foo')
+" ds'       - Delete surrounding single quotes ('fo|o' -> foo)
+" cs'"      - Change single quotes to double quotes ('fo|o' -> "foo")
+" yssb      - Surround entire line with brackets
+" S{        - Surround selection with braces (visual mode)
 
-" ------------------ Speed Dating --------------------
-" CTRL-A and CTRL-X to increment/decrement dates, times, numbers, hex colors,
+" -------------------------------------------------------------------------
+" Smart Number/Date Manipulation
+" -------------------------------------------------------------------------
+" Enhanced increment/decrement for dates, times, and various number formats
+" Extends Vim's native Ctrl-A/Ctrl-X functionality
+
+" SpeedDating - Smart increment/decrement
+" Repository: https://github.com/tpope/vim-speeddating
+" Handles dates, times, hex colors, Roman numerals, and more
 Plug 'tpope/vim-speeddating'
-" ---------------------------------------------------------
+" Key mappings:
+" Ctrl-A      - Increment number/date under cursor
+" Ctrl-X      - Decrement number/date under cursor
+" Supported formats: 2023-12-25, 12:30:45, #ff0000, XIV, etc.
 
-" ------------------ Results of commands as buffers --------------------
-" Interact with output of commands 
-" e.g :Bufferize cargo watch
+" -------------------------------------------------------------------------
+" Command Output Management
+" -------------------------------------------------------------------------
+" Capture command output in interactive buffers for better workflow
+" Useful for long-running commands and interactive development
+
+" Bufferize - Command output in buffers
+" Repository: https://github.com/AndrewRadev/bufferize.vim
+" Captures shell command output in manageable Vim buffers
 Plug 'AndrewRadev/bufferize.vim'
-" ---------------------------------------------------------
+" Usage examples:
+" :Bufferize cargo watch  - Run cargo watch in buffer
+" :Bufferize git log      - Show git log in buffer
+" :Bufferize make test    - Run tests with output in buffer
 
-" ------------------ File operations --------------------
-" File/Buffer operations :Rename, :Move, :Delete, :Chmod, :SudoEdit
+" -------------------------------------------------------------------------
+" File System Operations
+" -------------------------------------------------------------------------
+" Enhanced file and directory operations within Vim
+" Provides Unix-like commands and automatic directory creation
+
+" Eunuch - Unix shell commands in Vim
+" Repository: https://github.com/tpope/vim-eunuch
+" Provides file operations without leaving Vim
 Plug 'tpope/vim-eunuch'
-"" Make me dirs when saving a full path
+" Commands: :Rename, :Move, :Delete, :Chmod, :SudoEdit, :SudoWrite
+
+" Mkdir - Auto-create directories
+" Repository: https://github.com/pbrisbin/vim-mkdir
+" Automatically creates parent directories when saving files
 Plug 'pbrisbin/vim-mkdir'
-" ---------------------------------------------------------
 
 
-" ------------------ Scratch Buffer --------------------
-" gs in normal mode to open a scratch buffer in insert mode
-" gs in visual mode to open a scratch buffer with the selection
-" Scratch buffer persists between sessions in ~/.vim/scratch.md
-" :Scratch to open a scratch buffer in normal mode
+" -------------------------------------------------------------------------
+" Scratch Buffer for Quick Notes
+" -------------------------------------------------------------------------
+" Persistent scratch buffer for temporary notes and quick calculations
+" Perfect for jotting down ideas without creating temporary files
+
+" Scratch - Persistent scratch buffer
+" Repository: https://github.com/mtth/scratch.vim
+" Provides a persistent scratch space for notes and temporary content
 Plug 'mtth/scratch.vim'
-let g:scratch_persistence_file = '~/.vim/scratch.md'
-" ---------------------------------------------------------
+let g:scratch_persistence_file = '~/.vim/scratch.md'  " Persist across sessions
+" Key mappings:
+" gs          - Open scratch buffer in insert mode
+" gs          - Open scratch buffer with selection (visual mode)
+" :Scratch    - Open scratch buffer in normal mode
 
-" ------------------ Window Based on Selection --------------------
-"" Split window based on visual selection
-" C-W-gsa creates a split above with the selection C-W-gss on right
-" CW-gr resizes to selection
+" -------------------------------------------------------------------------
+" Visual Selection Window Management
+" -------------------------------------------------------------------------
+" Create new windows based on visual selections for better code organization
+" Useful for comparing code sections or focusing on specific parts
+
+" Visual Split - Selection-based window splitting
+" Repository: https://github.com/wellle/visual-split.vim
+" Create splits containing only the selected text
 Plug 'wellle/visual-split.vim'
+" Configure key mappings for visual splits
 for m in ['n', 'x']
   execute m . "noremap <C-w>gr  :VSResize<CR>"
   execute m . "noremap <C-w>gss :VSSplit<CR>"
   execute m . "noremap <C-w>gsa :VSSplitAbove<CR>"
   execute m . "noremap <C-w>gsb :VSSplitBelow<CR>"
 endfor
-" ---------------------------------------------------------
+" Key mappings:
+" Ctrl-w gr   - Resize window to selection
+" Ctrl-w gss  - Split right with selection
+" Ctrl-w gsa  - Split above with selection
+" Ctrl-w gsb  - Split below with selection
 
 
-" ------------------ Color Picker --------------------
-" ALT-c in insert mode and ALT-w in normal mode
+" -------------------------------------------------------------------------
+" Color Picker Integration
+" -------------------------------------------------------------------------
+" Interactive color picker for web development and design work
+" Provides system color picker integration within Vim
+
+" vCoolor - System color picker integration
+" Repository: https://github.com/KabbAmine/vCoolor.vim
+" Opens system color picker and inserts hex/rgb values
 Plug 'KabbAmine/vCoolor.vim'
-" ---------------------------------------------------------
+" Key mappings:
+" Alt-c       - Open color picker in insert mode
+" Alt-w       - Open color picker in normal mode
 
-" ------------------ Distraction Free Writing --------------------
-" <C-w>g opens goyo distraction free mode
+" -------------------------------------------------------------------------
+" Distraction-Free Writing Mode
+" -------------------------------------------------------------------------
+" Clean, minimal writing environment for focused work
+" Perfect for documentation, markdown, and creative writing
+
+" Goyo - Distraction-free writing
+" Repository: https://github.com/junegunn/goyo.vim
+" Centers content and hides UI elements for focused writing
 Plug 'junegunn/goyo.vim'
-nnoremap <C-w>g :Goyo<CR>
-inoremap <C-w>g <Esc>:Goyo<CR>
-" ---------------------------------------------------------
+" Key mappings:
+nnoremap <C-w>g :Goyo<CR>        " Ctrl-w g - Toggle Goyo mode (normal)
+inoremap <C-w>g <Esc>:Goyo<CR>   " Ctrl-w g - Toggle Goyo mode (insert)
 
-" ------------------ Zoom Window --------------------
-" Window Zoom in out
-" <C-w>m to toggle zoom
+" -------------------------------------------------------------------------
+" Window Zoom Functionality
+" -------------------------------------------------------------------------
+" Temporarily maximize current window while preserving layout
+" Useful for focusing on specific code sections in multi-window setups
+
+" Vim Zoom - Window zoom toggle
+" Repository: https://github.com/dhruvasagar/vim-zoom
+" Maximizes current window and restores previous layout
 Plug 'dhruvasagar/vim-zoom'
-" ---------------------------------------------------------
+" Key mappings:
+" Ctrl-w m    - Toggle window zoom (maximize/restore)
 
-" ------------------ Better Cut and Delete --------------------
-" Delete instead of cut (cut is mapped to x, single char is dl)
+" -------------------------------------------------------------------------
+" Improved Cut/Delete Operations
+" -------------------------------------------------------------------------
+" Separates delete and cut operations for more intuitive editing
+" Prevents accidental clipboard pollution when deleting text
+
+" Cutlass - Separate cut and delete
+" Repository: https://github.com/svermeulen/vim-cutlass
+" Makes delete operations not affect clipboard/register
 Plug 'svermeulen/vim-cutlass'
-nnoremap x d
-xnoremap x d
-nnoremap xx dd
-nnoremap X D
-" ---------------------------------------------------------
+" Remap cut operations to x key
+nnoremap x d       " x now cuts (was delete single char)
+xnoremap x d       " x cuts in visual mode
+nnoremap xx dd     " xx cuts entire line
+nnoremap X D       " X cuts to end of line
+" Note: d/dd now delete without affecting clipboard
+" Use x/xx for traditional cut behavior
 
-" ------------------ Easy Motion --------------------
-" ,,motion
-" ,,fa = find the next `a` with visual hints
-Plug 'easymotion/vim-easymotion'"
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" Enhanced Motion Commands
+" -------------------------------------------------------------------------
+" Fast cursor movement with visual hints throughout the buffer
+" Replaces repetitive h/j/k/l navigation with targeted jumps
 
-" " ------------------ Better Substitutions --------------------
+" EasyMotion - Visual motion hints
+" Repository: https://github.com/easymotion/vim-easymotion
+" Provides visual hints for quick cursor positioning
+Plug 'easymotion/vim-easymotion'
+" Key mappings:
+" ,,{motion}  - Trigger EasyMotion for any motion
+" ,,w         - Jump to word beginnings
+" ,,f{char}   - Find character with hints
+" ,,j         - Jump to lines below
+" ,,k         - Jump to lines above
+
+" -------------------------------------------------------------------------
+" Advanced Text Substitution
+" -------------------------------------------------------------------------
+" Enhanced substitution operations with smart case handling
+" Provides intuitive substitute-with-yank and case-aware replacements
+
+" Abolish - Smart substitution with case variants
+" Repository: https://github.com/tpope/vim-abolish
+" Handles multiple case variants in substitutions (Word/word/WORD)
 Plug 'tpope/vim-abolish'
+
+" Subversive - Substitute with yanked text
+" Repository: https://github.com/svermeulen/vim-subversive
+" Provides intuitive substitute operations using yanked content
 Plug 'svermeulen/vim-subversive'
 
-" Subversive Subvert
-" s+motion to substitute with yanked text
+" Key mappings for substitute operations:
+" s{motion}     - Substitute motion with yanked text
 nmap s <plug>(SubversiveSubstitute)
-" ss to substitute current line with yanked text
+" ss            - Substitute current line with yanked text
 nmap ss <plug>(SubversiveSubstituteLine)
-" S to substitute from cursor to end of line with yanked text
+" S             - Substitute from cursor to end of line with yanked text
 nmap S <plug>(SubversiveSubstituteToEndOfLine)
-" <leader>s+motion to substitute with prompted text
-" example: <leader>siwip to select inner word and range inner paragraph to
-" substitute with prompted text
+
+" Prompted substitution mappings:
+" ,s{motion}    - Substitute motion with prompted text
 nmap <leader>s <plug>(SubversiveSubstituteRange)
 xmap <leader>s <plug>(SubversiveSubstituteRange)
-" <leader>ssie to select current word and range entire buffer to substitute
-" with prompted text
+" ,ss           - Substitute current word across buffer with prompted text
 nmap <leader>ss <plug>(SubversiveSubstituteWordRange)
-" Same as above but use Subvert so matches different text casing 
-" ,,ssie will match "Word", "word", "WORD", etc
+
+" Case-aware substitution (uses Abolish):
+" ,,s{motion}   - Smart case substitute (matches Word/word/WORD variants)
 nmap <leader><leader>s <plug>(SubversiveSubvertRange)
 xmap <leader><leader>s <plug>(SubversiveSubvertRange)
+" ,,ss          - Smart case substitute current word across buffer
 nmap <leader><leader>ss <plug>(SubversiveSubvertWordRange)
 
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" Enhanced Yank and Paste System
+" -------------------------------------------------------------------------
+" Improved yank/paste operations with history management
+" Maintains clipboard history and provides easy access to previous yanks
 
-" ------------------ Yoink - Better Yank and Paste --------------------
-
+" Yoink - Enhanced yank/paste with history
+" Repository: https://github.com/svermeulen/vim-yoink
+" Provides yank history and better paste behavior
 Plug 'svermeulen/vim-yoink'
-let g:yoinkIncludeDeleteOperations = 1
-let g:yoinkMaxItems = 20
-nmap <c-n> <plug>(YoinkPostPasteSwapBack)
-nmap <c-p> <plug>(YoinkPostPasteSwapForward)
-nmap p <plug>(YoinkPaste_p)
-nmap P <plug>(YoinkPaste_P)
-" Also replace the default gp with yoink paste so we can toggle paste in this case too
-nmap gp <plug>(YoinkPaste_gp)
-nmap gP <plug>(YoinkPaste_gP)
-" Rotate the yank buffer
-nmap [y <plug>(YoinkRotateBack)
-nmap ]y <plug>(YoinkRotateForward)
-" maintain cursor position when yanking
-nmap y <plug>(YoinkYankPreserveCursorPosition)
-xmap y <plug>(YoinkYankPreserveCursorPosition)
-" ---------------------------------------------------------
+let g:yoinkIncludeDeleteOperations = 1  " Include delete operations in history
+let g:yoinkMaxItems = 20                " Keep last 20 yank items
 
-" ------------------ Find and Replace --------------------
-" Find and Replace in multiple files
-" :Far pattern replacement files_or_glob
-" Example: :Far foo bar **/*.txt
-" After running execute :Fardo to apply
+" Post-paste navigation:
+nmap <c-n> <plug>(YoinkPostPasteSwapBack)     " Ctrl-n - Previous yank after paste
+nmap <c-p> <plug>(YoinkPostPasteSwapForward)  " Ctrl-p - Next yank after paste
+
+" Enhanced paste operations:
+nmap p <plug>(YoinkPaste_p)   " p - Paste with yoink history
+nmap P <plug>(YoinkPaste_P)   " P - Paste before with yoink history
+nmap gp <plug>(YoinkPaste_gp) " gp - Paste and move cursor
+nmap gP <plug>(YoinkPaste_gP) " gP - Paste before and move cursor
+
+" Yank history navigation:
+nmap [y <plug>(YoinkRotateBack)     " [y - Previous item in yank history
+nmap ]y <plug>(YoinkRotateForward)  " ]y - Next item in yank history
+
+" Cursor position preservation:
+nmap y <plug>(YoinkYankPreserveCursorPosition)  " y - Yank without moving cursor
+xmap y <plug>(YoinkYankPreserveCursorPosition)  " y - Yank selection without moving cursor
+
+" -------------------------------------------------------------------------
+" Multi-File Find and Replace
+" -------------------------------------------------------------------------
+" Interactive find and replace across multiple files with preview
+" Safe bulk text replacement with confirmation before applying changes
+
+" Far - Multi-file find and replace
+" Repository: https://github.com/brooth/far.vim
+" Provides interactive find/replace with preview and confirmation
 Plug 'brooth/far.vim'
-" ---------------------------------------------------------
+" Usage workflow:
+" :Far pattern replacement files_glob  - Find and preview replacements
+" :Fardo                              - Apply all replacements
+" :Farundo                            - Undo all replacements
+" Example: :Far foo bar **/*.txt      - Replace 'foo' with 'bar' in all txt files
 
-" ------------------ Extra Text Objects --------------------
-" Extra wrapper target text objects
-" cI, = change inner comma (any type)
-" da, = delete around comma (any type)
-Plug 'wellle/targets.vim' " IS this conflicting with Subvert?
-" ai = around indentation
-" cai = change around indentation 
-" ii = inner indentation
-" cii = change inner indentation
-" aI = around including lines above/below
-" iI = inner no lines above/below
+" -------------------------------------------------------------------------
+" Extended Text Objects
+" -------------------------------------------------------------------------
+" Additional text objects for more precise text manipulation
+" Extends Vim's built-in text objects with useful additions
+
+" Targets - Advanced text objects
+" Repository: https://github.com/wellle/targets.vim
+" Provides additional pair text objects and seeking behavior
+Plug 'wellle/targets.vim'
+" Text objects:
+" ci,    - Change inside next comma-separated value
+" da)    - Delete around next parentheses
+" di'    - Delete inside next single quotes
+
+" Indent Object - Indentation-based text objects
+" Repository: https://github.com/michaeljsmith/vim-indent-object
+" Work with indentation levels as text objects
 Plug 'michaeljsmith/vim-indent-object'
+" Text objects:
+" ai/ii  - Around/inside indentation level
+" aI/iI  - Around/inside indentation level (including blank lines)
+" Examples: cai (change around indentation), dii (delete inner indentation)
 
-" ie = inner entire buffer
-" cie = change inner entire buffer
-" vie = visually select inner entire buffer
-" die = delete inner entire buffer
-onoremap ie :exec "normal! ggVG"<cr>
-" iv = current viewable text in the buffer
-" civ = change current viewable text in the buffer
-" viv = visually select current viewable text in the buffer
-" div = delete current viewable text in the buffer
-onoremap iv :exec "normal! HVL"<cr>
-" ---------------------------------------------------------
+" Custom text objects for buffer operations:
+" Entire buffer text object
+onoremap ie :exec "normal! ggVG"<cr>  " ie - Inner entire buffer
+" Examples: cie (change entire buffer), vie (select entire buffer)
+
+" Viewable text object (current screen)
+onoremap iv :exec "normal! HVL"<cr>   " iv - Current viewable text
+" Examples: civ (change visible text), div (delete visible text)
 
 
-" ------------------ Avoid meesing with window layout --------------------
-" Avoid deleting buffer and messing with window layout
-" :Bdelete to delete buffer without messing with window layout
+" -------------------------------------------------------------------------
+" Buffer Management Without Layout Disruption
+" -------------------------------------------------------------------------
+" Delete buffers without closing windows or disrupting layout
+" Maintains window structure when removing buffers from memory
+
+" Bbye - Better buffer deletion
+" Repository: https://github.com/moll/vim-bbye
+" Delete buffers without affecting window layout
 Plug 'moll/vim-bbye'
-nnoremap <leader>bd :Bdelete<CR> " delete buffer
-nnoremap <leader>bx :Bdelete!<CR> " delete buffer without saving
-" ---------------------------------------------------------
+" Key mappings:
+nnoremap <leader>bd :Bdelete<CR>   " ,bd - Delete buffer (save first)
+nnoremap <leader>bx :Bdelete!<CR>  " ,bx - Force delete buffer (no save)
+" Commands:
+" :Bdelete   - Delete current buffer, keep window
+" :Bwipeout  - Wipeout current buffer, keep window
 
-" ------------------- Substitute with preview --------------------
-" :OverCommandLine 
-" > %s/foo/bar/gc
-" Press Enter to preview substitutions
+" -------------------------------------------------------------------------
+" Visual Substitution Preview
+" -------------------------------------------------------------------------
+" Interactive substitution with real-time preview of changes
+" See substitution results before confirming changes
+
+" Over - Visual substitution preview
+" Repository: https://github.com/osyo-manga/vim-over
+" Shows live preview of substitution operations
 Plug 'osyo-manga/vim-over'
-" ---------------------------------------------------------
+" Usage:
+" :OverCommandLine        - Enter Over mode
+" > %s/pattern/replace/g  - Type substitution command
+" Enter                   - Preview changes before applying
+" Provides visual feedback for complex substitutions
 
-" " ------------------- Most Recently Used Files --------------------
-":MRU list
+" -------------------------------------------------------------------------
+" Most Recently Used Files
+" -------------------------------------------------------------------------
+" Quick access to recently opened files for faster workflow
+" Maintains persistent list of recently accessed files
+
+" MRU - Most Recently Used files
+" Repository: https://github.com/yegappan/mru
+" Provides easy access to recently opened files
 Plug 'yegappan/mru'
-" ---------------------------------------------------------
+" Commands:
+" :MRU        - Open MRU file list
+" :MRU pattern - Search within MRU list
+" File list persists across Vim sessions
 
-" ------------------- Swap Windows --------------------
-" Navigate to a window by its marker
-" - opens overlay with window numbers to choose from
-" then: s to swap, S to swap and stay, - to previous, -ss swap with previous 
+" -------------------------------------------------------------------------
+" Interactive Window Management
+" -------------------------------------------------------------------------
+" Visual window selection and swapping with overlay interface
+" Simplifies navigation and manipulation in multi-window layouts
+
+" ChooseWin - Interactive window selection
+" Repository: https://github.com/t9md/vim-choosewin
+" Provides overlay interface for window operations
 Plug 't9md/vim-choosewin'
-let g:choosewin_overlay_enable = 1
-nmap  -  <Plug>(choosewin)
-" ---------------------------------------------------------
+let g:choosewin_overlay_enable = 1  " Show window markers as overlay
+" Key mappings:
+nmap - <Plug>(choosewin)  " - - Open window chooser
+" Operations in chooser:
+" s      - Swap with selected window
+" S      - Swap and stay in current window
+" -      - Return to previous window
+" -ss    - Swap with previous window
 
-" ------------------- Auto adjust expandtab  --------------------
-" Detect and set expandtab, tabstop, shiftwidth based on file content
+" -------------------------------------------------------------------------
+" Automatic Indentation Detection
+" -------------------------------------------------------------------------
+" Automatically detect and set indentation settings based on file content
+" Adapts to project-specific indentation styles without manual configuration
+
+" Sleuth - Automatic indentation detection
+" Repository: https://github.com/tpope/vim-sleuth
+" Detects tabs vs spaces and indentation width from existing code
 Plug 'tpope/vim-sleuth'
-" ---------------------------------------------------------
+" Automatically sets:
+" - expandtab/noexpandtab (tabs vs spaces)
+" - tabstop, shiftwidth (indentation width)
+" - Based on analysis of current buffer content
 
-" ----------------- HTTP Client --------------------
-" :set ft=rest 
-" Write multiple requests on a buffer
-" Example:
-"     -s
-"     Content-Type: application/json
-"     --
-"     https://httpbingo.org
-"     POST /post
-"     {"batata": 123}
-"
-" <C-j> with the cursor on the request to execute
-" 
+" -------------------------------------------------------------------------
+" HTTP REST Client
+" -------------------------------------------------------------------------
+" Execute HTTP requests directly from Vim buffers
+" Perfect for API testing and development workflows
+
+" VRC - Vim REST Console
+" Repository: https://github.com/diepm/vim-rest-console
+" Execute HTTP requests with results in separate buffer
 Plug 'diepm/vim-rest-console'
-let g:vrc_output_buffer_name = '__VRC_OUTPUT.json'
+let g:vrc_output_buffer_name = '__VRC_OUTPUT.json'  " Output buffer name
 let g:vrc_curl_opts = {
-    \ '-k':'', 
-    \ '-L':'',
+    \ '-k':'',
+    \ '-L':''
 \}
-" ---------------------------------------------------------
+" Usage:
+" 1. Set filetype: :set ft=rest
+" 2. Write request format:
+"    -s
+"    Content-Type: application/json
+"    --
+"    https://httpbingo.org
+"    POST /post
+"    {"data": "value"}
+" 3. Key mappings:
+"    Ctrl-j  - Execute request under cursor
 
-" ----------------- MArkdown tables ----------------------
-" ,tm to toggle table mode
+" -------------------------------------------------------------------------
+" Markdown Table Management
+" -------------------------------------------------------------------------
+" Enhanced table editing capabilities for Markdown documents
+" Automatic table formatting and alignment with convenient shortcuts
+
+" Table Mode - Markdown table editing
+" Repository: https://github.com/dhruvasagar/vim-table-mode
+" Provides automatic table formatting and manipulation
 Plug 'dhruvasagar/vim-table-mode'
+" Key mappings:
+" ,tm         - Toggle table mode
+" ||          - Start table or add column (table mode)
+" |           - Add column separator (table mode)
+" Features: Auto-alignment, row/column manipulation, table formatting
 
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" Markdown Live Preview
+" -------------------------------------------------------------------------
+" Real-time Markdown preview in browser with automatic updates
+" Requires Rust and Cargo for building the preview server
 
-" ----------------- Markdown Preview ----------------------
+" Build function for Markdown Composer
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
     if has('nvim')
@@ -473,23 +754,37 @@ function! BuildComposer(info)
   endif
 endfunction
 
-" Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+" Markdown Composer - Live preview in browser
+" Repository: https://github.com/rochacbruno/vim-markdown-composer
+" Fork with updated dependencies for better compatibility
 Plug 'rochacbruno/vim-markdown-composer', { 'do': function('BuildComposer'), 'branch': 'fix/bump-deps' }
-let g:markdown_composer_autostart = 0
+let g:markdown_composer_autostart = 0  " Don't auto-start preview
+" Commands:
+" :ComposerStart  - Start live preview server
+" :ComposerStop   - Stop preview server
+" :ComposerOpen   - Open preview in browser
 
-" ---------------------------------------------------------
+" -------------------------------------------------------------------------
+" External Application Integration
+" -------------------------------------------------------------------------
+" Quick access to system file manager and terminal from current file context
+" Seamlessly bridge between Vim and external tools
 
-" ----------------- Go to File Manager or Terminal -----------
+" GTFO - Go to file manager or terminal
+" Repository: https://github.com/justinmk/vim-gtfo
+" Opens external applications in current file's directory
 Plug 'justinmk/vim-gtfo'
-" got = open terminal in current file's directory
-" gof = open file manager in current file's directory
-let g:gtfo#terminals = { 'unix': 'kitty @ launch --cwd="%:p:h"' }
-"
-"
-" TODO: Check for a custom.plugins.vim and source it here
-"
-" Why Copilot keeps removing my blank lines?
-" --- PLUGINS END ---
+let g:gtfo#terminals = { 'unix': 'kitty @ launch --cwd="%:p:h"' }  " Use Kitty terminal
+" Key mappings:
+" got         - Open terminal in current file's directory
+" gof         - Open file manager in current file's directory
+
+" -------------------------------------------------------------------------
+" Plugin Configuration Complete
+" -------------------------------------------------------------------------
+" TODO: Check for a custom.plugins.vim and source it here for user extensions
+" 
+" End plugin declarations
 call plug#end()
 
 

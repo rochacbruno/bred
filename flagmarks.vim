@@ -1,20 +1,25 @@
-" =====================================
-" Flag Marks Manager - Vim9script
-" =====================================
-" This is actually a plygin, but for now kept here for simplicity
+" =========================================================================
+" Flag Marks Manager
+" =========================================================================
+" This is actually a plugin, but for now kept here for simplicity
 " In the future this will move to a separate repo when complete.
 " See flagmarks.md for documentation.
 
-
+" -------------------------------------------------------------------------
+" Global Variables and Configuration
+" -------------------------------------------------------------------------
 " Global variables
 let g:flag_marks = []
 let g:last_mark = ''
 let g:flag_signs_visible = 1
 let g:flag_go_history = []
 
-" ---------------------------
-" Initialize signs for marks
-" ---------------------------
+" -------------------------------------------------------------------------
+" Sign System Initialization
+" -------------------------------------------------------------------------
+
+""" Initialize visual signs for all marks A-Z
+""" Creates sign definitions for each uppercase letter with '>' prefix for visibility
 function! s:InitSigns()
     " Define signs for all uppercase letters
     for l:i in range(char2nr('A'), char2nr('Z'))
@@ -35,9 +40,15 @@ if !exists('&signcolumn') || &signcolumn == 'no'
     set signcolumn=auto
 endif
 
-" ---------------------------
-" Helper function to compare files
-" ---------------------------
+" -------------------------------------------------------------------------
+" File Path Comparison Utilities
+" -------------------------------------------------------------------------
+
+""" Compare two file paths for equality using multiple strategies
+""" Handles relative paths, absolute paths, and filename-only comparisons
+""" @param file1 First file path to compare
+""" @param file2 Second file path to compare
+""" @return 1 if files match, 0 otherwise
 function! s:FilesMatch(file1, file2)
     " Remove any whitespace
     let l:f1 = trim(a:file1)
@@ -74,9 +85,13 @@ function! s:FilesMatch(file1, file2)
     return 0
 endfunction
 
-" ---------------------------
-" Update signs for all marks
-" ---------------------------
+" -------------------------------------------------------------------------
+" Sign Display Management
+" -------------------------------------------------------------------------
+
+""" Update visual signs for all current marks
+""" Clears existing signs and places new ones based on current mark locations
+""" Only displays signs if g:flag_signs_visible is enabled
 function! s:UpdateSigns()
     " Ensure signs are initialized
     call s:InitSigns()
@@ -137,9 +152,13 @@ function! s:UpdateSigns()
     endfor
 endfunction
 
-" ---------------------------
-" Collect all global marks (A-Z)
-" ---------------------------
+" -------------------------------------------------------------------------
+" Mark Collection and Processing
+" -------------------------------------------------------------------------
+
+""" Collect all global marks (A-Z) and store in g:flag_marks
+""" Retrieves mark information including position, file, and line number
+""" Sorts marks alphabetically and updates visual signs
 function! s:CollectMarks()
     try
         " Get marks info using getmarklist()
@@ -198,9 +217,8 @@ function! s:CollectMarks()
     endtry
 endfunction
 
-" ---------------------------
-" Find next free mark
-" ---------------------------
+""" Find the next available mark letter (A-Z)
+""" @return Next free mark letter, or empty string if all are used
 function! s:NextFreeMark()
     call s:CollectMarks()
     for l:c in range(char2nr('A'), char2nr('Z'))
@@ -213,9 +231,13 @@ function! s:NextFreeMark()
     return ''
 endfunction
 
-" ---------------------------
-" Add new global mark
-" ---------------------------
+" -------------------------------------------------------------------------
+" Mark Management Functions
+" -------------------------------------------------------------------------
+
+""" Add a new global mark at current cursor position
+""" Finds next available mark letter and sets it at current line
+""" Updates jump history and prevents duplicate marks on same line
 function! FlagAdd()
     " Check if there's already a mark on this line in this file
     call s:CollectMarks()
@@ -255,9 +277,8 @@ function! FlagAdd()
     echo "Set global mark " . l:m
 endfunction
 
-" ---------------------------
-" Delete mark on current line
-" ---------------------------
+""" Delete any mark present on the current line
+""" Searches for marks matching current file and line number
 function! FlagDelete()
     call s:CollectMarks()
     let l:lnum = line('.')
@@ -281,9 +302,8 @@ function! FlagDelete()
     echo "No mark on line " . l:lnum . " (checked " . len(g:flag_marks) . " marks)"
 endfunction
 
-" ---------------------------
-" Clear all marks in file
-" ---------------------------
+""" Clear all marks in the current file with confirmation
+""" Prompts user before deleting multiple marks
 function! FlagClearFile()
     call s:CollectMarks()
     let l:current_file = expand('%:p')
@@ -314,9 +334,8 @@ function! FlagClearFile()
     endif
 endfunction
 
-" ---------------------------
-" Clear all marks globally
-" ---------------------------
+""" Clear all global marks (A-Z) with confirmation
+""" Removes all marks from all files after user confirmation
 function! FlagClearAll()
     call s:CollectMarks()
     
@@ -342,9 +361,13 @@ function! FlagClearAll()
     endif
 endfunction
 
-" ---------------------------
-" Same-window versions (force same window)
-" ---------------------------
+" -------------------------------------------------------------------------
+" Same-Window Navigation Functions
+" -------------------------------------------------------------------------
+" These functions force navigation to occur in the current window,
+" ignoring window-aware behavior that might switch to existing windows
+
+""" Navigate to mark in current window (non-window-aware version)
 function! FlagGoSame(...)
     if a:0 == 0
         call FlagGo('', 0)
@@ -353,27 +376,35 @@ function! FlagGoSame(...)
     endif
 endfunction
 
+""" Navigate to next mark in current window (non-window-aware)
 function! FlagNextSame()
     call FlagNext(0)
 endfunction
 
+""" Navigate to previous mark in current window (non-window-aware)
 function! FlagPrevSame()
     call FlagPrev(0)
 endfunction
 
+""" Show mark menu with same-window navigation behavior
 function! FlagMenuSame()
     let g:flag_menu_window_aware = 0
     call FlagMenu()
 endfunction
 
+""" Show mark menu with window-aware navigation behavior
 function! FlagMenuWindow()
     let g:flag_menu_window_aware = 1
     call FlagMenu()
 endfunction
 
-" ---------------------------
-" Populate quickfix with marks
-" ---------------------------
+" -------------------------------------------------------------------------
+" Quickfix Integration
+" -------------------------------------------------------------------------
+
+""" Populate quickfix list with all current marks
+""" Creates quickfix entries for each mark with file, line, and preview text
+""" Opens quickfix window for easy navigation
 function! FlagQuick()
     call s:CollectMarks()
     
@@ -419,9 +450,13 @@ function! FlagQuick()
     echo "Added " . len(l:qf_list) . " marks to quickfix"
 endfunction
 
-" ---------------------------
-" Jump next/prev mark
-" ---------------------------
+" -------------------------------------------------------------------------
+" Sequential Mark Navigation
+" -------------------------------------------------------------------------
+
+""" Jump to next mark in alphabetical order
+""" @param window_aware Optional flag for window-aware navigation (default: 1)
+""" Cycles through marks A-Z, wrapping around to beginning
 function! FlagNext(...)
     " Default to window-aware (1) unless explicitly passed 0
     let l:window_aware = (a:0 > 0) ? a:1 : 1
@@ -437,6 +472,9 @@ function! FlagNext(...)
     call s:JumpToMark(g:last_mark, l:window_aware)
 endfunction
 
+""" Jump to previous mark in alphabetical order
+""" @param window_aware Optional flag for window-aware navigation (default: 1)
+""" Cycles through marks Z-A, wrapping around to end
 function! FlagPrev(...)
     " Default to window-aware (1) unless explicitly passed 0
     let l:window_aware = (a:0 > 0) ? a:1 : 1
@@ -452,9 +490,12 @@ function! FlagPrev(...)
     call s:JumpToMark(g:last_mark, l:window_aware)
 endfunction
 
-" ---------------------------
-" List marks aligned
-" ---------------------------
+" -------------------------------------------------------------------------
+" Mark Display and Listing
+" -------------------------------------------------------------------------
+
+""" Display all marks in a formatted table
+""" Shows mark letter, filename, and line number in aligned columns
 function! FlagList()
     call s:CollectMarks()
     if empty(g:flag_marks)
@@ -472,9 +513,8 @@ function! FlagList()
     endfor
 endfunction
 
-" ---------------------------
-" Toggle sign visibility
-" ---------------------------
+""" Toggle visibility of mark signs in the sign column
+""" Enables/disables visual indicators for all marks
 function! FlagToggle()
     let g:flag_signs_visible = !g:flag_signs_visible
     if g:flag_signs_visible
@@ -486,9 +526,14 @@ function! FlagToggle()
     endif
 endfunction
 
-" ---------------------------
-" Get line content preview
-" ---------------------------
+" -------------------------------------------------------------------------
+" Preview and Content Utilities
+" -------------------------------------------------------------------------
+
+""" Get a preview of the content at a specific line in a file
+""" @param file File path to read from
+""" @param line_num Line number to preview
+""" @return Truncated line content or '<no preview>' if unavailable
 function! s:GetLinePreview(file, line_num)
     " Try to get the line content
     let l:content = ''
@@ -523,9 +568,9 @@ function! s:GetLinePreview(file, line_num)
     return l:content
 endfunction
 
-" ---------------------------
-" Find window containing file
-" ---------------------------
+""" Find which window (if any) contains the specified file
+""" @param file File path to search for
+""" @return Window number containing the file, or 0 if not found
 function! s:FindWindowWithFile(file)
     " Get full path of target file
     let l:target_file = fnamemodify(a:file, ':p')
@@ -544,9 +589,14 @@ function! s:FindWindowWithFile(file)
     return 0
 endfunction
 
-" ---------------------------
-" Go to mark with window awareness
-" ---------------------------
+" -------------------------------------------------------------------------
+" Core Navigation Engine
+" -------------------------------------------------------------------------
+
+""" Jump to a specific mark with optional window awareness
+""" @param mark Mark letter to jump to
+""" @param window_aware If 1, try to switch to existing window with the file
+""" @return 1 if successful, 0 if mark not found
 function! s:JumpToMark(mark, window_aware)
     " Check if mark exists
     let l:mark_info = 0
@@ -583,9 +633,10 @@ function! s:JumpToMark(mark, window_aware)
     return 0
 endfunction
 
-" ---------------------------
-" Go to specific mark
-" ---------------------------
+""" Primary function for navigating to marks
+""" Handles mark history, validation, and window awareness
+""" @param mark Optional mark letter to jump to (empty for history toggle)
+""" @param window_aware Optional window awareness flag (default: 1)
 function! FlagGo(...)
     " Check for window_aware flag (second argument), default to 1 (window-aware)
     let l:window_aware = (a:0 >= 2) ? a:2 : 1
@@ -687,9 +738,15 @@ function! FlagGo(...)
     endif
 endfunction
 
-" ---------------------------
-" Popup menu: type letter
-" ---------------------------
+" -------------------------------------------------------------------------
+" Interactive Popup Menu System
+" -------------------------------------------------------------------------
+
+""" Filter function for popup menu key handling
+""" Processes keystrokes in the mark selection popup
+""" @param winid Popup window ID
+""" @param key Key pressed by user
+""" @return 1 to consume the key, 0 to pass through
 function! s:PopupFilter(winid, key)
     " Convert lowercase to uppercase for marks
     let l:key = toupper(a:key)
@@ -725,6 +782,9 @@ function! s:PopupFilter(winid, key)
     return 1
 endfunction
 
+""" Display interactive popup menu for mark selection
+""" Shows all marks with file, line, and preview information
+""" User can type a-z to jump to corresponding mark A-Z
 function! FlagMenu()
     call s:CollectMarks()
     if empty(g:flag_marks)
@@ -771,9 +831,12 @@ function! FlagMenu()
     call popup_create(l:content, l:opts)
 endfunction
 
-" ---------------------------
-" Debug function
-" ---------------------------
+" -------------------------------------------------------------------------
+" Debugging and Diagnostics
+" -------------------------------------------------------------------------
+
+""" Debug function to display detailed mark and buffer information
+""" Shows file matching results, buffer states, and sign placements
 function! s:DebugMarks()
     let l:current_file = expand('%:p')
     echo "=== Current State ==="
@@ -814,9 +877,10 @@ function! s:DebugMarks()
     endif
 endfunction
 
-" ---------------------------
-" Commands
-" ---------------------------
+" -------------------------------------------------------------------------
+" Command Definitions
+" -------------------------------------------------------------------------
+" Define all user commands for the flag marks system
 command! FlagAdd call FlagAdd()
 command! FlagDelete call FlagDelete()
 command! FlagNext call FlagNext()
@@ -835,9 +899,10 @@ command! FlagMenuSame call FlagMenuSame()
 command! FlagMenuWindow call FlagMenuWindow()
 command! FlagQuick call FlagQuick()
 
-" ---------------------------
-" Keymaps
-" ---------------------------
+" -------------------------------------------------------------------------
+" Key Mappings
+" -------------------------------------------------------------------------
+" Core mark management mappings (ma, md, mn, mp, etc.)
 nnoremap <silent> ma :FlagAdd<CR>
 nnoremap <silent> md :FlagDelete<CR>
 nnoremap <silent> mn :FlagNext<CR>
@@ -848,33 +913,45 @@ nnoremap <silent> ml :FlagList<CR>
 nnoremap <silent> mt :FlagToggle<CR>
 nnoremap <silent> mq :FlagQuick<CR>
 
-" Window-aware mappings (lowercase m - default behavior)
+" -------------------------------------------------------------------------
+" Window-Aware Navigation Mappings
+" -------------------------------------------------------------------------
+" These mappings (lowercase 'm') provide window-aware navigation behavior.
+" If a mark's file is open in another window, jump to that window instead
+" of opening the file in the current window.
 nnoremap <silent> mm :FlagGo<CR>
 nnoremap <silent> mn :FlagNext<CR>
 nnoremap <silent> mp :FlagPrev<CR>
 nnoremap <silent> <leader>m :FlagMenuWindow<CR>
 
-" Window-aware go to specific marks
+" Generate mappings for direct mark access (mga, mgb, mgc, etc.)
+" These allow quick jumping to specific marks with window awareness
 for s:i in range(char2nr('a'), char2nr('z'))
     let s:letter = nr2char(s:i)
     execute 'nnoremap <silent> mg' . s:letter . ' :FlagGo ' . s:letter . '<CR>'
 endfor
 
-" Same-window mappings (uppercase M - force same window)
+" -------------------------------------------------------------------------
+" Same-Window Navigation Mappings
+" -------------------------------------------------------------------------
+" These mappings (uppercase 'M') force navigation to occur in the current
+" window, ignoring any existing windows that might contain the target file.
 nnoremap <silent> Mm :FlagGoSame<CR>
 nnoremap <silent> Mn :FlagNextSame<CR>
 nnoremap <silent> Mp :FlagPrevSame<CR>
 nnoremap <silent> <leader>M :FlagMenuSame<CR>
 
-" Same-window go to specific marks
+" Generate same-window mappings for direct mark access (Mga, Mgb, Mgc, etc.)
+" These force opening files in current window regardless of existing windows
 for s:i in range(char2nr('a'), char2nr('z'))
     let s:letter = nr2char(s:i)
     execute 'nnoremap <silent> Mg' . s:letter . ' :FlagGoSame ' . s:letter . '<CR>'
 endfor
 
-" ---------------------------
-" Auto-update signs on buffer enter
-" ---------------------------
+" -------------------------------------------------------------------------
+" Auto-Update System
+" -------------------------------------------------------------------------
+" Automatically refresh mark signs when buffers are entered or modified
 augroup FlagMarksAutoUpdate
     autocmd!
     autocmd BufEnter,BufRead,BufWritePost * silent! call s:CollectMarks()

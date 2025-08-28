@@ -1,129 +1,167 @@
+" =========================================================================
+" Key Mappings and Shortcuts
+" =========================================================================
+" This file contains pure Vim key mappings
+" Plugin-specific mappings are defined in plugins.vim
+" 
+" Debugging tips:
+" :verbose map <key>  - See where a mapping was defined
+" :map                - See all mappings
+" :nmap, :vmap, :imap - See mode-specific mappings
+" :map <leader>       - See all leader mappings
+" =========================================================================
+" -------------------------------------------------------------------------
+" Tab Management
+" -------------------------------------------------------------------------
+" Note: Tabs are rarely used in favor of buffers, but mappings provided
+nnoremap <leader>tn :tabnew<CR>      " ,tn - Create new tab
+nnoremap <leader>to :tabonly<CR>     " ,to - Close all other tabs
+nnoremap <leader>tc :tabclose<CR>    " ,tc - Close current tab
+nnoremap <leader>tl :tabnext<CR>     " ,tl - Go to next tab
+nnoremap <leader>th :tabprevious<CR> " ,th - Go to previous tab
 
-" ---- PURE VIM MAPPINGS
-"  for plugin mappings check plugins.vim
-"  use :verbose map <key> to see where a mapping was defined
-"  or use :Maps to see all mappings
-"  or :nmap, :vmap, :imap, :tmap for specific modes
-"  or :map <leader> to see all leader mappings
-" -----------------------------
-" --- Tabs ---
-" Tabs are useless, but here are some mappings anyway
-nnoremap <leader>tn :tabnew<CR>
-nnoremap <leader>to :tabonly<CR>
-nnoremap <leader>tc :tabclose<CR>
-nnoremap <leader>tl :tabnext<CR>
-nnoremap <leader>th :tabprevious<CR>
+" -------------------------------------------------------------------------
+" Buffer Management
+" -------------------------------------------------------------------------
+nnoremap <leader>bl :ls<CR>:b<Space>  " ,bl - List buffers and jump to one
+nnoremap [q :bp<CR>                   " [q  - Previous buffer
+nnoremap ]q :bn<CR>                   " ]q  - Next buffer
+nnoremap bda :DeleteHiddenBuffers<CR> " bda - Delete all hidden buffers
 
-" --- Buffers ---
-nnoremap <leader>bl :ls<CR>:b<Space> " list buffers and prompt for buffer number
-nnoremap [q :bp<CR> " previous buffer
-nnoremap ]q :bn<CR> " next buffer
-nnoremap bda :DeleteHiddenBuffers<CR> " delete all hidden buffers
-
+" Quick buffer switching with ,1 through ,9
 for n in range(1, 9)
   execute 'nnoremap <silent> <leader>' . n . ' :buffer ' . n . '<CR>'
 endfor
 
-"Map buffer quick switch keys"
-nnoremap <silent> <leader><Tab> <C-^>
+" Quick switch to alternate buffer
+nnoremap <silent> <leader><Tab> <C-^>  " ,<Tab> - Toggle between two buffers
 
-" --- Window management (splits) ---
-nnoremap <leader>= :resize +3<CR>
-nnoremap <leader>- :resize -3<CR>
-nnoremap <leader>> :vertical resize +3<CR>
-nnoremap <leader>< :vertical resize -3<CR>
-" C-w-f = open current file in new split
-" C-w-v = split file vertically
-" C-w-s = split file horizontally
+" -------------------------------------------------------------------------
+" Window Management (Splits)
+" -------------------------------------------------------------------------
+" Window resizing
+nnoremap <leader>= :resize +3<CR>          " ,=  - Increase height
+nnoremap <leader>- :resize -3<CR>          " ,-  - Decrease height
+nnoremap <leader>> :vertical resize +3<CR> " ,>  - Increase width
+nnoremap <leader>< :vertical resize -3<CR> " ,<  - Decrease width
+" Built-in window shortcuts:
+" C-w-f - Open file under cursor in new split
+" C-w-v - Split window vertically
+" C-w-s - Split window horizontally
 
-" Shortcut to start resize mode
-nnoremap <leader>rs :call ResizeMode()<CR>
+" Interactive resize mode
+nnoremap <leader>rs :call ResizeMode()<CR>  " ,rs - Enter resize mode (arrows to resize)
 
-" --- Quick save/quit & QoL ---
-nnoremap <leader>w :write<CR>
-nnoremap <leader>q :quit<CR>
-nnoremap <leader>x :xit<CR>
-nnoremap <leader>h :nohlsearch<CR>
+" -------------------------------------------------------------------------
+" Quick Save/Quit and Quality of Life
+" -------------------------------------------------------------------------
+nnoremap <leader>w :write<CR>       " ,w - Save file
+nnoremap <leader>q :quit<CR>        " ,q - Quit
+nnoremap <leader>x :xit<CR>         " ,x - Save and quit
+nnoremap <leader>h :nohlsearch<CR>  " ,h - Clear search highlighting
 
+" -------------------------------------------------------------------------
+" Terminal Mode
+" -------------------------------------------------------------------------
+tnoremap <C-v><Esc> <C-\><C-n>      " C-v Esc - Exit terminal mode
+nnoremap <leader>c :botright term<CR> " ,c      - Open terminal at bottom
 
-" ------ Term mode ------
-tnoremap <C-v><Esc> <C-\><C-n>
-nnoremap <leader>c :botright term<CR>
+" -------------------------------------------------------------------------
+" Search and Replace
+" -------------------------------------------------------------------------
+" Replace current word throughout file
+" Note: Visual Multi plugin provides similar functionality with Ctrl+d
+nnoremap <leader>re :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>  " ,re - Replace word under cursor
 
-" -- replace current word --
-"NOTE: this is also a VM mode feature but I like having it in pure vim too
-" on VM: ctrl+d to select word then \\A to select all instances then c to
-" change
-nnoremap <leader>re :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
+" -------------------------------------------------------------------------
+" Configuration Reload
+" -------------------------------------------------------------------------
+nnoremap <leader><leader>so :source ~/.vim/vimrc<CR>  " ,,so - Reload Vim configuration
 
-" -- Reload vim config --
-nnoremap <leader><leader>so :source ~/.vim/vimrc<CR>
+" -------------------------------------------------------------------------
+" Common Editor Shortcuts
+" -------------------------------------------------------------------------
+" Ctrl+S to save (familiar for users coming from other editors)
+nnoremap <C-s> :update<CR>          " Ctrl+S - Save in normal mode
+inoremap <C-s> <Esc>:update<CR>a    " Ctrl+S - Save in insert mode
+xnoremap <C-s> <Esc>:update<CR>gv   " Ctrl+S - Save in visual mode
 
+" Ctrl+Z to undo (familiar for users coming from other editors)
+nnoremap <C-z> u                    " Ctrl+Z - Undo in normal mode
+inoremap <C-z> <Esc>ua              " Ctrl+Z - Undo in insert mode
+xnoremap <C-z> <Esc>ugv             " Ctrl+Z - Undo in visual mode
 
-" Make Ctrl+s save the file in normal and insert mode
-nnoremap <C-s> :update<CR>
-inoremap <C-s> <Esc>:update<CR>a
-xnoremap <C-s> <Esc>:update<CR>gv
+" -------------------------------------------------------------------------
+" Emacs-style Cursor Movement
+" -------------------------------------------------------------------------
+" Familiar keybindings for users coming from Emacs
+" Insert mode mappings
+inoremap <C-a> <Home>               " C-a - Move to beginning of line
+inoremap <C-e> <End>                " C-e - Move to end of line
+inoremap <C-f> <Right>              " C-f - Move forward one character
+inoremap <C-b> <Left>               " C-b - Move backward one character
+inoremap <C-d> <Del>                " C-d - Delete character under cursor
+inoremap <C-k> <C-o>D               " C-k - Kill to end of line
+inoremap <M-Backspace> <C-o>dB     " M-Backspace - Delete word backward
+" Command mode mappings
+cnoremap <C-a> <Home>               " C-a - Move to beginning
+cnoremap <C-e> <End>                " C-e - Move to end
+cnoremap <C-f> <Right>              " C-f - Move forward
+cnoremap <C-b> <Left>               " C-b - Move backward
+cnoremap <C-d> <Del>                " C-d - Delete character
+cnoremap <C-k> <C-u>                " C-k - Kill to beginning
+cnoremap <M-Backspace> <C-w>        " M-Backspace - Delete word
 
-" Make Ctrl+z undo in normal and insert mode
-nnoremap <C-z> u
-inoremap <C-z> <Esc>ua
-xnoremap <C-z> <Esc>ugv
+" -------------------------------------------------------------------------
+" Line Movement
+" -------------------------------------------------------------------------
+" Move lines up and down while maintaining indentation
+" Using Alt+j/k
+nnoremap <M-j> :m .+1<CR>==         " Alt+j - Move line down (normal)
+nnoremap <M-k> :m .-2<CR>==         " Alt+k - Move line up (normal)
+inoremap <M-j> <Esc>:m .+1<CR>==gi  " Alt+j - Move line down (insert)
+inoremap <M-k> <Esc>:m .-2<CR>==gi  " Alt+k - Move line up (insert)
+xnoremap <M-j> :m '>+1<CR>gv=gv     " Alt+j - Move selection down (visual)
+xnoremap <M-k> :m '<-2<CR>gv=gv     " Alt+k - Move selection up (visual)
+" Using Alt+Arrow keys
+nnoremap <M-Down> :m .+1<CR>==      " Alt+Down - Move line down (normal)
+nnoremap <M-Up> :m .-2<CR>==        " Alt+Up - Move line up (normal)
+inoremap <M-Down> <Esc>:m .+1<CR>==gi  " Alt+Down - Move line down (insert)
+inoremap <M-Up> <Esc>:m .-2<CR>==gi    " Alt+Up - Move line up (insert)
+xnoremap <M-Down> :m '>+1<CR>gv=gv     " Alt+Down - Move selection down (visual)
+xnoremap <M-Up> :m '<-2<CR>gv=gv       " Alt+Up - Move selection up (visual)
 
+" -------------------------------------------------------------------------
+" Visual Mode Enhancements
+" -------------------------------------------------------------------------
+" Stay in visual mode after indenting
+xnoremap < <gv                      " < - Indent left and stay in visual mode
+xnoremap > >gv                      " > - Indent right and stay in visual mode
 
-" Emacs style cursor movement in insert mode
-inoremap <C-a> <Home>
-inoremap <C-e> <End>
-inoremap <C-f> <Right>
-inoremap <C-b> <Left>
-inoremap <C-d> <Del>
-inoremap <C-k> <C-o>D
-inoremap <M-Backspace> <C-o>dB
-" Emacs style in command mode too
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <C-f> <Right>
-cnoremap <C-b> <Left>
-cnoremap <C-d> <Del>
-cnoremap <C-k> <C-u>
-cnoremap <M-Backspace> <C-w>
+" Paste without overwriting register (keeps yanked text)
+xnoremap p "_dP                     " p - Paste in visual mode without yanking
+vnoremap p "_dP                     " p - Paste in visual mode without yanking
 
-" Move lines up and down in normal and visual mode
-nnoremap <M-j> :m .+1<CR>==
-nnoremap <M-k> :m .-2<CR>==
-inoremap <M-j> <Esc>:m .+1<CR>==gi
-inoremap <M-k> <Esc>:m .-2<CR>==gi
-xnoremap <M-j> :m '>+1<CR>gv=gv
-xnoremap <M-k> :m '<-2<CR>gv=gv
-" Also using arrows
-nnoremap <M-Down> :m .+1<CR>==
-nnoremap <M-Up> :m .-2<CR>==
-inoremap <M-Down> <Esc>:m .+1<CR>==gi
-inoremap <M-Up> <Esc>:m .-2<CR>==gi
-xnoremap <M-Down> :m '>+1<CR>gv=gv
-xnoremap <M-Up> :m '<-2<CR>gv=gv
+" -------------------------------------------------------------------------
+" Disable Problematic Keys
+" -------------------------------------------------------------------------
+nnoremap Q <Nop>                    " Q - Disable Ex mode (often hit by accident)
 
-" Stay in indent mode when indenting in visual mode
-xnoremap < <gv
-xnoremap > >gv
+" -------------------------------------------------------------------------
+" Navigation Improvements
+" -------------------------------------------------------------------------
+" Better navigation for wrapped lines (uncomment if desired)
+" nnoremap j gj      " j - Move by display line, not physical line
+" nnoremap k gk      " k - Move by display line, not physical line
+" nnoremap gj j      " gj - Move by physical line
+" nnoremap gk k      " gk - Move by physical line
 
+" -------------------------------------------------------------------------
+" File Operations
+" -------------------------------------------------------------------------
+" Make current file executable (useful for scripts)
+nnoremap <leader>x :!chmod +x %<CR> " ,x - Make file executable
 
-" Sane paste without overwriting the default register
-xnoremap p "_dP
-vnoremap p "_dP
-
-" Disable annoying Q command
-nnoremap Q <Nop>
-
-" Better navigation for wrapped lines
-" nnoremap j gj
-" nnoremap k gk
-" nnoremap gj j
-" nnoremap gk k
-
-" Make a script executable from vim
-nnoremap <leader>x :!chmod +x %<CR>
-
-"
-"
-"
+" -------------------------------------------------------------------------
+" End of Mappings
+" -------------------------------------------------------------------------

@@ -24,3 +24,7 @@ augroup CustomColors
     " Reapply after any plugin window closes
     autocmd BufWinEnter * call s:ApplyCustomColors()
 augroup END
+
+" -------------------------------------------------------------------------
+" End of Custom Colors
+" -------------------------------------------------------------------------
