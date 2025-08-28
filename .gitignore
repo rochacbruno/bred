@@ -1,0 +1,10 @@
+*.bck
+.netrwhist
+viminfo
+Session.vim
+scratch.md
+plugged
+pack/downloads
+pack/plugins
+pack/colors/start/pure.vim
+autoload
