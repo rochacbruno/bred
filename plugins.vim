@@ -186,20 +186,6 @@ let g:AutoPairsShortcutFastWrap = ""
 Plug 'airblade/vim-gitgutter'
 " }}}
 
-" Which Key - Key binding helper {{{
-" , to open which-key
-" :WhichKey to open which-key
-Plug 'liuchengxu/vim-which-key'
-" let g:which_key_ignore_outside_mappings = 1
-let g:which_key_max_size = 0
-let g:which_key_flatten = 1
-" NOTE: dictionaries are defined in whichkey.vim
-
-nnoremap <silent> <leader> :<c-u>WhichKey ','<CR>
-nnoremap <silent> <C-w> :<c-u>WhichKey! g:which_key_map_window<CR>
-vnoremap <silent> <leader> :<c-u>WhichKeyVisual ','<CR>
-
-" }}}
 
 " Colorizer - Highlight color codes {{{
 " :ColorHighlight

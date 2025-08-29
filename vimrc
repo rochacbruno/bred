@@ -23,4 +23,3 @@ source ~/.vim/flagmarks.vim      " Custom global marks management system
 source ~/.vim/custom_colors.vim  " Color scheme fixes and customizations
 source ~/.vim/options.vim        " Core Vim options and settings
 source ~/.vim/mappings.vim       " Key mappings and shortcuts
-source ~/.vim/whichkey.vim       " WhichKey screen configuration
