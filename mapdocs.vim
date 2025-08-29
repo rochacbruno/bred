@@ -1,97 +1,368 @@
 " ==========================
-" MapDocs - classic Vimscript
+" MapDocs - classic Vimscript  
 " ==========================
 
-" Store docs
-if !exists("g:map_docs")
-    let g:map_docs = {}
-endif
-if !exists("g:map_docs_default")
-    let g:map_docs_default = {}
+" Initialize global dictionaries
+if !exists("g:mapdocs")
+    let g:mapdocs = {}
 endif
 
-" Trick Doc command: ends with <CR> automatically
-" Just a no-op command that shows up in :verbose map
-command! -nargs=* Doc call MapDocsStore(<q-args>) | call feedkeys("\<CR>", 'n')
+" Clear any existing mapdocs when sourcing
+let g:mapdocs = {}
 
-" Store mapping doc
-function! MapDocsStore(args) abort
-    " Determine last mapping LHS by checking verbose map
-    let l:maps = split(execute('verbose map'), "\n")
-    let l:lhs = ''
-    for l:line in reverse(l:maps)
-        if l:line =~ ':Doc'
-            let l:lhs = matchstr(l:line, '^\S\+')
-            break
-        endif
-    endfor
-    if l:lhs == ''
-        echoerr "Could not detect mapping LHS for Doc"
+" Parse documentation string (description|category)
+function! s:ParseDocString(docstr) abort
+    " Remove surrounding quotes if present
+    let l:str = a:docstr
+    if l:str =~ "^['\"].*['\"]$"
+        let l:str = l:str[1:-2]
+    endif
+    
+    " Split by | to get description and optional category
+    let l:parts = split(l:str, '|')
+    let l:desc = trim(get(l:parts, 0, ''))
+    let l:category = trim(get(l:parts, 1, ''))
+    return [l:desc, l:category]
+endfunction
+
+" Enhanced mapping commands with built-in documentation
+" Syntax: Nmap 'description|category' <lhs> <rhs>
+command! -nargs=+ Nmap call s:CreateMapping('n', <q-args>)
+command! -nargs=+ Imap call s:CreateMapping('i', <q-args>)
+command! -nargs=+ Vmap call s:CreateMapping('v', <q-args>)
+command! -nargs=+ Xmap call s:CreateMapping('x', <q-args>)
+command! -nargs=+ Omap call s:CreateMapping('o', <q-args>)
+command! -nargs=+ Cmap call s:CreateMapping('c', <q-args>)
+
+" Create mapping with documentation
+function! s:CreateMapping(mode, args) abort
+    " Parse the arguments - need to handle quoted strings properly
+    " Expected format: 'description|category' <lhs> <rhs>
+    
+    " Find the first quoted string
+    let l:match = matchlist(a:args, "^\\s*\\(['\"]\\)\\(.\\{-\\}\\)\\1\\s*\\(\\S\\+\\)\\s*\\(.*\\)$")
+    
+    if empty(l:match)
+        echoerr "Usage: " . toupper(a:mode) . "map 'description|category' <lhs> <rhs>"
         return
     endif
-
-    " Store in grouped or ungrouped
-    if len(a:args) == 1
-        let g:map_docs_default[l:lhs] = a:args[0]
-    elseif len(a:args) == 2
-        let l:group = a:args[1]
-        if !has_key(g:map_docs, l:group)
-            let g:map_docs[l:group] = {}
-        endif
-        let g:map_docs[l:group][l:lhs] = a:args[0]
+    
+    let l:docstr = l:match[2]  " The content between quotes
+    let l:lhs = l:match[3]      " The mapping key
+    let l:rhs = l:match[4]      " The command to execute
+    
+    " Parse documentation
+    let [l:desc, l:category] = s:ParseDocString(l:docstr)
+    
+    if l:desc == ''
+        echoerr "Description cannot be empty"
+        return
+    endif
+    
+    " Create the mapping
+    execute a:mode . 'noremap ' . l:lhs . ' ' . l:rhs
+    
+    " Store documentation
+    if !has_key(g:mapdocs, a:mode)
+        let g:mapdocs[a:mode] = {}
+    endif
+    
+    if l:category == ''
+        " No category - store at top level
+        let g:mapdocs[a:mode][l:lhs] = l:desc
     else
-        echoerr "Doc takes 1 or 2 arguments"
+        " With category
+        if !has_key(g:mapdocs[a:mode], l:category)
+            let g:mapdocs[a:mode][l:category] = {}
+        endif
+        let g:mapdocs[a:mode][l:category][l:lhs] = l:desc
     endif
 endfunction
 
-" Show docs popup
-function! ShowDocs() abort
-    let l:lines = ['=== Mapping Documentation ===']
+" ShowDocs command - display mappings in a popup
+command! ShowDocs call s:ShowDocsPopup()
 
-    " Ungrouped
-    if !empty(g:map_docs_default)
-        call add(l:lines, '--- Ungrouped ---')
-        for [lhs, doc] in items(g:map_docs_default)
-            call add(l:lines, printf('%-12s -> %s', lhs, doc))
-        endfor
-    endif
-
-    " Groups
-    for [group, maps] in items(g:map_docs)
-        call add(l:lines, '--- ' . group . ' ---')
-        for [lhs, doc] in items(maps)
-            call add(l:lines, printf('%-12s -> %s', lhs, doc))
-        endfor
-    endfor
-
-    " Popup in the middle
-    let l:opts = {
-                \ 'title': 'Mapping Docs',
-                \ 'line': '50%',
-                \ 'col': '50%',
-                \ 'minwidth': 60,
-                \ 'minheight': 15,
-                \ 'maxheight': 30,
-                \ 'wrap': 1,
-                \ 'filter': 'DocFilter'
-                \ }
-
-    call popup_clear()
-    call popup_create(l:lines, l:opts)
-endfunction
-
-" Popup filter for DocMode
-function! DocFilter(id, key) abort
-    if a:key ==# "\<Esc>" || a:key ==# "\<CR>"
-        call popup_close(a:id)
+" Popup filter function - handle key events
+function! s:PopupFilter(winid, key) abort
+    " Close on q, Esc, or Enter
+    if a:key == 'q' || a:key == "\<Esc>" || a:key == "\<CR>"
+        call popup_close(a:winid)
         return 1
     endif
-    try
-        call popup_close(a:id)
-        execute 'normal! ' . a:key
-    catch
-        echo "No mapping for: " . a:key
-    endtry
+    
+    " Allow scrolling with j/k
+    if a:key == 'j' || a:key == "\<Down>"
+        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
+        call popup_setoptions(a:winid, {'firstline': l:firstline + 1})
+        return 1
+    elseif a:key == 'k' || a:key == "\<Up>"
+        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
+        if l:firstline > 1
+            call popup_setoptions(a:winid, {'firstline': l:firstline - 1})
+        endif
+        return 1
+    endif
+    
+    " Page down/up
+    if a:key == "\<PageDown>" || a:key == "\<C-f>"
+        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
+        call popup_setoptions(a:winid, {'firstline': l:firstline + 10})
+        return 1
+    elseif a:key == "\<PageUp>" || a:key == "\<C-b>"
+        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
+        call popup_setoptions(a:winid, {'firstline': max([1, l:firstline - 10])})
+        return 1
+    endif
+    
+    " Try to execute as a mapping
+    " Check if this key corresponds to any documented mapping
+    for [l:mode, l:mode_data] in items(g:mapdocs)
+        " Check top-level mappings
+        for [l:lhs, l:desc] in items(l:mode_data)
+            if type(l:desc) == type('') && l:lhs == a:key
+                call popup_close(a:winid)
+                call feedkeys(a:key, 'n')
+                return 1
+            endif
+        endfor
+        " Check categorized mappings
+        for [l:cat, l:cat_data] in items(l:mode_data)
+            if type(l:cat_data) == type({})
+                for [l:lhs, l:desc] in items(l:cat_data)
+                    if l:lhs == a:key
+                        call popup_close(a:winid)
+                        call feedkeys(a:key, 'n')
+                        return 1
+                    endif
+                endfor
+            endif
+        endfor
+    endfor
+    
+    " Consume all other keys (don't pass through)
     return 1
 endfunction
 
+function! s:ShowDocsPopup() abort
+    let l:lines = []
+    
+    " Check if we have any docs
+    if empty(g:mapdocs)
+        let l:lines = ['No mappings documented yet.', '', 'Press Enter, q, or Esc to close.']
+    else
+        " Build header
+        call add(l:lines, ' Key        │ Description')
+        call add(l:lines, '────────────┼' . repeat('─', 50))
+        
+        " Iterate through modes
+        for [l:mode, l:mode_data] in items(g:mapdocs)
+            if !empty(l:mode_data)
+                let l:mode_name = s:GetModeName(l:mode)
+                call add(l:lines, '')
+                call add(l:lines, '═══ ' . l:mode_name . ' ' . repeat('═', 58 - len(l:mode_name)))
+                
+                " First show top-level mappings
+                for [l:key, l:value] in items(l:mode_data)
+                    if type(l:value) == type('')
+                        " Format key for display
+                        let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+                        let l:display_key = substitute(l:display_key, '<', '<', 'g')
+                        let l:display_key = substitute(l:display_key, '>', '>', 'g')
+                        
+                        " Ensure key column is fixed width
+                        let l:key_col = printf('%-11s', l:display_key)
+                        call add(l:lines, ' ' . l:key_col . '│ ' . l:value)
+                    endif
+                endfor
+                
+                " Then show categorized mappings
+                for [l:cat, l:cat_data] in items(l:mode_data)
+                    if type(l:cat_data) == type({})
+                        call add(l:lines, '')
+                        call add(l:lines, '  ▶ ' . l:cat)
+                        call add(l:lines, '  ' . repeat('─', len(l:cat) + 2))
+                        
+                        for [l:key, l:desc] in items(l:cat_data)
+                            " Format key for display
+                            let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+                            let l:display_key = substitute(l:display_key, '<', '<', 'g')
+                            let l:display_key = substitute(l:display_key, '>', '>', 'g')
+                            
+                            " Ensure key column is fixed width with indent
+                            let l:key_col = printf('%-9s', l:display_key)
+                            call add(l:lines, '   ' . l:key_col . '│ ' . l:desc)
+                        endfor
+                    endif
+                endfor
+            endif
+        endfor
+        
+        call add(l:lines, '')
+        call add(l:lines, repeat('═', 63))
+        call add(l:lines, ' Navigation: j/k (scroll), PgUp/PgDn, q/Esc/Enter (close)')
+        call add(l:lines, ' Type a mapping key to execute it')
+    endif
+    
+    " Create popup window
+    if has('popupwin')
+        " Calculate dimensions
+        let l:height = min([len(l:lines), &lines - 4])
+        let l:width = min([65, &columns - 4])
+        
+        " Create the popup with better styling
+        let l:winid = popup_create(l:lines, {
+            \ 'title': '╔═ Mapping Documentation ═╗',
+            \ 'pos': 'center',
+            \ 'minwidth': l:width,
+            \ 'maxwidth': l:width,
+            \ 'minheight': l:height,
+            \ 'maxheight': l:height,
+            \ 'border': [1, 1, 1, 1],
+            \ 'borderchars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+            \ 'padding': [0, 1, 0, 1],
+            \ 'scrollbar': 1,
+            \ 'wrap': 0,
+            \ 'mapping': 0,
+            \ 'filter': function('s:PopupFilter'),
+            \ 'filtermode': 'n',
+            \ 'highlight': 'Normal',
+            \ 'scrollbarhighlight': 'PmenuSbar',
+            \ 'thumbhighlight': 'PmenuThumb',
+            \ })
+        
+        " Set initial focus to the popup
+        call win_execute(l:winid, 'normal! gg')
+    else
+        " Fallback for older Vim versions
+        echo join(l:lines, "\n")
+        call input('Press Enter to continue...')
+    endif
+endfunction
+
+" BufferDocs command - display mappings in a buffer
+command! -nargs=? BufferDocs call s:ShowDocsBuffer(<q-args>)
+
+function! s:ShowDocsBuffer(position) abort
+    " Determine split position
+    let l:pos = a:position == '' ? 'right' : a:position
+    
+    " Create the content
+    let l:lines = []
+    
+    " Check if we have any docs
+    if empty(g:mapdocs)
+        let l:lines = ['No mappings documented yet.']
+    else
+        call add(l:lines, 'MAPPING DOCUMENTATION')
+        call add(l:lines, '=' . repeat('=', 62))
+        call add(l:lines, '')
+        
+        " Iterate through modes
+        for [l:mode, l:mode_data] in items(g:mapdocs)
+            if !empty(l:mode_data)
+                let l:mode_name = s:GetModeName(l:mode)
+                call add(l:lines, l:mode_name . ' Mappings')
+                call add(l:lines, repeat('-', len(l:mode_name . ' Mappings')))
+                call add(l:lines, '')
+                
+                " First show top-level mappings
+                for [l:key, l:value] in items(l:mode_data)
+                    if type(l:value) == type('')
+                        let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+                        call add(l:lines, printf('  %-15s %s', l:display_key, l:value))
+                    endif
+                endfor
+                
+                if !empty(filter(copy(l:mode_data), 'type(v:val) == type("")'))
+                    call add(l:lines, '')
+                endif
+                
+                " Then show categorized mappings
+                for [l:cat, l:cat_data] in items(l:mode_data)
+                    if type(l:cat_data) == type({})
+                        call add(l:lines, '  [' . l:cat . ']')
+                        for [l:key, l:desc] in items(l:cat_data)
+                            let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+                            call add(l:lines, printf('    %-13s %s', l:display_key, l:desc))
+                        endfor
+                        call add(l:lines, '')
+                    endif
+                endfor
+                
+                call add(l:lines, '')
+            endif
+        endfor
+    endif
+    
+    " Create or switch to the buffer
+    let l:bufname = '*Mapping Docs*'
+    let l:bufnr = bufnr(l:bufname)
+    
+    " Create split based on position
+    if l:pos == 'left'
+        vnew
+        wincmd H
+    elseif l:pos == 'right'
+        vnew
+        wincmd L
+    elseif l:pos == 'top'
+        new
+        wincmd K
+    elseif l:pos == 'bottom'
+        new
+        wincmd J
+    else
+        vnew
+        wincmd L
+    endif
+    
+    " Set up the buffer
+    if l:bufnr != -1
+        execute 'buffer' l:bufnr
+        setlocal modifiable
+        normal! ggdG
+    else
+        file *Mapping\ Docs*
+    endif
+    
+    " Add content
+    call setline(1, l:lines)
+    
+    " Make it read-only and set options
+    setlocal nomodifiable
+    setlocal readonly
+    setlocal buftype=nofile
+    setlocal noswapfile
+    setlocal nowrap
+    setlocal number
+    setlocal relativenumber
+    
+    " Set up key mappings for this buffer
+    nnoremap <buffer> q :close<CR>
+    nnoremap <buffer> <Esc> :close<CR>
+    nnoremap <buffer> <CR> :close<CR>
+    
+    " Move cursor to top
+    normal! gg
+endfunction
+
+" Helper function to get mode name
+function! s:GetModeName(mode) abort
+    if a:mode == 'n'
+        return 'Normal Mode'
+    elseif a:mode == 'i'
+        return 'Insert Mode'
+    elseif a:mode == 'v'
+        return 'Visual Mode'
+    elseif a:mode == 'x'
+        return 'Visual Mode'
+    elseif a:mode == 'o'
+        return 'Operator-pending Mode'
+    elseif a:mode == 'c'
+        return 'Command Mode'
+    else
+        return 'Mode ' . a:mode
+    endif
+endfunction
+
+" vim: set ft=vim:
