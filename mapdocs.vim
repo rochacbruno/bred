@@ -144,70 +144,173 @@ function! s:PopupFilter(winid, key) abort
 endfunction
 
 function! s:ShowDocsPopup() abort
-    let l:lines = []
+    " Get the actual leader key
+    let l:leader = get(g:, 'mapleader', '\')
     
-    " Check if we have any docs
-    if empty(g:mapdocs)
-        let l:lines = ['No mappings documented yet.', '', 'Press Enter, q, or Esc to close.']
-    else
-        " Build header
-        call add(l:lines, ' Key        │ Description')
-        call add(l:lines, '────────────┼' . repeat('─', 50))
-        
-        " Iterate through modes
-        for [l:mode, l:mode_data] in items(g:mapdocs)
-            if !empty(l:mode_data)
-                let l:mode_name = s:GetModeName(l:mode)
-                call add(l:lines, '')
-                call add(l:lines, '═══ ' . l:mode_name . ' ' . repeat('═', 58 - len(l:mode_name)))
-                
-                " First show top-level mappings
-                for [l:key, l:value] in items(l:mode_data)
-                    if type(l:value) == type('')
-                        " Format key for display
-                        let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+    " Collect all mappings first to determine layout
+    let l:all_mappings = []
+    for [l:mode, l:mode_data] in items(g:mapdocs)
+        if !empty(l:mode_data)
+            for [l:key, l:value] in items(l:mode_data)
+                if type(l:value) == type('')
+                    " Format key for display
+                    let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
+                    let l:display_key = substitute(l:display_key, '<', '<', 'g')
+                    let l:display_key = substitute(l:display_key, '>', '>', 'g')
+                    call add(l:all_mappings, {'mode': l:mode, 'key': l:display_key, 'desc': l:value, 'category': ''})
+                endif
+            endfor
+            " Categorized mappings
+            for [l:cat, l:cat_data] in items(l:mode_data)
+                if type(l:cat_data) == type({})
+                    for [l:key, l:desc] in items(l:cat_data)
+                        let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
                         let l:display_key = substitute(l:display_key, '<', '<', 'g')
                         let l:display_key = substitute(l:display_key, '>', '>', 'g')
-                        
-                        " Ensure key column is fixed width
-                        let l:key_col = printf('%-11s', l:display_key)
-                        call add(l:lines, ' ' . l:key_col . '│ ' . l:value)
+                        call add(l:all_mappings, {'mode': l:mode, 'key': l:display_key, 'desc': l:desc, 'category': l:cat})
+                    endfor
+                endif
+            endfor
+        endif
+    endfor
+    
+    " Build display lines
+    let l:lines = []
+    
+    if empty(l:all_mappings)
+        let l:lines = ['No mappings documented yet.', '', 'Press Enter, q, or Esc to close.']
+    else
+        " Determine if we should use columns
+        let l:total_width = &columns - 6
+        let l:use_columns = l:total_width >= 120  " Use columns if screen is wide enough
+        
+        if l:use_columns
+            " Two column layout
+            let l:col_width = l:total_width / 2 - 2
+            call add(l:lines, ' Key         │ Description' . repeat(' ', l:col_width - 25) . '│ Key         │ Description')
+            call add(l:lines, repeat('─', l:col_width) . '┼' . repeat('─', l:col_width))
+            
+            " Group mappings by mode
+            let l:modes_data = {}
+            for l:m in l:all_mappings
+                let l:mode_name = s:GetModeName(l:m.mode)
+                if !has_key(l:modes_data, l:mode_name)
+                    let l:modes_data[l:mode_name] = []
+                endif
+                call add(l:modes_data[l:mode_name], l:m)
+            endfor
+            
+            " Display each mode
+            for [l:mode_name, l:mappings] in items(l:modes_data)
+                call add(l:lines, '')
+                call add(l:lines, '═══ ' . l:mode_name . ' ' . repeat('═', l:total_width - len(l:mode_name) - 5))
+                
+                " Group by category
+                let l:uncategorized = []
+                let l:categorized = {}
+                for l:m in l:mappings
+                    if l:m.category == ''
+                        call add(l:uncategorized, l:m)
+                    else
+                        if !has_key(l:categorized, l:m.category)
+                            let l:categorized[l:m.category] = []
+                        endif
+                        call add(l:categorized[l:m.category], l:m)
                     endif
                 endfor
                 
-                " Then show categorized mappings
-                for [l:cat, l:cat_data] in items(l:mode_data)
-                    if type(l:cat_data) == type({})
-                        call add(l:lines, '')
-                        call add(l:lines, '  ▶ ' . l:cat)
-                        call add(l:lines, '  ' . repeat('─', len(l:cat) + 2))
+                " Display uncategorized in two columns
+                let l:idx = 0
+                while l:idx < len(l:uncategorized)
+                    let l:left = l:uncategorized[l:idx]
+                    let l:left_str = printf(' %-11s │ %-' . (l:col_width - 15) . 's', l:left.key, l:left.desc)
+                    
+                    if l:idx + 1 < len(l:uncategorized)
+                        let l:right = l:uncategorized[l:idx + 1]
+                        let l:right_str = printf('│ %-11s │ %s', l:right.key, l:right.desc)
+                    else
+                        let l:right_str = '│' . repeat(' ', l:col_width - 1)
+                    endif
+                    
+                    call add(l:lines, l:left_str . l:right_str)
+                    let l:idx += 2
+                endwhile
+                
+                " Display categorized mappings
+                for [l:cat, l:cat_mappings] in items(l:categorized)
+                    call add(l:lines, '')
+                    call add(l:lines, '  ▶ ' . l:cat)
+                    
+                    let l:idx = 0
+                    while l:idx < len(l:cat_mappings)
+                        let l:left = l:cat_mappings[l:idx]
+                        let l:left_str = printf('  %-10s │ %-' . (l:col_width - 15) . 's', l:left.key, l:left.desc)
                         
-                        for [l:key, l:desc] in items(l:cat_data)
-                            " Format key for display
-                            let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+                        if l:idx + 1 < len(l:cat_mappings)
+                            let l:right = l:cat_mappings[l:idx + 1]
+                            let l:right_str = printf('│ %-11s │ %s', l:right.key, l:right.desc)
+                        else
+                            let l:right_str = '│' . repeat(' ', l:col_width - 1)
+                        endif
+                        
+                        call add(l:lines, l:left_str . l:right_str)
+                        let l:idx += 2
+                    endwhile
+                endfor
+            endfor
+        else
+            " Single column layout for narrow screens
+            call add(l:lines, ' Key        │ Description')
+            call add(l:lines, '────────────┼' . repeat('─', 50))
+            
+            for [l:mode, l:mode_data] in items(g:mapdocs)
+                if !empty(l:mode_data)
+                    let l:mode_name = s:GetModeName(l:mode)
+                    call add(l:lines, '')
+                    call add(l:lines, '═══ ' . l:mode_name . ' ' . repeat('═', 58 - len(l:mode_name)))
+                    
+                    " First show top-level mappings
+                    for [l:key, l:value] in items(l:mode_data)
+                        if type(l:value) == type('')
+                            let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
                             let l:display_key = substitute(l:display_key, '<', '<', 'g')
                             let l:display_key = substitute(l:display_key, '>', '>', 'g')
+                            let l:key_col = printf('%-11s', l:display_key)
+                            call add(l:lines, ' ' . l:key_col . '│ ' . l:value)
+                        endif
+                    endfor
+                    
+                    " Then show categorized mappings
+                    for [l:cat, l:cat_data] in items(l:mode_data)
+                        if type(l:cat_data) == type({})
+                            call add(l:lines, '')
+                            call add(l:lines, '  ▶ ' . l:cat)
+                            call add(l:lines, '  ' . repeat('─', len(l:cat) + 2))
                             
-                            " Ensure key column is fixed width with indent
-                            let l:key_col = printf('%-9s', l:display_key)
-                            call add(l:lines, '   ' . l:key_col . '│ ' . l:desc)
-                        endfor
-                    endif
-                endfor
-            endif
-        endfor
+                            for [l:key, l:desc] in items(l:cat_data)
+                                let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
+                                let l:display_key = substitute(l:display_key, '<', '<', 'g')
+                                let l:display_key = substitute(l:display_key, '>', '>', 'g')
+                                let l:key_col = printf('%-9s', l:display_key)
+                                call add(l:lines, '   ' . l:key_col . '│ ' . l:desc)
+                            endfor
+                        endif
+                    endfor
+                endif
+            endfor
+        endif
         
         call add(l:lines, '')
-        call add(l:lines, repeat('═', 63))
+        call add(l:lines, repeat('═', min([l:total_width, 120])))
         call add(l:lines, ' Navigation: j/k (scroll), PgUp/PgDn, q/Esc/Enter (close)')
         call add(l:lines, ' Type a mapping key to execute it')
     endif
     
     " Create popup window
     if has('popupwin')
-        " Calculate dimensions
+        " Calculate dimensions - use more horizontal space
         let l:height = min([len(l:lines), &lines - 4])
-        let l:width = min([65, &columns - 4])
+        let l:width = min([max([80, &columns - 20]), 140])  " Wider popup, max 140 chars
         
         " Create the popup with better styling
         let l:winid = popup_create(l:lines, {
@@ -243,6 +346,9 @@ endfunction
 command! -nargs=? BufferDocs call s:ShowDocsBuffer(<q-args>)
 
 function! s:ShowDocsBuffer(position) abort
+    " Get the actual leader key
+    let l:leader = get(g:, 'mapleader', '\')
+    
     " Determine split position
     let l:pos = a:position == '' ? 'right' : a:position
     
@@ -268,7 +374,7 @@ function! s:ShowDocsBuffer(position) abort
                 " First show top-level mappings
                 for [l:key, l:value] in items(l:mode_data)
                     if type(l:value) == type('')
-                        let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+                        let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
                         call add(l:lines, printf('  %-15s %s', l:display_key, l:value))
                     endif
                 endfor
@@ -282,7 +388,7 @@ function! s:ShowDocsBuffer(position) abort
                     if type(l:cat_data) == type({})
                         call add(l:lines, '  [' . l:cat . ']')
                         for [l:key, l:desc] in items(l:cat_data)
-                            let l:display_key = substitute(l:key, '<leader>', '\', 'g')
+                            let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
                             call add(l:lines, printf('    %-13s %s', l:display_key, l:desc))
                         endfor
                         call add(l:lines, '')

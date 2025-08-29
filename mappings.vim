@@ -106,7 +106,7 @@ nnoremap <leader>re :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
 " -------------------------------------------------------------------------
 " Configuration Reload
 " -------------------------------------------------------------------------
-nnoremap <leader><leader>so :source $MYVIMRC<CR>:Doc 'Reload config' 
+nnoremap <leader><leader>so :source $MYVIMRC<CR>
 
 " -------------------------------------------------------------------------
 " Common Editor Shortcuts
