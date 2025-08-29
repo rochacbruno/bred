@@ -79,290 +79,206 @@ function! s:CreateMapping(mode, args) abort
     endif
 endfunction
 
-" ShowDocs command - display mappings in a popup
-command! ShowDocs call s:ShowDocsPopup()
-
-" Popup filter function - handle key events
-function! s:PopupFilter(winid, key) abort
-    " Close on q, Esc, or Enter
-    if a:key == 'q' || a:key == "\<Esc>" || a:key == "\<CR>"
-        call popup_close(a:winid)
-        return 1
-    endif
-    
-    " Allow scrolling with j/k
-    if a:key == 'j' || a:key == "\<Down>"
-        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
-        call popup_setoptions(a:winid, {'firstline': l:firstline + 1})
-        return 1
-    elseif a:key == 'k' || a:key == "\<Up>"
-        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
-        if l:firstline > 1
-            call popup_setoptions(a:winid, {'firstline': l:firstline - 1})
-        endif
-        return 1
-    endif
-    
-    " Page down/up
-    if a:key == "\<PageDown>" || a:key == "\<C-f>"
-        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
-        call popup_setoptions(a:winid, {'firstline': l:firstline + 10})
-        return 1
-    elseif a:key == "\<PageUp>" || a:key == "\<C-b>"
-        let l:firstline = get(popup_getoptions(a:winid), 'firstline', 1)
-        call popup_setoptions(a:winid, {'firstline': max([1, l:firstline - 10])})
-        return 1
-    endif
-    
-    " Try to execute as a mapping
-    " Check if this key corresponds to any documented mapping
-    for [l:mode, l:mode_data] in items(g:mapdocs)
-        " Check top-level mappings
-        for [l:lhs, l:desc] in items(l:mode_data)
-            if type(l:desc) == type('') && l:lhs == a:key
-                call popup_close(a:winid)
-                call feedkeys(a:key, 'n')
-                return 1
-            endif
-        endfor
-        " Check categorized mappings
-        for [l:cat, l:cat_data] in items(l:mode_data)
-            if type(l:cat_data) == type({})
-                for [l:lhs, l:desc] in items(l:cat_data)
-                    if l:lhs == a:key
-                        call popup_close(a:winid)
-                        call feedkeys(a:key, 'n')
-                        return 1
-                    endif
-                endfor
-            endif
-        endfor
-    endfor
-    
-    " Consume all other keys (don't pass through)
-    return 1
-endfunction
-
-function! s:ShowDocsPopup() abort
-    " Get the actual leader key
+" Build FZF source list from mapdocs
+function! s:BuildFZFSource() abort
     let l:leader = get(g:, 'mapleader', '\')
+    let l:uncategorized = []
+    let l:categorized = []
     
-    " Collect all mappings first to determine layout
-    let l:all_mappings = []
+    " Iterate through all modes
     for [l:mode, l:mode_data] in items(g:mapdocs)
-        if !empty(l:mode_data)
-            for [l:key, l:value] in items(l:mode_data)
-                if type(l:value) == type('')
-                    " Format key for display
+        let l:mode_display = s:GetModeShort(l:mode)
+        
+        " Collect top-level mappings (uncategorized)
+        for [l:key, l:desc] in items(l:mode_data)
+            if type(l:desc) == type('')
+                " Format: [mode] key : description
+                let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
+                let l:line = printf("[%s] %-15s : %s", l:mode_display, l:display_key, l:desc)
+                " Store with description for sorting
+                call add(l:uncategorized, {'line': l:line . '|' . l:mode . '|' . l:key, 'desc': l:desc})
+            endif
+        endfor
+        
+        " Collect categorized mappings
+        for [l:category, l:cat_data] in items(l:mode_data)
+            if type(l:cat_data) == type({})
+                for [l:key, l:desc] in items(l:cat_data)
                     let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
-                    let l:display_key = substitute(l:display_key, '<', '<', 'g')
-                    let l:display_key = substitute(l:display_key, '>', '>', 'g')
-                    call add(l:all_mappings, {'mode': l:mode, 'key': l:display_key, 'desc': l:value, 'category': ''})
-                endif
-            endfor
-            " Categorized mappings
-            for [l:cat, l:cat_data] in items(l:mode_data)
-                if type(l:cat_data) == type({})
-                    for [l:key, l:desc] in items(l:cat_data)
-                        let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
-                        let l:display_key = substitute(l:display_key, '<', '<', 'g')
-                        let l:display_key = substitute(l:display_key, '>', '>', 'g')
-                        call add(l:all_mappings, {'mode': l:mode, 'key': l:display_key, 'desc': l:desc, 'category': l:cat})
-                    endfor
-                endif
-            endfor
-        endif
+                    " Include category in display
+                    let l:line = printf("[%s] %-15s : [%s] %s", l:mode_display, l:display_key, l:category, l:desc)
+                    " Store with category and description for sorting
+                    call add(l:categorized, {
+                        \ 'line': l:line . '|' . l:mode . '|' . l:key,
+                        \ 'category': l:category,
+                        \ 'desc': l:desc
+                    \ })
+                endfor
+            endif
+        endfor
     endfor
     
-    " Build display lines
-    let l:lines = []
+    " Sort uncategorized alphabetically by description
+    call sort(l:uncategorized, {a, b -> a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0})
     
-    if empty(l:all_mappings)
-        let l:lines = ['No mappings documented yet.', '', 'Press Enter, q, or Esc to close.']
-    else
-        " Determine if we should use columns
-        let l:total_width = &columns - 6
-        let l:use_columns = l:total_width >= 120  " Use columns if screen is wide enough
-        
-        if l:use_columns
-            " Two column layout
-            let l:col_width = (l:total_width - 3) / 2  " -3 for the middle separator
-            let l:key_width = 12
-            let l:desc_width = l:col_width - l:key_width - 4  " -4 for borders and padding
-            
-            " Header with proper alignment
-            let l:header_left = printf(' %-' . l:key_width . 's │ Description', 'Key')
-            let l:header_right = printf(' %-' . l:key_width . 's │ Description', 'Key')
-            let l:header_left_padded = l:header_left . repeat(' ', l:col_width - len(l:header_left))
-            call add(l:lines, l:header_left_padded . ' ║ ' . l:header_right)
-            
-            " Separator line
-            call add(l:lines, repeat('─', l:key_width + 2) . '┼' . repeat('─', l:desc_width + 1) . '═╬═' . repeat('─', l:key_width + 2) . '┼' . repeat('─', l:desc_width + 1))
-            
-            " Group mappings by mode
-            let l:modes_data = {}
-            for l:m in l:all_mappings
-                let l:mode_name = s:GetModeName(l:m.mode)
-                if !has_key(l:modes_data, l:mode_name)
-                    let l:modes_data[l:mode_name] = []
-                endif
-                call add(l:modes_data[l:mode_name], l:m)
-            endfor
-            
-            " Display each mode
-            for [l:mode_name, l:mappings] in items(l:modes_data)
-                call add(l:lines, '')
-                call add(l:lines, '═══ ' . l:mode_name . ' ' . repeat('═', l:total_width - len(l:mode_name) - 5))
-                
-                " Group by category
-                let l:uncategorized = []
-                let l:categorized = {}
-                for l:m in l:mappings
-                    if l:m.category == ''
-                        call add(l:uncategorized, l:m)
-                    else
-                        if !has_key(l:categorized, l:m.category)
-                            let l:categorized[l:m.category] = []
-                        endif
-                        call add(l:categorized[l:m.category], l:m)
-                    endif
-                endfor
-                
-                " Display uncategorized in two columns
-                let l:idx = 0
-                while l:idx < len(l:uncategorized)
-                    let l:left = l:uncategorized[l:idx]
-                    let l:left_key = printf(' %-' . l:key_width . 's', l:left.key)
-                    let l:left_desc = printf('│ %-' . l:desc_width . 's', l:left.desc)
-                    let l:left_full = l:left_key . l:left_desc
-                    
-                    if l:idx + 1 < len(l:uncategorized)
-                        let l:right = l:uncategorized[l:idx + 1]
-                        let l:right_key = printf(' %-' . l:key_width . 's', l:right.key)
-                        let l:right_desc = printf('│ %-' . l:desc_width . 's', l:right.desc)
-                        let l:right_full = l:right_key . l:right_desc
-                    else
-                        let l:right_full = repeat(' ', l:col_width)
-                    endif
-                    
-                    call add(l:lines, l:left_full . ' ║ ' . l:right_full)
-                    let l:idx += 2
-                endwhile
-                
-                " Display categorized mappings
-                for [l:cat, l:cat_mappings] in items(l:categorized)
-                    " Category header spans both columns
-                    call add(l:lines, '')
-                    let l:cat_line = '  ▶ ' . l:cat
-                    call add(l:lines, l:cat_line . repeat(' ', l:col_width - len(l:cat_line)) . ' ║ ' . repeat(' ', l:col_width))
-                    call add(l:lines, '  ' . repeat('─', len(l:cat) + 2) . repeat(' ', l:col_width - len(l:cat) - 4) . ' ║ ' . repeat(' ', l:col_width))
-                    
-                    let l:idx = 0
-                    while l:idx < len(l:cat_mappings)
-                        let l:left = l:cat_mappings[l:idx]
-                        let l:left_key = printf('  %-' . (l:key_width - 1) . 's', l:left.key)
-                        let l:left_desc = printf('│ %-' . l:desc_width . 's', l:left.desc)
-                        let l:left_full = l:left_key . l:left_desc
-                        
-                        if l:idx + 1 < len(l:cat_mappings)
-                            let l:right = l:cat_mappings[l:idx + 1]
-                            let l:right_key = printf(' %-' . l:key_width . 's', l:right.key)
-                            let l:right_desc = printf('│ %-' . l:desc_width . 's', l:right.desc)
-                            let l:right_full = l:right_key . l:right_desc
-                        else
-                            let l:right_full = repeat(' ', l:col_width)
-                        endif
-                        
-                        call add(l:lines, l:left_full . ' ║ ' . l:right_full)
-                        let l:idx += 2
-                    endwhile
-                endfor
-            endfor
-        else
-            " Single column layout for narrow screens
-            call add(l:lines, ' Key        │ Description')
-            call add(l:lines, '────────────┼' . repeat('─', 50))
-            
-            for [l:mode, l:mode_data] in items(g:mapdocs)
-                if !empty(l:mode_data)
-                    let l:mode_name = s:GetModeName(l:mode)
-                    call add(l:lines, '')
-                    call add(l:lines, '═══ ' . l:mode_name . ' ' . repeat('═', 58 - len(l:mode_name)))
-                    
-                    " First show top-level mappings
-                    for [l:key, l:value] in items(l:mode_data)
-                        if type(l:value) == type('')
-                            let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
-                            let l:display_key = substitute(l:display_key, '<', '<', 'g')
-                            let l:display_key = substitute(l:display_key, '>', '>', 'g')
-                            let l:key_col = printf('%-11s', l:display_key)
-                            call add(l:lines, ' ' . l:key_col . '│ ' . l:value)
-                        endif
-                    endfor
-                    
-                    " Then show categorized mappings
-                    for [l:cat, l:cat_data] in items(l:mode_data)
-                        if type(l:cat_data) == type({})
-                            call add(l:lines, '')
-                            call add(l:lines, '  ▶ ' . l:cat)
-                            call add(l:lines, '  ' . repeat('─', len(l:cat) + 2))
-                            
-                            for [l:key, l:desc] in items(l:cat_data)
-                                let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
-                                let l:display_key = substitute(l:display_key, '<', '<', 'g')
-                                let l:display_key = substitute(l:display_key, '>', '>', 'g')
-                                let l:key_col = printf('%-9s', l:display_key)
-                                call add(l:lines, '   ' . l:key_col . '│ ' . l:desc)
-                            endfor
-                        endif
-                    endfor
-                endif
-            endfor
-        endif
-        
-        call add(l:lines, '')
-        call add(l:lines, repeat('═', min([l:total_width, 120])))
-        call add(l:lines, ' Navigation: j/k (scroll), PgUp/PgDn, q/Esc/Enter (close)')
-        call add(l:lines, ' Type a mapping key to execute it')
+    " Sort categorized first by category, then by description
+    call sort(l:categorized, {a, b -> 
+        \ a.category != b.category ? 
+        \ (a.category < b.category ? -1 : 1) :
+        \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
+    \ })
+    
+    " Build final source list: uncategorized first, then categorized
+    let l:source = []
+    
+    " Add uncategorized items
+    for l:item in l:uncategorized
+        call add(l:source, l:item.line)
+    endfor
+    
+    " Add separator if we have both types
+    if !empty(l:uncategorized) && !empty(l:categorized)
+        " Add a visual separator (this will be filtered out in selection)
+        call add(l:source, '─────────────────────────────────────────────────|separator|separator')
     endif
     
-    " Create popup window
-    if has('popupwin')
-        " Calculate dimensions - use more horizontal space
-        let l:height = min([len(l:lines), &lines - 4])
-        let l:width = min([max([80, &columns - 20]), 140])  " Wider popup, max 140 chars
+    " Add categorized items
+    for l:item in l:categorized
+        call add(l:source, l:item.line)
+    endfor
+    
+    return l:source
+endfunction
+
+" Handler for FZF selection
+function! s:HandleFZFSelection(line) abort
+    " Extract the mode and key from the selected line
+    " Format: display|mode|key
+    let l:parts = split(a:line, '|')
+    if len(l:parts) >= 3
+        let l:mode = l:parts[-2]
+        let l:key = l:parts[-1]
         
-        " Create the popup with better styling
-        let l:winid = popup_create(l:lines, {
-            \ 'title': '╔═ Mapping Documentation ═╗',
-            \ 'pos': 'center',
-            \ 'minwidth': l:width,
-            \ 'maxwidth': l:width,
-            \ 'minheight': l:height,
-            \ 'maxheight': l:height,
-            \ 'border': [1, 1, 1, 1],
-            \ 'borderchars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
-            \ 'padding': [0, 1, 0, 1],
-            \ 'scrollbar': 1,
-            \ 'wrap': 0,
-            \ 'mapping': 0,
-            \ 'filter': function('s:PopupFilter'),
-            \ 'filtermode': 'n',
-            \ 'highlight': 'Normal',
-            \ 'scrollbarhighlight': 'PmenuSbar',
-            \ 'thumbhighlight': 'PmenuThumb',
-            \ })
+        " Ignore separator lines
+        if l:mode == 'separator'
+            return
+        endif
         
-        " Set initial focus to the popup
-        call win_execute(l:winid, 'normal! gg')
-    else
-        " Fallback for older Vim versions
-        echo join(l:lines, "\n")
-        call input('Press Enter to continue...')
+        " Replace <leader> with actual leader key in the key sequence
+        let l:leader = get(g:, 'mapleader', '\')
+        let l:key = substitute(l:key, '<leader>', l:leader, 'g')
+        
+        " Don't try to close - FZF will handle window closing
+        " Execute the mapping based on mode
+        if l:mode == 'n'
+            " For normal mode, make sure we're in normal mode first
+            call feedkeys("\<Esc>", 'n')
+            call feedkeys(l:key, 't')
+        elseif l:mode == 'i'
+            " For insert mode, enter insert mode first
+            call feedkeys('i', 'n')
+            call feedkeys(l:key, 't')
+        elseif l:mode == 'v'
+            " For visual mode, enter visual mode first
+            call feedkeys('v', 'n')
+            call feedkeys(l:key, 't')
+        else
+            " Default to normal mode execution
+            call feedkeys("\<Esc>", 'n')
+            call feedkeys(l:key, 't')
+        endif
     endif
 endfunction
 
-" BufferDocs command - display mappings in a buffer
+" ShowDocs command using FZF
+command! ShowDocs call s:ShowDocsWithFZF()
+
+function! s:ShowDocsWithFZF() abort
+    " Check if FZF is available
+    if !exists(':FZF')
+        echoerr "FZF is not available. Please install fzf.vim"
+        return
+    endif
+    
+    " Build the source list
+    let l:source = s:BuildFZFSource()
+    
+    if empty(l:source)
+        echo "No mappings documented yet."
+        return
+    endif
+    
+    " Extract display parts (without the hidden mode|key data)
+    let l:display_source = []
+    for l:item in l:source
+        let l:parts = split(l:item, '|')
+        if len(l:parts) > 0
+            call add(l:display_source, l:parts[0])
+        endif
+    endfor
+    
+    " Create FZF options
+    let l:fzf_options = {
+        \ 'source': l:source,
+        \ 'sink': function('s:HandleFZFSelection'),
+        \ 'options': [
+            \ '--prompt', 'Mappings> ',
+            \ '--header', 'Select mapping to execute (Enter) or ESC to cancel',
+            \ '--preview-window', 'hidden',
+            \ '--with-nth', '1',
+            \ '--delimiter', '|',
+            \ '--tiebreak', 'begin',
+            \ '--ansi',
+            \ '--info=inline',
+            \ '--layout=reverse',
+            \ '--height', '60%'
+        \ ],
+        \ 'window': {'width': 0.9, 'height': 0.6}
+    \ }
+    
+    " Launch FZF
+    call fzf#run(fzf#wrap('MapDocs', l:fzf_options))
+endfunction
+
+" Helper function to get short mode name
+function! s:GetModeShort(mode) abort
+    if a:mode == 'n'
+        return 'N'
+    elseif a:mode == 'i'
+        return 'I'
+    elseif a:mode == 'v'
+        return 'V'
+    elseif a:mode == 'x'
+        return 'X'
+    elseif a:mode == 'o'
+        return 'O'
+    elseif a:mode == 'c'
+        return 'C'
+    else
+        return a:mode
+    endif
+endfunction
+
+" Helper function to get full mode name
+function! s:GetModeName(mode) abort
+    if a:mode == 'n'
+        return 'Normal Mode'
+    elseif a:mode == 'i'
+        return 'Insert Mode'
+    elseif a:mode == 'v'
+        return 'Visual Mode'
+    elseif a:mode == 'x'
+        return 'Visual Mode'
+    elseif a:mode == 'o'
+        return 'Operator-pending Mode'
+    elseif a:mode == 'c'
+        return 'Command Mode'
+    else
+        return 'Mode ' . a:mode
+    endif
+endfunction
+
+" BufferDocs command - display mappings in a buffer (keeping this as alternative)
 command! -nargs=? BufferDocs call s:ShowDocsBuffer(<q-args>)
 
 function! s:ShowDocsBuffer(position) abort
@@ -470,25 +386,6 @@ function! s:ShowDocsBuffer(position) abort
     
     " Move cursor to top
     normal! gg
-endfunction
-
-" Helper function to get mode name
-function! s:GetModeName(mode) abort
-    if a:mode == 'n'
-        return 'Normal Mode'
-    elseif a:mode == 'i'
-        return 'Insert Mode'
-    elseif a:mode == 'v'
-        return 'Visual Mode'
-    elseif a:mode == 'x'
-        return 'Visual Mode'
-    elseif a:mode == 'o'
-        return 'Operator-pending Mode'
-    elseif a:mode == 'c'
-        return 'Command Mode'
-    else
-        return 'Mode ' . a:mode
-    endif
 endfunction
 
 " vim: set ft=vim:

@@ -25,7 +25,10 @@ Nmap 'Close window|windows' <leader>wc :close<CR>
 Nmap 'Go to definition' gd :lua vim.lsp.buf.definition()<CR>
 Nmap 'Show hover documentation' K :lua vim.lsp.buf.hover()<CR>
 
-" Test commands
+Nmap 'Open Buffers' <leader>b :Buffers<CR> 
+
+
+"der>m Test commands
 echo "Test mappings defined. You can now test:"
 echo "1. :ShowDocs - Popup window (stays open until q/Esc/Enter)"
 echo "2. :BufferDocs - Buffer in right split (default)"
