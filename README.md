@@ -5,6 +5,12 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
 > [!WARNING]
 > This configuration is for Vim 9+ only, NOT for Neovim or older versions of Vim.
 
+> [!INFO]
+> This configuration does not affect neovim as it is located in `~/.vim` and not in `~/.config/nvim`, as long as you don't symlink it and don have a ~/.vimrc it must allow you to use both Vim and Neovim with different configurations.
+
+
+**If you are wondering why Vim 9 and not Neovim, check my blog post: [Why I am using Vim 9](https://rochacbruno.com/why-i-use-vim9.html)**
+
 ## Table of Contents
 
 - [Features](#features)
