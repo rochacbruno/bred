@@ -199,25 +199,36 @@ function! s:HandleFZFSelection(line) abort
             let l:was_created = index(g:mapdocs_created[l:mode], l:key_orig) >= 0
         endif
         
+        " For special keys, we need to interpret them properly
+        " Convert <C-w> and similar notation to actual key codes
+        let l:key = substitute(l:key, '<C-\([a-z]\)>', '\<C-\1>', 'g')
+        let l:key = substitute(l:key, '<C-\([A-Z]\)>', '\<C-\1>', 'g')
+        let l:key = substitute(l:key, '<CR>', '\<CR>', 'g')
+        let l:key = substitute(l:key, '<Esc>', '\<Esc>', 'g')
+        let l:key = substitute(l:key, '<Tab>', '\<Tab>', 'g')
+        let l:key = substitute(l:key, '<BS>', '\<BS>', 'g')
+        let l:key = substitute(l:key, '<Space>', '\<Space>', 'g')
+        
         " Don't try to close - FZF will handle window closing
         " Execute the mapping based on mode
         if l:mode == 'n'
             " For normal mode, make sure we're in normal mode first
             call feedkeys("\<Esc>", 'n')
             " Use 't' for mappings we created, 'm' for existing mappings we documented
-            call feedkeys(l:key, l:was_created ? 't' : 'm')
+            " Use eval() to properly interpret special keys
+            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
         elseif l:mode == 'i'
             " For insert mode, enter insert mode first
             call feedkeys('i', 'n')
-            call feedkeys(l:key, l:was_created ? 't' : 'm')
+            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
         elseif l:mode == 'v'
             " For visual mode, enter visual mode first
             call feedkeys('v', 'n')
-            call feedkeys(l:key, l:was_created ? 't' : 'm')
+            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
         else
             " Default to normal mode execution
             call feedkeys("\<Esc>", 'n')
-            call feedkeys(l:key, l:was_created ? 't' : 'm')
+            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
         endif
     endif
 endfunction
