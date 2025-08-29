@@ -11,7 +11,7 @@ colorscheme purify
 " -------------------------------------------------------------------------
 " Editor Defaults and Behavior
 " -------------------------------------------------------------------------
-" Essential settings for a modern Vim experience
+" Essential settings for a modern Vim experience {{{
 set nocompatible              " Disable Vi compatibility mode
 set number                    " Show absolute line numbers
 set relativenumber            " Show relative line numbers for easier navigation
@@ -34,16 +34,20 @@ set wildignorecase            " Case-insensitive file completion
 set ttimeout ttimeoutlen=10   " Quick escape key response
 set timeout timeoutlen=500    " Time to wait for mapped sequences
 set encoding=UTF-8            " Use UTF-8 encoding for better character support
+" }}}
 
 " -------------------------------------------------------------------------
 " Syntax Highlighting and File Type Detection
 " -------------------------------------------------------------------------
+"  {{{
 syntax on                     " Enable syntax highlighting
 filetype plugin indent on     " Enable file type detection, plugins, and indentation
+"  }}}
 
 " -------------------------------------------------------------------------
 " Status Line and Tab Line Configuration
 " -------------------------------------------------------------------------
+"  {{{
 set laststatus=2              " Always show status line
 set showcmd                   " Show partial commands in the last line
 set noshowmode                " Don't show mode (handled by status line plugin)
@@ -53,15 +57,18 @@ set ruler                     " Show cursor position in status line
 " Tab line shows open buffers as tabs
 set showtabline=2             " Always show tab line
 set tabline=%!BufferTabLine() " Use custom function for buffer tabs
-
+"  }}}
 " -------------------------------------------------------------------------
 " Vim Info File Location
 " -------------------------------------------------------------------------
-" Search upwards for a project-specific .viminfo file or use default location
+"  {{{
+" Search upwards for a project-specific .viminfo file or use default location 
 let &viminfofile=findfile('.viminfo','.;') ?? $HOME . '/.vim/viminfo'
-
+"  }}}
 " -------------------------------------------------------------------------
 " Custom Options Extension Point
 " -------------------------------------------------------------------------
 " TODO: Check for a custom.options.vim file and source it here
 " This would allow user-specific options without modifying the main config
+
+" vim: set foldmethod=marker foldlevel=0:
