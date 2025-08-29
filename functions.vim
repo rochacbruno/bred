@@ -159,7 +159,8 @@ if empty_args != ""
           if counter % 4 == 3 " Fourth file - move to right pane first
             silent exe "normal \<C-w>l"
           endif
-          silent exe "split" i " Third and fourth files - create horizontal split
+          silent exe "split" i 
+          " Third and fourth files - create horizontal split
         endif
       endif
       let counter += 1
