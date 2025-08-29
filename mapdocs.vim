@@ -175,6 +175,48 @@ function! s:BuildFZFSource() abort
     return l:source
 endfunction
 
+" Convert key notation to executable key sequence
+function! s:ConvertKeyNotation(key) abort
+    " For sequences with special keys, convert notation to escape sequences
+    let l:key_seq = a:key
+    
+    " Replace special key notations with their escape sequences
+    " Using double backslash to properly escape in the string
+    let l:key_seq = substitute(l:key_seq, '<C-w>', '\\<C-w>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-r>', '\\<C-r>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-a>', '\\<C-a>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-b>', '\\<C-b>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-c>', '\\<C-c>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-d>', '\\<C-d>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-e>', '\\<C-e>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-f>', '\\<C-f>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-g>', '\\<C-g>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-h>', '\\<C-h>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-i>', '\\<C-i>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-j>', '\\<C-j>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-k>', '\\<C-k>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-l>', '\\<C-l>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-m>', '\\<C-m>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-n>', '\\<C-n>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-o>', '\\<C-o>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-p>', '\\<C-p>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-q>', '\\<C-q>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-s>', '\\<C-s>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-t>', '\\<C-t>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-u>', '\\<C-u>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-v>', '\\<C-v>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-x>', '\\<C-x>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-y>', '\\<C-y>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-z>', '\\<C-z>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<CR>', '\\<CR>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Esc>', '\\<Esc>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Tab>', '\\<Tab>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<BS>', '\\<BS>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Space>', '\\<Space>', 'g')
+    
+    return l:key_seq
+endfunction
+
 " Handler for FZF selection
 function! s:HandleFZFSelection(line) abort
     " Extract the mode and key from the selected line
@@ -205,40 +247,42 @@ function! s:HandleFZFSelection(line) abort
             " For normal mode, make sure we're in normal mode first
             call feedkeys("\<Esc>", 'n')
             
-            " Only apply <lt> substitution if the key contains angle brackets
-            let l:keys = l:key
+            " Handle different types of key sequences
             if l:key =~ '<.*>'
-                " For feedkeys to work with special keys, we need to use \<lt> notation
-                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+                " Convert key notation and use eval to execute
+                let l:converted = s:ConvertKeyNotation(l:key)
+                call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
+            else
+                " For simple keys, just send them directly
+                call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
-            
-            " Use 't' for mappings we created, 'm' for existing mappings we documented
-            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         elseif l:mode == 'i'
             " For insert mode, enter insert mode first
             call feedkeys('i', 'n')
-            " Same conversion for insert mode
-            let l:keys = l:key
             if l:key =~ '<.*>'
-                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+                let l:converted = s:ConvertKeyNotation(l:key)
+                call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
+            else
+                call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
-            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         elseif l:mode == 'v'
             " For visual mode, enter visual mode first
             call feedkeys('v', 'n')
-            let l:keys = l:key
             if l:key =~ '<.*>'
-                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+                let l:converted = s:ConvertKeyNotation(l:key)
+                call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
+            else
+                call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
-            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         else
             " Default to normal mode execution
             call feedkeys("\<Esc>", 'n')
-            let l:keys = l:key
             if l:key =~ '<.*>'
-                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+                let l:converted = s:ConvertKeyNotation(l:key)
+                call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
+            else
+                call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
-            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         endif
     endif
 endfunction
