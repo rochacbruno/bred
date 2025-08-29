@@ -205,35 +205,40 @@ function! s:HandleFZFSelection(line) abort
             " For normal mode, make sure we're in normal mode first
             call feedkeys("\<Esc>", 'n')
             
-            " For feedkeys to work with special keys, we need to use \<lt> notation
-            " This allows Vim to properly interpret the key codes
+            " Only apply <lt> substitution if the key contains angle brackets
             let l:keys = l:key
-            let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+            if l:key =~ '<.*>'
+                " For feedkeys to work with special keys, we need to use \<lt> notation
+                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+            endif
             
             " Use 't' for mappings we created, 'm' for existing mappings we documented
-            " The 'x' flag means don't remap, just execute raw keys
-            " The 'm' flag means remap (use mappings)
-            " The 't' flag means handle as if typed
-            call feedkeys(l:keys, l:was_created ? 't' : 'mx')
+            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         elseif l:mode == 'i'
             " For insert mode, enter insert mode first
             call feedkeys('i', 'n')
             " Same conversion for insert mode
             let l:keys = l:key
-            let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
-            call feedkeys(l:keys, l:was_created ? 't' : 'mx')
+            if l:key =~ '<.*>'
+                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+            endif
+            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         elseif l:mode == 'v'
             " For visual mode, enter visual mode first
             call feedkeys('v', 'n')
             let l:keys = l:key
-            let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
-            call feedkeys(l:keys, l:was_created ? 't' : 'mx')
+            if l:key =~ '<.*>'
+                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+            endif
+            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         else
             " Default to normal mode execution
             call feedkeys("\<Esc>", 'n')
             let l:keys = l:key
-            let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
-            call feedkeys(l:keys, l:was_created ? 't' : 'mx')
+            if l:key =~ '<.*>'
+                let l:keys = substitute(l:keys, '<', '\<lt>', 'g')
+            endif
+            call feedkeys(l:keys, l:was_created ? 't' : 'm')
         endif
     endif
 endfunction
