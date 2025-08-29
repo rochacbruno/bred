@@ -1,14 +1,26 @@
 " ==========================
 " MapDocs - classic Vimscript  
 " ==========================
+" 
+" Usage:
+"   Nmap 'description|category' <lhs> <rhs>  - Create mapping with documentation
+"   Nmap 'description|category' <lhs>        - Document existing mapping only
+"   
+" The second form (without <rhs>) allows documenting built-in Vim mappings
+" or plugin-provided mappings without overriding them.
 
 " Initialize global dictionaries
 if !exists("g:mapdocs")
     let g:mapdocs = {}
 endif
 
+if !exists("g:mapdocs_created")
+    let g:mapdocs_created = {}
+endif
+
 " Clear any existing mapdocs when sourcing
 let g:mapdocs = {}
+let g:mapdocs_created = {}
 
 " Parse documentation string (description|category)
 function! s:ParseDocString(docstr) abort
@@ -37,19 +49,20 @@ command! -nargs=+ Cmap call s:CreateMapping('c', <q-args>)
 " Create mapping with documentation
 function! s:CreateMapping(mode, args) abort
     " Parse the arguments - need to handle quoted strings properly
-    " Expected format: 'description|category' <lhs> <rhs>
+    " Expected format: 'description|category' <lhs> [<rhs>]
+    " If <rhs> is omitted, only documentation is added (no mapping created)
     
     " Find the first quoted string
     let l:match = matchlist(a:args, "^\\s*\\(['\"]\\)\\(.\\{-\\}\\)\\1\\s*\\(\\S\\+\\)\\s*\\(.*\\)$")
     
     if empty(l:match)
-        echoerr "Usage: " . toupper(a:mode) . "map 'description|category' <lhs> <rhs>"
+        echoerr "Usage: " . toupper(a:mode) . "map 'description|category' <lhs> [<rhs>]"
         return
     endif
     
     let l:docstr = l:match[2]  " The content between quotes
     let l:lhs = l:match[3]      " The mapping key
-    let l:rhs = l:match[4]      " The command to execute
+    let l:rhs = l:match[4]      " The command to execute (optional)
     
     " Parse documentation
     let [l:desc, l:category] = s:ParseDocString(l:docstr)
@@ -59,10 +72,22 @@ function! s:CreateMapping(mode, args) abort
         return
     endif
     
-    " Create the mapping
-    execute a:mode . 'noremap ' . l:lhs . ' ' . l:rhs
+    " Track whether we created a mapping or just documented an existing one
+    if !exists("g:mapdocs_created")
+        let g:mapdocs_created = {}
+    endif
+    if !has_key(g:mapdocs_created, a:mode)
+        let g:mapdocs_created[a:mode] = []
+    endif
     
-    " Store documentation
+    " Only create the mapping if RHS is provided
+    if l:rhs != ''
+        execute a:mode . 'noremap ' . l:lhs . ' ' . l:rhs
+        " Track that we created this mapping
+        call add(g:mapdocs_created[a:mode], l:lhs)
+    endif
+    
+    " Store documentation (always, whether or not we created a mapping)
     if !has_key(g:mapdocs, a:mode)
         let g:mapdocs[a:mode] = {}
     endif
@@ -157,7 +182,7 @@ function! s:HandleFZFSelection(line) abort
     let l:parts = split(a:line, '|')
     if len(l:parts) >= 3
         let l:mode = l:parts[-2]
-        let l:key = l:parts[-1]
+        let l:key_orig = l:parts[-1]
         
         " Ignore separator lines
         if l:mode == 'separator'
@@ -166,26 +191,33 @@ function! s:HandleFZFSelection(line) abort
         
         " Replace <leader> with actual leader key in the key sequence
         let l:leader = get(g:, 'mapleader', '\')
-        let l:key = substitute(l:key, '<leader>', l:leader, 'g')
+        let l:key = substitute(l:key_orig, '<leader>', l:leader, 'g')
+        
+        " Check if this was a mapping we created or just documented
+        let l:was_created = 0
+        if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode)
+            let l:was_created = index(g:mapdocs_created[l:mode], l:key_orig) >= 0
+        endif
         
         " Don't try to close - FZF will handle window closing
         " Execute the mapping based on mode
         if l:mode == 'n'
             " For normal mode, make sure we're in normal mode first
             call feedkeys("\<Esc>", 'n')
-            call feedkeys(l:key, 't')
+            " Use 't' for mappings we created, 'm' for existing mappings we documented
+            call feedkeys(l:key, l:was_created ? 't' : 'm')
         elseif l:mode == 'i'
             " For insert mode, enter insert mode first
             call feedkeys('i', 'n')
-            call feedkeys(l:key, 't')
+            call feedkeys(l:key, l:was_created ? 't' : 'm')
         elseif l:mode == 'v'
             " For visual mode, enter visual mode first
             call feedkeys('v', 'n')
-            call feedkeys(l:key, 't')
+            call feedkeys(l:key, l:was_created ? 't' : 'm')
         else
             " Default to normal mode execution
             call feedkeys("\<Esc>", 'n')
-            call feedkeys(l:key, 't')
+            call feedkeys(l:key, l:was_created ? 't' : 'm')
         endif
     endif
 endfunction

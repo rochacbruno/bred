@@ -25,7 +25,23 @@ Nmap 'Close window|windows' <leader>wc :close<CR>
 Nmap 'Go to definition' gd :lua vim.lsp.buf.definition()<CR>
 Nmap 'Show hover documentation' K :lua vim.lsp.buf.hover()<CR>
 
-Nmap 'Open Buffers' <leader>b :Buffers<CR> 
+Nmap 'Open Buffers' <leader>b :Buffers<CR>
+
+" Document existing Vim built-in mappings (no RHS = documentation only)
+Nmap 'Split window vertically|windows' <C-w>v
+Nmap 'Split window horizontally|windows' <C-w>s
+Nmap 'Navigate to window below|windows' <C-w>j
+Nmap 'Navigate to window above|windows' <C-w>k
+Nmap 'Navigate to window left|windows' <C-w>h
+Nmap 'Navigate to window right|windows' <C-w>l
+
+" Document existing mappings without categories
+Nmap 'Undo last change' u
+Nmap 'Redo last undone change' <C-r>
+Nmap 'Search forward' /
+Nmap 'Search backward' ?
+Nmap 'Jump to next search result' n
+Nmap 'Jump to previous search result' N 
 
 
 "der>m Test commands
