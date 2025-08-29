@@ -186,9 +186,18 @@ function! s:ShowDocsPopup() abort
         
         if l:use_columns
             " Two column layout
-            let l:col_width = l:total_width / 2 - 2
-            call add(l:lines, ' Key         │ Description' . repeat(' ', l:col_width - 25) . '│ Key         │ Description')
-            call add(l:lines, repeat('─', l:col_width) . '┼' . repeat('─', l:col_width))
+            let l:col_width = (l:total_width - 3) / 2  " -3 for the middle separator
+            let l:key_width = 12
+            let l:desc_width = l:col_width - l:key_width - 4  " -4 for borders and padding
+            
+            " Header with proper alignment
+            let l:header_left = printf(' %-' . l:key_width . 's │ Description', 'Key')
+            let l:header_right = printf(' %-' . l:key_width . 's │ Description', 'Key')
+            let l:header_left_padded = l:header_left . repeat(' ', l:col_width - len(l:header_left))
+            call add(l:lines, l:header_left_padded . ' ║ ' . l:header_right)
+            
+            " Separator line
+            call add(l:lines, repeat('─', l:key_width + 2) . '┼' . repeat('─', l:desc_width + 1) . '═╬═' . repeat('─', l:key_width + 2) . '┼' . repeat('─', l:desc_width + 1))
             
             " Group mappings by mode
             let l:modes_data = {}
@@ -223,37 +232,48 @@ function! s:ShowDocsPopup() abort
                 let l:idx = 0
                 while l:idx < len(l:uncategorized)
                     let l:left = l:uncategorized[l:idx]
-                    let l:left_str = printf(' %-11s │ %-' . (l:col_width - 15) . 's', l:left.key, l:left.desc)
+                    let l:left_key = printf(' %-' . l:key_width . 's', l:left.key)
+                    let l:left_desc = printf('│ %-' . l:desc_width . 's', l:left.desc)
+                    let l:left_full = l:left_key . l:left_desc
                     
                     if l:idx + 1 < len(l:uncategorized)
                         let l:right = l:uncategorized[l:idx + 1]
-                        let l:right_str = printf('│ %-11s │ %s', l:right.key, l:right.desc)
+                        let l:right_key = printf(' %-' . l:key_width . 's', l:right.key)
+                        let l:right_desc = printf('│ %-' . l:desc_width . 's', l:right.desc)
+                        let l:right_full = l:right_key . l:right_desc
                     else
-                        let l:right_str = '│' . repeat(' ', l:col_width - 1)
+                        let l:right_full = repeat(' ', l:col_width)
                     endif
                     
-                    call add(l:lines, l:left_str . l:right_str)
+                    call add(l:lines, l:left_full . ' ║ ' . l:right_full)
                     let l:idx += 2
                 endwhile
                 
                 " Display categorized mappings
                 for [l:cat, l:cat_mappings] in items(l:categorized)
+                    " Category header spans both columns
                     call add(l:lines, '')
-                    call add(l:lines, '  ▶ ' . l:cat)
+                    let l:cat_line = '  ▶ ' . l:cat
+                    call add(l:lines, l:cat_line . repeat(' ', l:col_width - len(l:cat_line)) . ' ║ ' . repeat(' ', l:col_width))
+                    call add(l:lines, '  ' . repeat('─', len(l:cat) + 2) . repeat(' ', l:col_width - len(l:cat) - 4) . ' ║ ' . repeat(' ', l:col_width))
                     
                     let l:idx = 0
                     while l:idx < len(l:cat_mappings)
                         let l:left = l:cat_mappings[l:idx]
-                        let l:left_str = printf('  %-10s │ %-' . (l:col_width - 15) . 's', l:left.key, l:left.desc)
+                        let l:left_key = printf('  %-' . (l:key_width - 1) . 's', l:left.key)
+                        let l:left_desc = printf('│ %-' . l:desc_width . 's', l:left.desc)
+                        let l:left_full = l:left_key . l:left_desc
                         
                         if l:idx + 1 < len(l:cat_mappings)
                             let l:right = l:cat_mappings[l:idx + 1]
-                            let l:right_str = printf('│ %-11s │ %s', l:right.key, l:right.desc)
+                            let l:right_key = printf(' %-' . l:key_width . 's', l:right.key)
+                            let l:right_desc = printf('│ %-' . l:desc_width . 's', l:right.desc)
+                            let l:right_full = l:right_key . l:right_desc
                         else
-                            let l:right_str = '│' . repeat(' ', l:col_width - 1)
+                            let l:right_full = repeat(' ', l:col_width)
                         endif
                         
-                        call add(l:lines, l:left_str . l:right_str)
+                        call add(l:lines, l:left_full . ' ║ ' . l:right_full)
                         let l:idx += 2
                     endwhile
                 endfor
