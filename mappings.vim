@@ -1,5 +1,6 @@
 " =========================================================================
 " Key Mappings and Shortcuts
+" use zr/zm to open/close all folds, za to toggle fold under cursor
 " =========================================================================
 " This file contains pure Vim key mappings
 " Plugin-specific mappings are defined in plugins.vim
