@@ -199,36 +199,34 @@ function! s:HandleFZFSelection(line) abort
             let l:was_created = index(g:mapdocs_created[l:mode], l:key_orig) >= 0
         endif
         
-        " For special keys, we need to interpret them properly
-        " Convert <C-w> and similar notation to actual key codes
-        let l:key = substitute(l:key, '<C-\([a-z]\)>', '\<C-\1>', 'g')
-        let l:key = substitute(l:key, '<C-\([A-Z]\)>', '\<C-\1>', 'g')
-        let l:key = substitute(l:key, '<CR>', '\<CR>', 'g')
-        let l:key = substitute(l:key, '<Esc>', '\<Esc>', 'g')
-        let l:key = substitute(l:key, '<Tab>', '\<Tab>', 'g')
-        let l:key = substitute(l:key, '<BS>', '\<BS>', 'g')
-        let l:key = substitute(l:key, '<Space>', '\<Space>', 'g')
-        
         " Don't try to close - FZF will handle window closing
         " Execute the mapping based on mode
         if l:mode == 'n'
             " For normal mode, make sure we're in normal mode first
-            call feedkeys("\<Esc>", 'n')
-            " Use 't' for mappings we created, 'm' for existing mappings we documented
-            " Use eval() to properly interpret special keys
-            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
+            " Try using normal! for built-in sequences like <C-w>v
+            if !l:was_created && l:key =~ '^<C-w>'
+                " Use normal! for window commands
+                execute 'normal! ' . l:key
+            else
+                call feedkeys("\<Esc>", 'n')
+                " For feedkeys, we need to convert special notation to actual keys
+                let l:key_seq = l:key
+                let l:key_seq = substitute(l:key_seq, '\\<', '<', 'g')
+                " Use the execute/eval trick to interpret special keys
+                execute 'call feedkeys("' . escape(l:key_seq, '"\') . '", "' . (l:was_created ? 't' : 'm') . '")'
+            endif
         elseif l:mode == 'i'
             " For insert mode, enter insert mode first
             call feedkeys('i', 'n')
-            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
+            execute 'call feedkeys("' . escape(l:key, '"\') . '", "' . (l:was_created ? 't' : 'm') . '")'
         elseif l:mode == 'v'
             " For visual mode, enter visual mode first
             call feedkeys('v', 'n')
-            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
+            execute 'call feedkeys("' . escape(l:key, '"\') . '", "' . (l:was_created ? 't' : 'm') . '")'
         else
             " Default to normal mode execution
             call feedkeys("\<Esc>", 'n')
-            call feedkeys(eval('"' . escape(l:key, '\"') . '"'), l:was_created ? 't' : 'm')
+            execute 'call feedkeys("' . escape(l:key, '"\') . '", "' . (l:was_created ? 't' : 'm') . '")'
         endif
     endif
 endfunction
