@@ -19,10 +19,10 @@ let g:netrw_winsize = 25                  " Width of explorer window
 let g:netrw_keepdir = 0                   " Keep current directory synced
 runtime! plugin/netrwPlugin.vim          " Load netrw plugin
 " Key mappings:
-nnoremap <leader>e :Lexplore<CR>          
+nnoremap <leader>e :Lexplore<CR>
 
 " ,e - Open explorer on left
-nnoremap <leader>E :Vexplore<CR>          
+nnoremap <leader>E :Vexplore<CR>
 
 " ,E - Open explorer in vertical split
 " }}}
@@ -42,11 +42,11 @@ endif
 packadd lsp                               " Load LSP plugin
 source ~/.vim/lsp.vim                     " Load LSP configuration
 " Key mappings:
-nnoremap <leader>a :LspCodeAction<CR>     
+nnoremap <leader>a :LspCodeAction<CR>
 " ,a - Show code actions
-nnoremap <leader>d :LspGotoDefinition<CR> 
+nnoremap <leader>d :LspGotoDefinition<CR>
 " ,d - Go to definition
-nnoremap <leader>k :LspHover<CR>          
+nnoremap <leader>k :LspHover<CR>
 " ,k - Show hover information
 " }}}
 
@@ -90,15 +90,15 @@ Plug 'chrisbra/matchit'
 if executable('fzf')
   Plug 'junegunn/fzf.vim'
   " Key mappings:
-  nnoremap <silent> <leader>l :Lines<CR>    
+  nnoremap <silent> <leader>l :Lines<CR>
   " ,l - Search lines in current buffer
-  nnoremap <silent> <leader>f :Files<CR>    
+  nnoremap <silent> <leader>f :Files<CR>
   " ,f - Find files
-  nnoremap <silent> <leader>F :Rg<CR>       
+  nnoremap <silent> <leader>F :Rg<CR>
   " ,F - Search text with ripgrep
-  nnoremap <silent> <leader>b :Buffers<CR>  
+  nnoremap <silent> <leader>b :Buffers<CR>
   " ,b - List open buffers
-  nnoremap <silent> <leader>g :GFiles<CR>   
+  nnoremap <silent> <leader>g :GFiles<CR>
 " ,g - Git files
 else
   echo "fzf is not installed, please install it to use fzf.vim"
@@ -152,8 +152,8 @@ Plug 'dense-analysis/ale'
 " <M-]> Cycle next suggestion
 " <M-[> Cycle previous suggestion
 " <M-\> Request suggestion
-" <M-Right> accept next word 
-" <M-C-Right> Accept next line 
+" <M-Right> accept next word
+" <M-C-Right> Accept next line
 " Tab Accept suggestion (in insert mode)
 " :Copilot panel to open the copilot panel
 Plug 'github/copilot.vim'
@@ -217,11 +217,11 @@ let g:VM_maps = {}
 let g:VM_maps['Find Under']         = '<C-d>'  " Replace default C-n
 let g:VM_maps['Find Subword Under'] = '<C-d>'  " Replace visual C-n
 " Mouse support:
-nmap   <C-LeftMouse>         <Plug>(VM-Mouse-Cursor)   
+nmap   <C-LeftMouse>         <Plug>(VM-Mouse-Cursor)
 " Add cursor with Ctrl+Click
-nmap   <C-RightMouse>        <Plug>(VM-Mouse-Word)     
+nmap   <C-RightMouse>        <Plug>(VM-Mouse-Word)
 " Select word with Ctrl+Right
-nmap   <M-C-RightMouse>      <Plug>(VM-Mouse-Column)   
+nmap   <M-C-RightMouse>      <Plug>(VM-Mouse-Column)
 " Column selection
 " }}}
 
@@ -248,7 +248,7 @@ Plug 'tpope/vim-rhubarb'
 Plug 'rhysd/git-messenger.vim'
 let g:git_messenger_no_default_mappings = v:true
 " Key mappings:
-nmap <C-g>m <Plug>(git-messenger)        
+nmap <C-g>m <Plug>(git-messenger)
 " Ctrl+g,m - Show git commit info
 " }}}
 
@@ -479,9 +479,9 @@ Plug 'KabbAmine/vCoolor.vim'
 " Centers content and hides UI elements for focused writing
 Plug 'junegunn/goyo.vim'
 " Key mappings:
-nnoremap <C-w>g :Goyo<CR>        
+nnoremap <C-w>g :Goyo<CR>
 " Ctrl-w g - Toggle Goyo mode (normal)
-inoremap <C-w>g <Esc>:Goyo<CR>   
+inoremap <C-w>g <Esc>:Goyo<CR>
 " Ctrl-w g - Toggle Goyo mode (insert)
 " }}}
 
@@ -515,13 +515,13 @@ Plug 'dhruvasagar/vim-zoom'
 " Makes delete operations not affect clipboard/register
 Plug 'svermeulen/vim-cutlass'
 " Remap cut operations to x key
-nnoremap x d                     
+nnoremap x d
 " x now cuts (was delete single char)
-xnoremap x d                     
+xnoremap x d
 " x cuts in visual mode
-nnoremap xx dd                   
+nnoremap xx dd
 " xx cuts entire line
-nnoremap X D                     
+nnoremap X D
 " X cuts to end of line
 " Note: d/dd now delete without affecting clipboard
 " Use x/xx for traditional cut behavior
@@ -615,31 +615,31 @@ let g:yoinkIncludeDeleteOperations = 1        " Include delete operations in his
 let g:yoinkMaxItems = 20                      " Keep last 20 yank items
 
 " Post-paste navigation:
-nmap <c-n> <plug>(YoinkPostPasteSwapBack)     
+nmap <c-n> <plug>(YoinkPostPasteSwapBack)
 " Ctrl-n - Previous yank after paste
-nmap <c-p> <plug>(YoinkPostPasteSwapForward)  
+nmap <c-p> <plug>(YoinkPostPasteSwapForward)
 " Ctrl-p - Next yank after paste
 
 " Enhanced paste operations:
-nmap p <plug>(YoinkPaste_p)                   
+nmap p <plug>(YoinkPaste_p)
 " p - Paste with yoink history
-nmap P <plug>(YoinkPaste_P)                   
+nmap P <plug>(YoinkPaste_P)
 " P - Paste before with yoink history
-nmap gp <plug>(YoinkPaste_gp)                 
+nmap gp <plug>(YoinkPaste_gp)
 " gp - Paste and move cursor
-nmap gP <plug>(YoinkPaste_gP)                 
+nmap gP <plug>(YoinkPaste_gP)
 " gP - Paste before and move cursor
 
 " Yank history navigation:
-nmap [y <plug>(YoinkRotateBack)               
+nmap [y <plug>(YoinkRotateBack)
 " [y - Previous item in yank history
-nmap ]y <plug>(YoinkRotateForward)            
+nmap ]y <plug>(YoinkRotateForward)
 " ]y - Next item in yank history
 
 " Cursor position preservation:
-nmap y <plug>(YoinkYankPreserveCursorPosition)  
+nmap y <plug>(YoinkYankPreserveCursorPosition)
 " y - Yank without moving cursor
-xmap y <plug>(YoinkYankPreserveCursorPosition)  
+xmap y <plug>(YoinkYankPreserveCursorPosition)
 " y - Yank selection without moving cursor
 " }}}
 
@@ -703,12 +703,12 @@ Plug 'michaeljsmith/vim-indent-object'
 
 " Custom text objects for buffer operations: {{{
 " Entire buffer text object
-onoremap ie :exec "normal! ggVG"<cr>  
+onoremap ie :exec "normal! ggVG"<cr>
 " ie - Inner entire buffer
 " Examples: cie (change entire buffer), vie (select entire buffer)
 
 " Viewable text object (current screen)
-onoremap iv :exec "normal! HVL"<cr>   
+onoremap iv :exec "normal! HVL"<cr>
 " iv - Current viewable text
 " Examples: civ (change visible text), div (delete visible text)
 " }}}
@@ -728,9 +728,9 @@ onoremap iv :exec "normal! HVL"<cr>
 " Delete buffers without affecting window layout
 Plug 'moll/vim-bbye'
 " Key mappings:
-nnoremap <leader>bd :Bdelete<CR>          
+nnoremap <leader>bd :Bdelete<CR>
 " ,bd - Delete buffer (save first)
-nnoremap <leader>bx :Bdelete!<CR>         
+nnoremap <leader>bx :Bdelete!<CR>
 " ,bx - Force delete buffer (no save)
 " Commands:
 " :Bdelete   - Delete current buffer, keep window
@@ -794,7 +794,7 @@ Plug 'yegappan/mru'
 Plug 't9md/vim-choosewin'
 let g:choosewin_overlay_enable = 1        " Show window markers as overlay
 " Key mappings:
-nmap - <Plug>(choosewin)                  
+nmap - <Plug>(choosewin)
 " - - Open window chooser
 " Operations in chooser:
 " s      - Swap with selected window
@@ -936,7 +936,7 @@ let g:gtfo#terminals = { 'unix': 'kitty @ launch --cwd="%:p:h"' }  " Use Kitty t
 " Plugin Configuration Complete {{{
 " ===============================================================================
 " TODO: Check for a custom.plugins.vim and source it here for user extensions
-" 
+"
 " End plugin declarations
 call plug#end()
 " }}}

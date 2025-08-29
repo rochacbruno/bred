@@ -20,7 +20,7 @@ autocmd FocusGained,BufEnter * checktime
 
 
 " -----------------------------
-" Autosave - here as reference, but disabled 
+" Autosave - here as reference, but disabled
 " -----------------------------
 " set noswapfile
 

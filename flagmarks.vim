@@ -53,35 +53,35 @@ function! s:FilesMatch(file1, file2)
     " Remove any whitespace
     let l:f1 = trim(a:file1)
     let l:f2 = trim(a:file2)
-    
+
     " Direct comparison
     if l:f1 ==# l:f2
         return 1
     endif
-    
+
     " Get full paths
     let l:f1_full = fnamemodify(l:f1, ':p')
     let l:f2_full = fnamemodify(l:f2, ':p')
-    
+
     " Full path comparison
     if l:f1_full != '' && l:f2_full != '' && l:f1_full ==# l:f2_full
         return 1
     endif
-    
+
     " Try resolving relative to current directory
     let l:f1_resolved = resolve(l:f1)
     let l:f2_resolved = resolve(l:f2)
     if l:f1_resolved ==# l:f2_resolved
         return 1
     endif
-    
+
     " Compare just filenames as last resort
     let l:f1_tail = fnamemodify(l:f1, ':t')
     let l:f2_tail = fnamemodify(l:f2, ':t')
     if l:f1_tail != '' && l:f2_tail != '' && l:f1_tail ==# l:f2_tail
         return 1
     endif
-    
+
     return 0
 endfunction
 
@@ -95,41 +95,41 @@ endfunction
 function! s:UpdateSigns()
     " Ensure signs are initialized
     call s:InitSigns()
-    
+
     " Clear all existing flag mark signs
     call sign_unplace('FlagMarks')
-    
+
     " Only place signs if they're visible
     if !g:flag_signs_visible
         return
     endif
-    
+
     " Place signs for current marks
     for l:m in g:flag_marks
         try
             " Get the file path - it might be relative or absolute
             let l:file_path = trim(l:m.file)
-            
+
             " Try different ways to find the buffer
             let l:bufnr = -1
-            
+
             " Check all buffers for a match
             for l:buf in range(1, bufnr('$'))
                 if !bufexists(l:buf)
                     continue
                 endif
-                
+
                 let l:bufname = bufname(l:buf)
                 if l:bufname == ''
                     continue
                 endif
-                
+
                 if s:FilesMatch(l:bufname, l:file_path)
                     let l:bufnr = l:buf
                     break
                 endif
             endfor
-            
+
             " If no buffer found, try to create one if file exists
             if l:bufnr == -1
                 let l:full_path = fnamemodify(l:file_path, ':p')
@@ -139,7 +139,7 @@ function! s:UpdateSigns()
                     let l:bufnr = bufnr(l:file_path, 1)
                 endif
             endif
-            
+
             if l:bufnr != -1 && bufexists(l:bufnr)
                 let l:sign_name = 'FlagMark' . l:m.mark
                 let l:sign_id = char2nr(l:m.mark) * 1000 + str2nr(l:m.line)
@@ -163,9 +163,9 @@ function! s:CollectMarks()
     try
         " Get marks info using getmarklist()
         let l:marks = getmarklist()
-        
+
         let g:flag_marks = []
-        
+
         " Process each mark
         for l:mark_info in l:marks
             " Only process uppercase marks A-Z
@@ -176,7 +176,7 @@ function! s:CollectMarks()
                 let l:bufnr = l:pos[0]
                 let l:line_num = l:pos[1]
                 let l:col = l:pos[2]
-                
+
                 " Get filename from buffer number
                 let l:file = ''
                 if l:bufnr > 0
@@ -186,7 +186,7 @@ function! s:CollectMarks()
                         let l:file = fnamemodify(bufname(l:bufnr), ':p')
                     endif
                 endif
-                
+
                 " If we still don't have a file, try getting it from mark position
                 if l:file == ''
                     " Try to get file using getpos
@@ -195,7 +195,7 @@ function! s:CollectMarks()
                         let l:file = bufname(l:mark_pos[0])
                     endif
                 endif
-                
+
                 if l:file != ''
                     let l:markinfo = {'mark': l:mark_char, 'line': string(l:line_num), 'col': string(l:col), 'file': l:file}
                     call add(g:flag_marks, l:markinfo)
@@ -205,7 +205,7 @@ function! s:CollectMarks()
 
         " sort by mark
         call sort(g:flag_marks, {a,b -> a.mark < b.mark ? -1 : a.mark > b.mark ? 1 : 0})
-        
+
         " Update signs after collecting marks
         call s:UpdateSigns()
     catch /E283/
@@ -243,7 +243,7 @@ function! FlagAdd()
     call s:CollectMarks()
     let l:lnum = line('.')
     let l:fname = expand('%:p')
-    
+
     for l:existing in g:flag_marks
         let l:mark_file = fnamemodify(l:existing.file, ':p')
         if l:mark_file ==# l:fname && str2nr(l:existing.line) == l:lnum
@@ -251,14 +251,14 @@ function! FlagAdd()
             return
         endif
     endfor
-    
+
     let l:m = s:NextFreeMark()
     if l:m == ''
         echo "No free global marks!"
         return
     endif
     execute 'mark ' . l:m
-    
+
     " Add to jump history
     if empty(g:flag_go_history)
         call add(g:flag_go_history, l:m)
@@ -272,7 +272,7 @@ function! FlagAdd()
             let g:flag_go_history[0] = l:m
         endif
     endif
-    
+
     call s:CollectMarks()
     echo "Set global mark " . l:m
 endfunction
@@ -284,13 +284,13 @@ function! FlagDelete()
     let l:lnum = line('.')
     let l:current_file = expand('%:p')
     let l:current_name = expand('%:t')
-    
+
     for l:m in g:flag_marks
         " Check if line numbers match
         if str2nr(l:m.line) != l:lnum
             continue
         endif
-        
+
         " Check if files match using helper function
         if s:FilesMatch(l:current_file, l:m.file)
             execute 'delmarks ' . l:m.mark
@@ -308,14 +308,14 @@ function! FlagClearFile()
     call s:CollectMarks()
     let l:current_file = expand('%:p')
     let l:marks = []
-    
+
     for l:m in g:flag_marks
         " Check if files match using helper function
         if s:FilesMatch(l:current_file, l:m.file)
             call add(l:marks, l:m.mark)
         endif
     endfor
-    
+
     if !empty(l:marks)
         " Ask for confirmation
         let l:file_name = fnamemodify(l:current_file, ':t')
@@ -338,19 +338,19 @@ endfunction
 """ Removes all marks from all files after user confirmation
 function! FlagClearAll()
     call s:CollectMarks()
-    
+
     if empty(g:flag_marks)
         echo "No global marks to clear"
         return
     endif
-    
+
     " Ask for confirmation
     let l:count = len(g:flag_marks)
     let l:marks = map(copy(g:flag_marks), 'v:val.mark')
     let l:marks_str = join(l:marks, ', ')
     echo "Clear ALL " . l:count . " global marks [" . l:marks_str . "]? (y/N): "
     let l:confirm = nr2char(getchar())
-    
+
     if l:confirm ==? 'y'
         execute 'delmarks A-Z'
         call s:CollectMarks()
@@ -407,14 +407,14 @@ endfunction
 """ Opens quickfix window for easy navigation
 function! FlagQuick()
     call s:CollectMarks()
-    
+
     if empty(g:flag_marks)
         echo "No marks to add to quickfix"
         return
     endif
-    
+
     let l:qf_list = []
-    
+
     for l:m in g:flag_marks
         " Get buffer number for the file
         let l:bufnr = bufnr(l:m.file)
@@ -426,10 +426,10 @@ function! FlagQuick()
                 let l:bufnr = bufnr(l:m.file, 1)
             endif
         endif
-        
+
         " Get line text for preview
         let l:text = s:GetLinePreview(l:m.file, str2nr(l:m.line))
-        
+
         " Add to quickfix list
         call add(l:qf_list, {
             \ 'bufnr': l:bufnr,
@@ -440,13 +440,13 @@ function! FlagQuick()
             \ 'type': 'M'
             \ })
     endfor
-    
+
     " Set quickfix list
     call setqflist(l:qf_list)
-    
+
     " Open quickfix window
     copen
-    
+
     echo "Added " . len(l:qf_list) . " marks to quickfix"
 endfunction
 
@@ -538,7 +538,7 @@ function! s:GetLinePreview(file, line_num)
     " Try to get the line content
     let l:content = ''
     let l:bufnr = bufnr(a:file)
-    
+
     if l:bufnr != -1 && bufloaded(l:bufnr)
         " Buffer is loaded, get line directly
         let l:lines = getbufline(l:bufnr, a:line_num)
@@ -552,7 +552,7 @@ function! s:GetLinePreview(file, line_num)
             let l:content = l:lines[a:line_num - 1]
         endif
     endif
-    
+
     " Clean and truncate the content
     if l:content != ''
         " Remove leading whitespace
@@ -564,7 +564,7 @@ function! s:GetLinePreview(file, line_num)
     else
         let l:content = '<no preview>'
     endif
-    
+
     return l:content
 endfunction
 
@@ -574,7 +574,7 @@ endfunction
 function! s:FindWindowWithFile(file)
     " Get full path of target file
     let l:target_file = fnamemodify(a:file, ':p')
-    
+
     " Check all windows
     for l:winnr in range(1, winnr('$'))
         let l:bufnr = winbufnr(l:winnr)
@@ -585,7 +585,7 @@ function! s:FindWindowWithFile(file)
             endif
         endif
     endfor
-    
+
     return 0
 endfunction
 
@@ -606,11 +606,11 @@ function! s:JumpToMark(mark, window_aware)
             break
         endif
     endfor
-    
+
     if type(l:mark_info) == type({})
         let l:target_bufnr = l:mark_info.pos[0]
         let l:target_file = bufname(l:target_bufnr)
-        
+
         if a:window_aware && l:target_file != ''
             " Check if file is open in another window
             let l:target_winnr = s:FindWindowWithFile(l:target_file)
@@ -623,13 +623,13 @@ function! s:JumpToMark(mark, window_aware)
                 return 1
             endif
         endif
-        
+
         " Normal jump (same window)
         silent! execute "normal! '" . a:mark
         redraw | echo "Went to mark " . a:mark
         return 1
     endif
-    
+
     return 0
 endfunction
 
@@ -640,7 +640,7 @@ endfunction
 function! FlagGo(...)
     " Check for window_aware flag (second argument), default to 1 (window-aware)
     let l:window_aware = (a:0 >= 2) ? a:2 : 1
-    
+
     if a:0 == 0 || (a:0 == 1 && a:1 == '')
         " No argument - toggle between last two marks
         if len(g:flag_go_history) >= 2
@@ -655,7 +655,7 @@ function! FlagGo(...)
                     let l:mark2_exists = 1
                 endif
             endfor
-            
+
             if l:mark1_exists && l:mark2_exists
                 " Swap last two entries
                 let l:temp = g:flag_go_history[0]
@@ -677,7 +677,7 @@ function! FlagGo(...)
                     break
                 endif
             endfor
-            
+
             if l:mark_exists
                 call s:JumpToMark(g:flag_go_history[0], l:window_aware)
             else
@@ -706,7 +706,7 @@ function! FlagGo(...)
                     break
                 endif
             endfor
-            
+
             if l:mark_exists
                 " Update jump history
                 if empty(g:flag_go_history)
@@ -725,7 +725,7 @@ function! FlagGo(...)
                         let g:flag_go_history[0] = l:mark
                     endif
                 endif
-                
+
                 if !s:JumpToMark(l:mark, l:window_aware)
                     echo "Failed to go to mark " . l:mark
                 endif
@@ -750,7 +750,7 @@ endfunction
 function! s:PopupFilter(winid, key)
     " Convert lowercase to uppercase for marks
     let l:key = toupper(a:key)
-    
+
     " Check if it's a valid mark letter
     if l:key =~# '^[A-Z]$'
         " Find and go to the mark
@@ -771,13 +771,13 @@ function! s:PopupFilter(winid, key)
         echo "Mark " . l:key . " not found"
         return 1
     endif
-    
+
     " Close on Escape or q
     if a:key ==# "\<Esc>" || a:key ==# 'q'
         call popup_close(a:winid)
         return 1
     endif
-    
+
     " Ignore other keys
     return 1
 endfunction
@@ -796,7 +796,7 @@ function! FlagMenu()
     let l:content = []
     call add(l:content, ' Key │ File            │ Line │ Preview')
     call add(l:content, '─────┼─────────────────┼──────┼────────────────────────────────')
-    
+
     for l:m in g:flag_marks
         " Only show uppercase marks A-Z
         if l:m.mark =~# '^[A-Z]$'
@@ -813,10 +813,10 @@ function! FlagMenu()
             call add(l:content, l:line_text)
         endif
     endfor
-    
+
     call add(l:content, '')
     call add(l:content, ' Press a-z to jump, Esc/q to close')
-    
+
     " Create popup
     let l:opts = {
         \ 'filter': 's:PopupFilter',
@@ -827,7 +827,7 @@ function! FlagMenu()
         \ 'mapping': 0,
         \ 'highlight': 'Normal'
         \ }
-    
+
     call popup_create(l:content, l:opts)
 endfunction
 

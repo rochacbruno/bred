@@ -47,35 +47,26 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
 
 ## Installation
 
-1. **Backup your existing Vim configuration:**
-   ```bash
-   mv ~/.vim ~/.vim_backup
-   mv ~/.vimrc ~/.vimrc_backup
-   ```
+<details>
+<summary>Ensure you have all dependencies installed.</summary>
 
-2. **Clone this repository:**
-   ```bash
-   git clone https://github.com/rochacbruno/.vim.git ~/.vim
-   ```
 
-3. **Install plugins:**
-   ```bash
-   vim +PlugInstall +qall
-   ```
-
-4. **Install dependencies:**
+- **Install dependencies:**
    ```bash
    # macOS (using Homebrew)
-   brew install fzf ripgrep node
-   
+   brew install fzf ripgrep node rustup git curl
+   rustup install stable
+
    # Ubuntu/Debian
-   sudo apt install fzf ripgrep nodejs npm
+   sudo apt install fzf ripgrep nodejs npm rustup git curl
+   rustup install stable
    
    # Arch Linux
-   sudo pacman -S fzf ripgrep nodejs npm
+   sudo pacman -S fzf ripgrep nodejs npm rustup git curl
+   rustup install stable
    ```
 
-5. **Install language servers (optional):**
+- **Install language servers (optional):**
    ```bash
    # Python
    npm install -g pyright
@@ -89,6 +80,27 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
    # Rust
    rustup component add rust-analyzer
    ```
+
+</details>
+
+
+
+1. **Backup your existing Vim configuration:**
+   ```bash
+   mv ~/.vim ~/.vim_backup
+   mv ~/.vimrc ~/.vimrc_backup
+   ```
+
+2. **Clone this repository:**
+   ```bash
+   git clone https://github.com/rochacbruno/vim9 ~/.vim
+   ```
+
+3. **Install plugins:**
+   ```bash
+   vim +PlugInstall +qall
+   ```
+
 
 ## Architecture
 

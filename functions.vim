@@ -56,7 +56,7 @@ endfunction
 " -------------------------------------------------------------------------
 " Clears all hidden buffers when running Vim with the 'hidden' option
 " Keeps only buffers that are visible in tabs, closes all others
-if !exists("*DeleteHiddenBuffers") " Clear all hidden buffers when running 
+if !exists("*DeleteHiddenBuffers") " Clear all hidden buffers when running
 	function DeleteHiddenBuffers() " Vim with the 'hidden' option
 		let tpbl=[] " List to store buffers visible in tabs
 		" Collect all buffers that are visible in any tab
@@ -89,7 +89,7 @@ function! ResizeMode()
   nnoremap <buffer> j  :resize -2<CR>
   nnoremap <buffer> h  :vertical resize -2<CR>
   nnoremap <buffer> l :vertical resize +2<CR>
-  
+
   nnoremap <buffer> <Esc> :call ResizeModeEnd()<CR>
 endfunction
 
@@ -107,7 +107,7 @@ function! ResizeModeEnd()
   silent! nunmap <buffer> j
   silent! nunmap <buffer> h
   silent! nunmap <buffer> l
- 
+
   silent! nunmap <buffer> <Esc>
   echo "Exited resize mode"
 endfunction
@@ -144,7 +144,7 @@ if empty_args != ""
     argdelete * " Clear existing argument list
     argadd % " Add current buffer to argument list
     " Process each file and arrange in grid layout
-    for i in args 
+    for i in args
       if counter % 4 == 0 " First file in each group of 4
         if counter == 0 " Very first file - just navigate to it
           silent bnext

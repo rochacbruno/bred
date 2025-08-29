@@ -192,7 +192,7 @@ endif
 "   - Via npm: npm install -g pyright
 "   - Arch Linux: pacman -S pyright
 " Features: Type checking, completion, diagnostics, refactoring for Python
-if executable('/usr/bin/pyright-langserver') 
+if executable('/usr/bin/pyright-langserver')
     call LspAddServer([{'name': 'pyright',
                  \   'filetype': 'python',
                  \   'path': '/usr/bin/pyright-langserver',

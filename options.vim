@@ -62,7 +62,7 @@ set tabline=%!BufferTabLine() " Use custom function for buffer tabs
 " Vim Info File Location
 " -------------------------------------------------------------------------
 "  {{{
-" Search upwards for a project-specific .viminfo file or use default location 
+" Search upwards for a project-specific .viminfo file or use default location
 let &viminfofile=findfile('.viminfo','.;') ?? $HOME . '/.vim/viminfo'
 "  }}}
 " -------------------------------------------------------------------------
