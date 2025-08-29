@@ -167,7 +167,3 @@ if empty_args != ""
   endif
 endif
 
-
-
-
-

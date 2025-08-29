@@ -36,7 +36,7 @@ nnoremap [q :bp<CR>
 " [q  - Previous buffer
 nnoremap ]q :bn<CR>
 " ]q  - Next buffer
-nnoremap bda :DeleteHiddenBuffers<CR>
+nnoremap bh :DeleteHiddenBuffers<CR>
 " bda - Delete all hidden buffers
 
 " Quick buffer switching with ,1 through ,9
@@ -106,8 +106,7 @@ nnoremap <leader>re :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
 " -------------------------------------------------------------------------
 " Configuration Reload
 " -------------------------------------------------------------------------
-nnoremap <leader><leader>so :source ~/.vim/vimrc<CR>
-" ,,so - Reload Vim configuration
+nnoremap <leader><leader>so :source $MYVIMRC<CR>:Doc 'Reload config' 
 
 " -------------------------------------------------------------------------
 " Common Editor Shortcuts
@@ -242,7 +241,7 @@ nnoremap Q <Nop>
 " File Operations
 " -------------------------------------------------------------------------
 " Make current file executable (useful for scripts)
-nnoremap <leader>x :!chmod +x %<CR>
+nnoremap <leader><leader>x :!chmod +x %<CR>
 " ,x - Make file executable
 
 " -------------------------------------------------------------------------

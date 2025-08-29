@@ -56,6 +56,11 @@ augroup autosession
     }
 augroup END
 
+" This command does nothing, it takes a text and don't do anything
+" it exists just to be used on mappings to pipe so it is parseable 
+" on :map command output
+" command! -nargs=* Doc :
+
 " -------------------------------------------------------------------------
 " End of Commands
 " -------------------------------------------------------------------------

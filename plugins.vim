@@ -90,15 +90,15 @@ Plug 'chrisbra/matchit'
 if executable('fzf')
   Plug 'junegunn/fzf.vim'
   " Key mappings:
-  nnoremap <silent> <leader>l :Lines<CR>
+  nnoremap <silent> <leader>fl :Lines<CR>
   " ,l - Search lines in current buffer
-  nnoremap <silent> <leader>f :Files<CR>
+  nnoremap <silent> <leader>ff :Files<CR>
   " ,f - Find files
-  nnoremap <silent> <leader>F :Rg<CR>
+  nnoremap <silent> <leader>fr :Rg<CR>
   " ,F - Search text with ripgrep
-  nnoremap <silent> <leader>b :Buffers<CR>
+  nnoremap <silent> <leader>fb :Buffers<CR>
   " ,b - List open buffers
-  nnoremap <silent> <leader>g :GFiles<CR>
+  nnoremap <silent> <leader>fg :GFiles<CR>
 " ,g - Git files
 else
   echo "fzf is not installed, please install it to use fzf.vim"
@@ -189,9 +189,16 @@ Plug 'airblade/vim-gitgutter'
 " Which Key - Key binding helper {{{
 " , to open which-key
 " :WhichKey to open which-key
-Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
+Plug 'liuchengxu/vim-which-key'
+" let g:which_key_ignore_outside_mappings = 1
+let g:which_key_max_size = 0
+let g:which_key_flatten = 1
+" NOTE: dictionaries are defined in whichkey.vim
 
-nnoremap <silent> <leader> :WhichKey ','<CR>
+nnoremap <silent> <leader> :<c-u>WhichKey ','<CR>
+nnoremap <silent> <C-w> :<c-u>WhichKey! g:which_key_map_window<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual ','<CR>
+
 " }}}
 
 " Colorizer - Highlight color codes {{{
