@@ -235,18 +235,24 @@ Nmap 'Show git commit info|Git' <C-g>m <Plug>(git-messenger)
 " ===============================================================================
 " Code Commenting
 " ===============================================================================
-
+ 
 " Commentary - Smart commenting plugin {{{
 " Repository: https://github.com/tpope/vim-commentary
 " Provides intelligent commenting/uncommenting for various file types
 " Automatically detects file type and uses appropriate comment syntax
+
 Plug 'tpope/vim-commentary'
-" Key mappings:
-" Document Commentary mappings without overriding them
-Nmap 'Comment/uncomment current line|Commentary' gcc
-Nmap 'Comment/uncomment motion|Commentary' gc
-Xmap 'Comment/uncomment selection|Commentary' gc
+
 Nmap 'Uncomment adjacent commented lines|Commentary' gcu
+Nmap 'Comment Toggle|Commentary' <C-/> <Plug>CommentaryLine
+Imap 'Comment Toggle|Commentary' <C-/> <Esc><Plug>CommentaryLineA
+Xmap 'Comment Toggle|Commentary' <C-/> <Esc><Plug>Commentary
+
+" the following mappings are for keyboards where Ctrl+/ is not possible
+nnoremap <silent> <C-_> <Plug>CommentaryLine
+inoremap <silent> <C-_> <Esc><Plug>CommentaryLineA
+xnoremap <silent> <C-_> <Esc><Plug>Commentary
+
 " }}}
 
 " ===============================================================================
