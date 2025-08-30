@@ -31,10 +31,11 @@ MapDocs provides enhanced mapping commands that combine mapping creation with do
 
 - `Nmap` - Normal mode mappings
 - `Imap` - Insert mode mappings  
-- `Vmap` - Visual mode mappings
-- `Xmap` - Visual mode mappings (characterwise)
+- `Vmap` - Visual and Select mode mappings
+- `Xmap` - Visual mode only mappings
 - `Omap` - Operator-pending mappings
 - `Cmap` - Command-line mode mappings
+- `Tmap` - Terminal mode mappings
 
 ### Syntax
 
@@ -102,21 +103,28 @@ Opens an interactive FZF menu displaying documented mappings.
 
 **Usage:**
 ```vim
-:ShowDocs       " Show all mappings
-:ShowDocs n     " Show only normal mode mappings
-:ShowDocs ni    " Show normal and insert mode mappings
-:ShowDocs vx    " Show visual mode mappings
+:ShowDocs         " Show all mappings in default order (nvxicot)
+:ShowDocs n       " Show only normal mode mappings
+:ShowDocs ni      " Show normal and insert mode mappings (in that order)
+:ShowDocs vx      " Show visual mode mappings (v first, then x)
+:ShowDocs nvxicot " Explicit default order
 ```
 
+**Mode Order:**
+- Default order when no modes specified: `nvxicot` (Normal, Visual, V-Line, Insert, Command, Operator, Terminal)
+- When modes are specified, they appear in the exact order given
+- Modes not included in the default order appear at the end
+- Within each mode, mappings are sorted alphabetically by category and description
+
 **Features:**
-- Filter by mode(s) using single-letter mode identifiers (n, i, v, x, o, c)
+- Filter by mode(s) using single-letter mode identifiers (n, i, v, x, o, c, t)
 - Search through mappings with fuzzy finding
 - See mode, key combination, category, and description
-- Press Enter to execute the selected mapping (except for insert mode)
+- Press Enter to execute the selected mapping (except for insert and terminal modes)
 - Press ESC to close without executing
 - Automatically substitutes `<leader>` with your actual leader key in display
 - Shows `<Space>` when leader key is set to a literal space
-- Sorts uncategorized mappings first, then categorized ones
+- Respects the order of modes as specified in the command
 
 **Visual Mode with Range:**
 ```vim
@@ -207,6 +215,11 @@ This ensures that both newly created mappings and documented existing mappings e
 
 **Operator-pending Mode (O):**
 - ⚠️ Limited support (falls back to normal mode execution)
+
+**Terminal Mode (T):**
+- ℹ️ Shows mapping information only (no execution)
+- Displays notification that the mapping should be used in a terminal buffer
+- Terminal mappings only work within actual terminal windows
 
 ### Leader Key Display
 
