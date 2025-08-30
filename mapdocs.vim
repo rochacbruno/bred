@@ -361,7 +361,7 @@ function! s:HandleFZFSelection(line) abort
                 " Then send the actual command separately
                 if l:key =~ '<.*>'
                     let l:converted = s:ConvertKeyNotation(l:key)
-                    " Use 't' flag to allow mappings to be triggered
+                    " Use 'mt' flag to allow mappings to be triggered
                     call feedkeys(eval('"' . l:converted . '"'), 'mt')
                 else
                     call feedkeys(l:key, 'mt')

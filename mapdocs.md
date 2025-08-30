@@ -96,22 +96,38 @@ g:mapdocs_created = {
 
 ## Display Commands
 
-### `ShowDocs`
+### `ShowDocs [modes]`
 
-Opens an interactive FZF menu displaying all documented mappings. 
+Opens an interactive FZF menu displaying documented mappings. 
+
+**Usage:**
+```vim
+:ShowDocs       " Show all mappings
+:ShowDocs n     " Show only normal mode mappings
+:ShowDocs ni    " Show normal and insert mode mappings
+:ShowDocs vx    " Show visual mode mappings
+```
 
 **Features:**
+- Filter by mode(s) using single-letter mode identifiers (n, i, v, x, o, c)
 - Search through mappings with fuzzy finding
 - See mode, key combination, category, and description
-- Press Enter to execute the selected mapping
+- Press Enter to execute the selected mapping (except for insert mode)
 - Press ESC to close without executing
 - Automatically substitutes `<leader>` with your actual leader key in display
+- Shows `<Space>` when leader key is set to a literal space
 - Sorts uncategorized mappings first, then categorized ones
+
+**Visual Mode with Range:**
+```vim
+" Select text in visual mode, then:
+:'<,'>ShowDocs vx   " Shows visual mappings and preserves your selection
+```
 
 **Example display:**
 ```
-[N] ,ff             : [files] Find files using Telescope
-[N] ,fg             : [files] Live grep using Telescope  
+[N] <Space>ff       : [files] Find files using Telescope
+[N] <Space>fg       : [files] Live grep using Telescope  
 [N] u               : Undo last change
 [N] /               : Search forward
 ─────────────────────────────────────────
@@ -164,6 +180,44 @@ This ensures that both newly created mappings and documented existing mappings e
 - FZF and fzf.vim are required for the `ShowDocs` command
 - Some complex key sequences may not execute properly from the FZF menu
 - The plugin clears existing documentation when re-sourced
+
+## Caveats
+
+### Mode-Specific Execution Behavior
+
+**Normal Mode (N):** 
+- ✅ Full execution support
+- All mappings execute as expected when selected from ShowDocs
+
+**Visual Mode (V/X):**
+- ✅ Selection restoration works
+- ✅ Simple visual mappings work (commenting, indenting, yanking, etc.)
+- ⚠️ Complex window operations (like `<C-w>gsa` visual splits) may not execute properly
+- When using with a range (`:'<,'>ShowDocs`), your selection is preserved and restored before executing the mapping
+
+**Insert Mode (I):**
+- ℹ️ Shows mapping information only (no execution)
+- Displays what the mapping does in the status line
+- Window closes after selection, allowing you to manually press the key in insert mode
+- This is due to the complexity of programmatically triggering insert mode mappings
+
+**Command Mode (C):**
+- ✅ Basic command mode mappings work
+- Commands are executed after entering command mode with `:`
+
+**Operator-pending Mode (O):**
+- ⚠️ Limited support (falls back to normal mode execution)
+
+### Leader Key Display
+
+When your leader key is set to a space (`let mapleader = " "`), ShowDocs will display it as `<Space>` for clarity instead of showing an empty space.
+
+### Visual Selection Preservation
+
+The visual selection preservation feature saves:
+- The exact start and end positions (line and column)
+- The visual mode type (character-wise `v`, line-wise `V`, or block-wise `<C-v>`)
+- Restores the selection before executing visual mode mappings
 
 ## Tips
 
