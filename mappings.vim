@@ -113,13 +113,13 @@ Nmap 'Remove trailing whitespace|Edit' <leader>tw :let _s=@/<Bar>:%s/\s\+$//e<Ba
 " -------------------------------------------------------------------------
 " Familiar keybindings for users coming from Emacs
 " Insert mode mappings
-Imap 'Move to beginning of line|Emacs' <C-a> <Home>
-Imap 'Move to end of line|Emacs' <C-e> <End>
-Imap 'Move forward one character|Emacs' <C-f> <Right>
-Imap 'Move backward one character|Emacs' <C-b> <Left>
-Imap 'Delete character under cursor|Emacs' <C-d> <Del>
-Imap 'Kill to end of line|Emacs' <C-k> <C-o>D
-Imap 'Delete word backward|Emacs' <M-Backspace> <C-o>dB
+" Imap 'Move to beginning of line|Emacs' <C-a> <Home>
+" Imap 'Move to end of line|Emacs' <C-e> <End>
+" Imap 'Move forward one character|Emacs' <C-f> <Right>
+" Imap 'Move backward one character|Emacs' <C-b> <Left>
+" Imap 'Delete character under cursor|Emacs' <C-d> <Del>
+" Imap 'Kill to end of line|Emacs' <C-k> <C-o>D
+" Imap 'Delete word backward|Emacs' <M-Backspace> <C-o>dB
 " Command mode mappings
 Cmap 'Move to beginning|Emacs' <C-a> <Home>
 Cmap 'Move to end|Emacs' <C-e> <End>
@@ -196,8 +196,76 @@ Nmap 'Open mapping documentation on a buffer|Help' <leader>h :BufferDocs<CR>
 nnoremap <silent> <leader> :ShowDocs<CR>
 
 
-" }}}
+
+" ---------------------------------------------------------------
+"  Docs Only For The MapDocs System (do not remove these lines)
+" ---------------------------------------------------------------
+Imap 'Indent|Edit' <C-T>
+Imap 'Outdent|Edit' <C-D>
+Imap 'Repeat last Insert|Edit' <C-A>
+Imap 'Delete word backward|Edit' <C-W>
+Imap 'Delete to last insert in the current line|Edit' <C-U>
+Imap 'Next Completion|Edit' <C-N>
+Imap 'Previous Completion|Edit' <C-P>
+Imap 'Cancel completion|Edit' <C-E>
+Imap 'Insert char above cursor|Edit' <C-Y>
+Imap 'Insert char below cursor|Edit' <C-E>
+
+Nmap 'Redraw screen|View' <C-L>
+Nmap 'Go to first line of file|Navigation' gg
+Nmap 'Go to last line of file|Navigation' G
+Nmap 'Go to end of line|Navigation' $
+Nmap 'Go to beginning of line|Navigation' 0
+Nmap 'Go to first non-blank character of line|Navigation' ^
+Nmap 'Go to matching bracket|Navigation' %
+
+Nmap 'Indent N lines|Edit' N>>
+Nmap 'Outdent N lines|Edit' N<<
+Nmap 'Restore Indentation N Lines|Edit' N==
+Nmap 'Go to line N|Navigation' Ngg
+Nmap 'Cursor to the middle of the screen|Navigation' M
+Nmap 'Cursor to the top of the screen|Navigation' H
+Nmap 'Cursor to the bottom of the screen|Navigation' L
+
+Nmap 'New line above current line|Edit' O
+Nmap 'New line below current line|Edit' o
+Nmap 'Insert before cursor|Edit' I
+Nmap 'Insert at end of line|Edit' A
+Nmap 'Append after cursor|Edit' a
+Nmap 'delete N lines and start insert|Edit' Ncc
+
+Nmap 'Move window focus left|Windows' <C-w>h
+Nmap 'Move window focus down|Windows' <C-w>j
+Nmap 'Move window focus up|Windows' <C-w>k
+Nmap 'Move window focus right|Windows' <C-w>l
+Nmap 'Split window horizontally|Windows' <C-w>s
+Nmap 'Split window vertically|Windows' <C-w>v
+Nmap 'Close current window|Windows' <C-w>c
+Nmap 'Quit current window|Windows' <C-w>q
+Nmap 'Equalize window sizes|Windows' <C-w>=
+Nmap 'Go to previous window|Windows' <C-w>p
+Nmap 'Go to Nth window|Windows' <C-w>N
+Nmap 'Go to last window|Windows' <C-w>W
+Nmap 'Rotate windows up|Windows' <C-w>R
+Nmap 'Rotate windows down|Windows' <C-w>r
+Nmap 'Move current window to new tab|Windows' <C-w>T
+Nmap 'Close all other windows|Windows' <C-w>o
+Nmap 'Move current window to left|Windows' <C-w>H
+Nmap 'Move current window to bottom|Windows' <C-w>J
+Nmap 'Move current window to top|Windows' <C-w>K
+Nmap 'Move current window to right|Windows' <C-w>L
+Nmap 'Split window and jump to symbol|Windows' <C-w>]
+Nmap 'Split window and go to file under cursor|Windows' <C-w>f
+Nmap 'Go to file under cursor|Navigation' gf
+Nmap 'Go to another window|Windows' <C-w>ARROWS
+Nmap 'Exchange windows|Windows' <C-w>x
+
+Nmap 'Swap Window|Windows' --s<ID>
+Nmap 'Jump Windows|Windows' --  
+
 " -------------------------------------------------------------------------
 " End of Mappings
 " -------------------------------------------------------------------------
+
+
 " vim: set foldmethod=marker foldlevel=0:
