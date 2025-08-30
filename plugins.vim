@@ -19,12 +19,8 @@ let g:netrw_winsize = 25                  " Width of explorer window
 let g:netrw_keepdir = 0                   " Keep current directory synced
 runtime! plugin/netrwPlugin.vim          " Load netrw plugin
 " Key mappings:
-nnoremap <leader>e :Lexplore<CR>
-
-" ,e - Open explorer on left
-nnoremap <leader>E :Vexplore<CR>
-
-" ,E - Open explorer in vertical split
+Nmap 'Open explorer on left|Files' <leader>e :Lexplore<CR>
+Nmap 'Open explorer in vertical split|Files' <leader>E :Vexplore<CR>
 " }}}
 
 " LSP - Language Server Protocol support {{{
@@ -42,12 +38,9 @@ endif
 packadd lsp                               " Load LSP plugin
 source ~/.vim/lsp.vim                     " Load LSP configuration
 " Key mappings:
-nnoremap <leader>a :LspCodeAction<CR>
-" ,a - Show code actions
-nnoremap <leader>d :LspGotoDefinition<CR>
-" ,d - Go to definition
-nnoremap <leader>k :LspHover<CR>
-" ,k - Show hover information
+Nmap 'Show code actions|LSP' <leader>a :LspCodeAction<CR>
+Nmap 'Go to definition|LSP' <leader>d :LspGotoDefinition<CR>
+Nmap 'Show hover information|LSP' <leader>k :LspHover<CR>
 " }}}
 
 " ===============================================================================
@@ -90,16 +83,11 @@ Plug 'chrisbra/matchit'
 if executable('fzf')
   Plug 'junegunn/fzf.vim'
   " Key mappings:
-  nnoremap <silent> <leader>fl :Lines<CR>
-  " ,l - Search lines in current buffer
-  nnoremap <silent> <leader>ff :Files<CR>
-  " ,f - Find files
-  nnoremap <silent> <leader>fr :Rg<CR>
-  " ,F - Search text with ripgrep
-  nnoremap <silent> <leader>fb :Buffers<CR>
-  " ,b - List open buffers
-  nnoremap <silent> <leader>fg :GFiles<CR>
-" ,g - Git files
+  Nmap 'Search lines in current buffer|FZF' <leader>fl :Lines<CR>
+  Nmap 'Find files|FZF' <leader>ff :Files<CR>
+  Nmap 'Search text with ripgrep|FZF' <leader>fr :Rg<CR>
+  Nmap 'List open buffers|FZF' <leader>fb :Buffers<CR>
+  Nmap 'Git files|FZF' <leader>fg :GFiles<CR>
 else
   echo "fzf is not installed, please install it to use fzf.vim"
 endif
@@ -149,12 +137,13 @@ Plug 'dense-analysis/ale'
 " ===============================================================================
 
 " GitHub Copilot - AI code completion {{{
-" <M-]> Cycle next suggestion
-" <M-[> Cycle previous suggestion
-" <M-\> Request suggestion
-" <M-Right> accept next word
-" <M-C-Right> Accept next line
-" Tab Accept suggestion (in insert mode)
+" Document Copilot mappings without overriding them
+Imap 'Cycle next suggestion|Copilot' <M-]>
+Imap 'Cycle previous suggestion|Copilot' <M-[>
+Imap 'Request suggestion|Copilot' <M-\>
+Imap 'Accept next word|Copilot' <M-Right>
+Imap 'Accept next line|Copilot' <M-C-Right>
+Imap 'Accept suggestion|Copilot' <Tab>
 " :Copilot panel to open the copilot panel
 Plug 'github/copilot.vim'
 " }}}
@@ -171,9 +160,10 @@ let g:mistflyWithIndentStatus = v:true
 " }}}
 
 " Auto Pairs - Automatic bracket pairing {{{
-" <M-b back insert pair
-" <M-n jump to next closed pair
-" <M-p tooggle auto pairs on and off
+" Document Auto Pairs mappings without overriding them
+Imap 'Back insert pair|Auto Pairs' <M-b>
+Imap 'Jump to next closed pair|Auto Pairs' <M-n>
+Imap 'Toggle auto pairs on/off|Auto Pairs' <M-p>
 Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsMoveCharacter = ""
 let g:AutoPairsShortcutBackInsert = ""
@@ -198,8 +188,9 @@ Plug 'chrisbra/Colorizer'
 
 " Visual Multi - Multiple cursor support {{{
 " Key mappings:
-" <C-d>       - Select word under cursor
-" <C-d>       - Add next occurrence (visual mode)
+" Document Visual Multi mappings without overriding them
+Nmap 'Select word under cursor / Add next occurrence|Visual Multi' <C-d>
+Xmap 'Add next occurrence|Visual Multi' <C-d>
 " n/N         - Next/previous occurrence
 " [/]         - Next/previous cursor
 " q           - Skip current and find next
@@ -210,12 +201,9 @@ let g:VM_maps = {}
 let g:VM_maps['Find Under']         = '<C-d>'  " Replace default C-n
 let g:VM_maps['Find Subword Under'] = '<C-d>'  " Replace visual C-n
 " Mouse support:
-nmap   <C-LeftMouse>         <Plug>(VM-Mouse-Cursor)
-" Add cursor with Ctrl+Click
-nmap   <C-RightMouse>        <Plug>(VM-Mouse-Word)
-" Select word with Ctrl+Right
-nmap   <M-C-RightMouse>      <Plug>(VM-Mouse-Column)
-" Column selection
+Nmap 'Add cursor with Ctrl+Click|Visual Multi' <C-LeftMouse> <Plug>(VM-Mouse-Cursor)
+Nmap 'Select word with Ctrl+Right|Visual Multi' <C-RightMouse> <Plug>(VM-Mouse-Word)
+Nmap 'Column selection|Visual Multi' <M-C-RightMouse> <Plug>(VM-Mouse-Column)
 " }}}
 
 " ===============================================================================
@@ -241,8 +229,7 @@ Plug 'tpope/vim-rhubarb'
 Plug 'rhysd/git-messenger.vim'
 let g:git_messenger_no_default_mappings = v:true
 " Key mappings:
-nmap <C-g>m <Plug>(git-messenger)
-" Ctrl+g,m - Show git commit info
+Nmap 'Show git commit info|Git' <C-g>m <Plug>(git-messenger)
 " }}}
 
 " ===============================================================================
@@ -255,10 +242,11 @@ nmap <C-g>m <Plug>(git-messenger)
 " Automatically detects file type and uses appropriate comment syntax
 Plug 'tpope/vim-commentary'
 " Key mappings:
-" gcc         - Comment/uncomment current line
-" gc{motion}  - Comment/uncomment motion (e.g., gcip for inner paragraph)
-" gc          - Comment/uncomment selection (visual mode)
-" gcu         - Uncomment adjacent commented lines
+" Document Commentary mappings without overriding them
+Nmap 'Comment/uncomment current line|Commentary' gcc
+Nmap 'Comment/uncomment motion|Commentary' gc
+Xmap 'Comment/uncomment selection|Commentary' gc
+Nmap 'Uncomment adjacent commented lines|Commentary' gcu
 " }}}
 
 " ===============================================================================
@@ -339,11 +327,12 @@ Plug 'tpope/vim-surround'
 " Enables dot repetition for surround operations
 Plug 'tpope/vim-repeat'
 " Key mappings:
-" ysiw'     - Surround inner word with single quotes (fo|o -> 'foo')
-" ds'       - Delete surrounding single quotes ('fo|o' -> foo)
-" cs'"      - Change single quotes to double quotes ('fo|o' -> "foo")
-" yssb      - Surround entire line with brackets
-" S{        - Surround selection with braces (visual mode)
+" Document Surround mappings without overriding them
+Nmap 'Surround inner word (ysiw + delimiter)|Surround' ysiw
+Nmap 'Delete surrounding (ds + delimiter)|Surround' ds
+Nmap 'Change surrounding (cs + old + new)|Surround' cs
+Nmap 'Surround entire line (yss + delimiter)|Surround' yss
+Xmap 'Surround selection (S + delimiter)|Surround' S
 " }}}
 
 " ===============================================================================
@@ -359,8 +348,9 @@ Plug 'tpope/vim-repeat'
 " Enhanced increment/decrement for dates, times, and various number formats
 Plug 'tpope/vim-speeddating'
 " Key mappings:
-" Ctrl-A      - Increment number/date under cursor
-" Ctrl-X      - Decrement number/date under cursor
+" Document SpeedDating mappings without overriding them
+Nmap 'Increment number/date under cursor|SpeedDating' <C-a>
+Nmap 'Decrement number/date under cursor|SpeedDating' <C-x>
 " Supported formats: 2023-12-25, 12:30:45, #ff0000, XIV, etc.
 " }}}
 
@@ -414,8 +404,9 @@ Plug 'pbrisbin/vim-mkdir'
 Plug 'mtth/scratch.vim'
 let g:scratch_persistence_file = '~/.vim/scratch.md'  " Persist across sessions
 " Key mappings:
-" gs          - Open scratch buffer in insert mode
-" gs          - Open scratch buffer with selection (visual mode)
+" Document Scratch mappings without overriding them
+Nmap 'Open scratch buffer in insert mode|Scratch' gs
+Xmap 'Open scratch buffer with selection|Scratch' gs
 " :Scratch    - Open scratch buffer in normal mode
 " }}}
 
@@ -431,12 +422,14 @@ let g:scratch_persistence_file = '~/.vim/scratch.md'  " Persist across sessions
 " Create splits containing only the selected text
 Plug 'wellle/visual-split.vim'
 " Configure key mappings for visual splits
-for m in ['n', 'x']
-  execute m . "noremap <C-w>gr  :VSResize<CR>"
-  execute m . "noremap <C-w>gss :VSSplit<CR>"
-  execute m . "noremap <C-w>gsa :VSSplitAbove<CR>"
-  execute m . "noremap <C-w>gsb :VSSplitBelow<CR>"
-endfor
+Nmap 'Resize window to selection|Visual Split' <C-w>gr :VSResize<CR>
+Nmap 'Split right with selection|Visual Split' <C-w>gss :VSSplit<CR>
+Nmap 'Split above with selection|Visual Split' <C-w>gsa :VSSplitAbove<CR>
+Nmap 'Split below with selection|Visual Split' <C-w>gsb :VSSplitBelow<CR>
+Xmap 'Resize window to selection|Visual Split' <C-w>gr :VSResize<CR>
+Xmap 'Split right with selection|Visual Split' <C-w>gss :VSSplit<CR>
+Xmap 'Split above with selection|Visual Split' <C-w>gsa :VSSplitAbove<CR>
+Xmap 'Split below with selection|Visual Split' <C-w>gsb :VSSplitBelow<CR>
 " Key mappings:
 " Ctrl-w gr   - Resize window to selection
 " Ctrl-w gss  - Split right with selection
@@ -456,8 +449,9 @@ endfor
 " Opens system color picker and inserts hex/rgb values
 Plug 'KabbAmine/vCoolor.vim'
 " Key mappings:
-" Alt-c       - Open color picker in insert mode
-" Alt-w       - Open color picker in normal mode
+" Document vCoolor mappings without overriding them
+Imap 'Open color picker|vCoolor' <M-c>
+Nmap 'Open color picker|vCoolor' <M-w>
 " }}}
 
 " ===============================================================================
@@ -472,10 +466,8 @@ Plug 'KabbAmine/vCoolor.vim'
 " Centers content and hides UI elements for focused writing
 Plug 'junegunn/goyo.vim'
 " Key mappings:
-nnoremap <C-w>g :Goyo<CR>
-" Ctrl-w g - Toggle Goyo mode (normal)
-inoremap <C-w>g <Esc>:Goyo<CR>
-" Ctrl-w g - Toggle Goyo mode (insert)
+Nmap 'Toggle Goyo mode|Writing' <C-w>g :Goyo<CR>
+Imap 'Toggle Goyo mode|Writing' <C-w>g <Esc>:Goyo<CR>
 " }}}
 
 " ===============================================================================
@@ -490,7 +482,8 @@ inoremap <C-w>g <Esc>:Goyo<CR>
 " Maximizes current window and restores previous layout
 Plug 'dhruvasagar/vim-zoom'
 " Key mappings:
-" Ctrl-w m    - Toggle window zoom (maximize/restore)
+" Document Vim Zoom mappings without overriding them
+Nmap 'Toggle window zoom (maximize/restore)|Vim Zoom' <C-w>m
 " }}}
 
 " ===============================================================================
@@ -508,14 +501,10 @@ Plug 'dhruvasagar/vim-zoom'
 " Makes delete operations not affect clipboard/register
 Plug 'svermeulen/vim-cutlass'
 " Remap cut operations to x key
-nnoremap x d
-" x now cuts (was delete single char)
-xnoremap x d
-" x cuts in visual mode
-nnoremap xx dd
-" xx cuts entire line
-nnoremap X D
-" X cuts to end of line
+Nmap 'Cut (delete to register)|Edit' x d
+Xmap 'Cut in visual mode|Edit' x d
+Nmap 'Cut entire line|Edit' xx dd
+Nmap 'Cut to end of line|Edit' X D
 " Note: d/dd now delete without affecting clipboard
 " Use x/xx for traditional cut behavior
 " }}}
@@ -536,7 +525,8 @@ nnoremap X D
 " Provides visual hints for quick cursor positioning
 Plug 'easymotion/vim-easymotion'
 " Key mappings:
-" ,,{motion}  - Trigger EasyMotion for any motion
+" Document EasyMotion mappings without overriding them
+Nmap 'Trigger EasyMotion for any motion|EasyMotion' <leader><leader>
 " ,,w         - Jump to word beginnings
 " ,,f{char}   - Find character with hints
 " ,,j         - Jump to lines below
@@ -568,26 +558,19 @@ Plug 'tpope/vim-abolish'
 Plug 'svermeulen/vim-subversive'
 
 " Key mappings for substitute operations:
-" s{motion}     - Substitute motion with yanked text
-nmap s <plug>(SubversiveSubstitute)
-" ss            - Substitute current line with yanked text
-nmap ss <plug>(SubversiveSubstituteLine)
-" S             - Substitute from cursor to end of line with yanked text
-nmap S <plug>(SubversiveSubstituteToEndOfLine)
+Nmap 'Substitute motion with yanked text|Subversive' s <plug>(SubversiveSubstitute)
+Nmap 'Substitute current line with yanked text|Subversive' ss <plug>(SubversiveSubstituteLine)
+Nmap 'Substitute to end of line with yanked text|Subversive' S <plug>(SubversiveSubstituteToEndOfLine)
 
 " Prompted substitution mappings:
-" ,s{motion}    - Substitute motion with prompted text
-nmap <leader>s <plug>(SubversiveSubstituteRange)
-xmap <leader>s <plug>(SubversiveSubstituteRange)
-" ,ss           - Substitute current word across buffer with prompted text
-nmap <leader>ss <plug>(SubversiveSubstituteWordRange)
+Nmap 'Substitute motion with prompted text|Subversive' <leader>s <plug>(SubversiveSubstituteRange)
+Xmap 'Substitute motion with prompted text|Subversive' <leader>s <plug>(SubversiveSubstituteRange)
+Nmap 'Substitute word across buffer with prompted text|Subversive' <leader>ss <plug>(SubversiveSubstituteWordRange)
 
 " Case-aware substitution (uses Abolish):
-" ,,s{motion}   - Smart case substitute (matches Word/word/WORD variants)
-nmap <leader><leader>s <plug>(SubversiveSubvertRange)
-xmap <leader><leader>s <plug>(SubversiveSubvertRange)
-" ,,ss          - Smart case substitute current word across buffer
-nmap <leader><leader>ss <plug>(SubversiveSubvertWordRange)
+Nmap 'Smart case substitute motion|Subversive' <leader><leader>s <plug>(SubversiveSubvertRange)
+Xmap 'Smart case substitute motion|Subversive' <leader><leader>s <plug>(SubversiveSubvertRange)
+Nmap 'Smart case substitute word across buffer|Subversive' <leader><leader>ss <plug>(SubversiveSubvertWordRange)
 " }}}
 
 " ===============================================================================
@@ -608,32 +591,22 @@ let g:yoinkIncludeDeleteOperations = 1        " Include delete operations in his
 let g:yoinkMaxItems = 20                      " Keep last 20 yank items
 
 " Post-paste navigation:
-nmap <c-n> <plug>(YoinkPostPasteSwapBack)
-" Ctrl-n - Previous yank after paste
-nmap <c-p> <plug>(YoinkPostPasteSwapForward)
-" Ctrl-p - Next yank after paste
+Nmap 'Previous yank after paste|Yoink' <c-n> <plug>(YoinkPostPasteSwapBack)
+Nmap 'Next yank after paste|Yoink' <c-p> <plug>(YoinkPostPasteSwapForward)
 
 " Enhanced paste operations:
-nmap p <plug>(YoinkPaste_p)
-" p - Paste with yoink history
-nmap P <plug>(YoinkPaste_P)
-" P - Paste before with yoink history
-nmap gp <plug>(YoinkPaste_gp)
-" gp - Paste and move cursor
-nmap gP <plug>(YoinkPaste_gP)
-" gP - Paste before and move cursor
+Nmap 'Paste with yoink history|Yoink' p <plug>(YoinkPaste_p)
+Nmap 'Paste before with yoink history|Yoink' P <plug>(YoinkPaste_P)
+Nmap 'Paste and move cursor|Yoink' gp <plug>(YoinkPaste_gp)
+Nmap 'Paste before and move cursor|Yoink' gP <plug>(YoinkPaste_gP)
 
 " Yank history navigation:
-nmap [y <plug>(YoinkRotateBack)
-" [y - Previous item in yank history
-nmap ]y <plug>(YoinkRotateForward)
-" ]y - Next item in yank history
+Nmap 'Previous item in yank history|Yoink' [y <plug>(YoinkRotateBack)
+Nmap 'Next item in yank history|Yoink' ]y <plug>(YoinkRotateForward)
 
 " Cursor position preservation:
-nmap y <plug>(YoinkYankPreserveCursorPosition)
-" y - Yank without moving cursor
-xmap y <plug>(YoinkYankPreserveCursorPosition)
-" y - Yank selection without moving cursor
+Nmap 'Yank without moving cursor|Yoink' y <plug>(YoinkYankPreserveCursorPosition)
+Xmap 'Yank selection without moving cursor|Yoink' y <plug>(YoinkYankPreserveCursorPosition)
 " }}}
 
 " ===============================================================================
@@ -672,9 +645,10 @@ Plug 'brooth/far.vim'
 " Provides additional pair text objects and seeking behavior
 Plug 'wellle/targets.vim'
 " Text objects:
-" ci,    - Change inside next comma-separated value
-" da)    - Delete around next parentheses
-" di'    - Delete inside next single quotes
+" Document Targets text objects without overriding them
+Omap 'Inside next comma-separated value|Targets' i,
+Omap 'Around next parentheses|Targets' a)
+Omap 'Inside next single quotes|Targets' i'
 " }}}
 
 " ===============================================================================
@@ -685,9 +659,11 @@ Plug 'wellle/targets.vim'
 " Work with indentation levels as text objects
 Plug 'michaeljsmith/vim-indent-object'
 " Text objects:
-" ai/ii  - Around/inside indentation level
-" aI/iI  - Around/inside indentation level (including blank lines)
-" Examples: cai (change around indentation), dii (delete inner indentation)
+" Document Indent Object text objects without overriding them
+Omap 'Around indentation level|Indent Object' ai
+Omap 'Inside indentation level|Indent Object' ii
+Omap 'Around indentation level (including blank lines)|Indent Object' aI
+Omap 'Inside indentation level (including blank lines)|Indent Object' iI
 " }}}
 
 " ===============================================================================
@@ -696,14 +672,10 @@ Plug 'michaeljsmith/vim-indent-object'
 
 " Custom text objects for buffer operations: {{{
 " Entire buffer text object
-onoremap ie :exec "normal! ggVG"<cr>
-" ie - Inner entire buffer
-" Examples: cie (change entire buffer), vie (select entire buffer)
+Omap 'Inner entire buffer|Text Objects' ie :exec "normal! ggVG"<cr>
 
 " Viewable text object (current screen)
-onoremap iv :exec "normal! HVL"<cr>
-" iv - Current viewable text
-" Examples: civ (change visible text), div (delete visible text)
+Omap 'Current viewable text|Text Objects' iv :exec "normal! HVL"<cr>
 " }}}
 
 " ===============================================================================
@@ -721,10 +693,8 @@ onoremap iv :exec "normal! HVL"<cr>
 " Delete buffers without affecting window layout
 Plug 'moll/vim-bbye'
 " Key mappings:
-nnoremap <leader>bd :Bdelete<CR>
-" ,bd - Delete buffer (save first)
-nnoremap <leader>bx :Bdelete!<CR>
-" ,bx - Force delete buffer (no save)
+Nmap 'Delete buffer (save first)|Buffers' <leader>bd :Bdelete<CR>
+Nmap 'Force delete buffer (no save)|Buffers' <leader>bx :Bdelete!<CR>
 " Commands:
 " :Bdelete   - Delete current buffer, keep window
 " :Bwipeout  - Wipeout current buffer, keep window
@@ -787,8 +757,7 @@ Plug 'yegappan/mru'
 Plug 't9md/vim-choosewin'
 let g:choosewin_overlay_enable = 1        " Show window markers as overlay
 " Key mappings:
-nmap - <Plug>(choosewin)
-" - - Open window chooser
+Nmap 'Open window chooser|Windows' - <Plug>(choosewin)
 " Operations in chooser:
 " s      - Swap with selected window
 " S      - Swap and stay in current window
@@ -863,7 +832,8 @@ let g:vrc_curl_opts = {
 " Provides automatic table formatting and manipulation
 Plug 'dhruvasagar/vim-table-mode'
 " Key mappings:
-" ,tm         - Toggle table mode
+" Document Table Mode mappings without overriding them
+Nmap 'Toggle table mode|Table Mode' <leader>tm
 " ||          - Start table or add column (table mode)
 " |           - Add column separator (table mode)
 " Features: Auto-alignment, row/column manipulation, table formatting
@@ -921,8 +891,9 @@ let g:markdown_composer_autostart = 0         " Don't auto-start preview
 Plug 'justinmk/vim-gtfo'
 let g:gtfo#terminals = { 'unix': 'kitty @ launch --cwd="%:p:h"' }  " Use Kitty terminal
 " Key mappings:
-" got         - Open terminal in current file's directory
-" gof         - Open file manager in current file's directory
+" Document GTFO mappings without overriding them
+Nmap 'Open terminal in current files directory|GTFO' got
+Nmap 'Open file manager in current files directory|GTFO' gof
 " }}}
 
 " ===============================================================================

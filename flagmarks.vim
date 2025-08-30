@@ -903,15 +903,15 @@ command! FlagQuick call FlagQuick()
 " Key Mappings
 " -------------------------------------------------------------------------
 " Core mark management mappings (ma, md, mn, mp, etc.)
-nnoremap <silent> ma :FlagAdd<CR>
-nnoremap <silent> md :FlagDelete<CR>
-nnoremap <silent> mn :FlagNext<CR>
-nnoremap <silent> mp :FlagPrev<CR>
-nnoremap <silent> mc :FlagClearFile<CR>
-nnoremap <silent> mC :FlagClearAll<CR>
-nnoremap <silent> ml :FlagList<CR>
-nnoremap <silent> mt :FlagToggle<CR>
-nnoremap <silent> mq :FlagQuick<CR>
+Nmap 'Add flag mark at current position|Flagmarks' ma :FlagAdd<CR>
+Nmap 'Delete flag mark at current line|Flagmarks' md :FlagDelete<CR>
+Nmap 'Jump to next flag mark|Flagmarks' mn :FlagNext<CR>
+Nmap 'Jump to previous flag mark|Flagmarks' mp :FlagPrev<CR>
+Nmap 'Clear all marks in current file|Flagmarks' mc :FlagClearFile<CR>
+Nmap 'Clear all marks globally|Flagmarks' mC :FlagClearAll<CR>
+Nmap 'List all flag marks|Flagmarks' ml :FlagList<CR>
+Nmap 'Toggle between last two flag marks|Flagmarks' mt :FlagToggle<CR>
+Nmap 'Quick jump to mark (prompt)|Flagmarks' mq :FlagQuick<CR>
 
 " -------------------------------------------------------------------------
 " Window-Aware Navigation Mappings
@@ -919,16 +919,16 @@ nnoremap <silent> mq :FlagQuick<CR>
 " These mappings (lowercase 'm') provide window-aware navigation behavior.
 " If a mark's file is open in another window, jump to that window instead
 " of opening the file in the current window.
-nnoremap <silent> mm :FlagGo<CR>
-nnoremap <silent> mn :FlagNext<CR>
-nnoremap <silent> mp :FlagPrev<CR>
-nnoremap <silent> <leader>m :FlagMenuWindow<CR>
+Nmap 'Jump to last mark (window-aware)|Flagmarks' mm :FlagGo<CR>
+Nmap 'Jump to next mark (window-aware)|Flagmarks' mn :FlagNext<CR>
+Nmap 'Jump to prev mark (window-aware)|Flagmarks' mp :FlagPrev<CR>
+Nmap 'Open flagmarks menu (window-aware)|Flagmarks' <leader>m :FlagMenuWindow<CR>
 
 " Generate mappings for direct mark access (mga, mgb, mgc, etc.)
 " These allow quick jumping to specific marks with window awareness
 for s:i in range(char2nr('a'), char2nr('z'))
     let s:letter = nr2char(s:i)
-    execute 'nnoremap <silent> mg' . s:letter . ' :FlagGo ' . s:letter . '<CR>'
+    execute 'Nmap ''Jump to mark ' . s:letter . ' (window-aware)|Flagmarks'' mg' . s:letter . ' :FlagGo ' . s:letter . '<CR>'
 endfor
 
 " -------------------------------------------------------------------------
@@ -936,16 +936,16 @@ endfor
 " -------------------------------------------------------------------------
 " These mappings (uppercase 'M') force navigation to occur in the current
 " window, ignoring any existing windows that might contain the target file.
-nnoremap <silent> Mm :FlagGoSame<CR>
-nnoremap <silent> Mn :FlagNextSame<CR>
-nnoremap <silent> Mp :FlagPrevSame<CR>
-nnoremap <silent> <leader>M :FlagMenuSame<CR>
+Nmap 'Jump to last mark (same window)|Flagmarks' Mm :FlagGoSame<CR>
+Nmap 'Jump to next mark (same window)|Flagmarks' Mn :FlagNextSame<CR>
+Nmap 'Jump to prev mark (same window)|Flagmarks' Mp :FlagPrevSame<CR>
+Nmap 'Open flagmarks menu (same window)|Flagmarks' <leader>M :FlagMenuSame<CR>
 
 " Generate same-window mappings for direct mark access (Mga, Mgb, Mgc, etc.)
 " These force opening files in current window regardless of existing windows
 for s:i in range(char2nr('a'), char2nr('z'))
     let s:letter = nr2char(s:i)
-    execute 'nnoremap <silent> Mg' . s:letter . ' :FlagGoSame ' . s:letter . '<CR>'
+    execute 'Nmap ''Jump to mark ' . s:letter . ' (same window)|Flagmarks'' Mg' . s:letter . ' :FlagGoSame ' . s:letter . '<CR>'
 endfor
 
 " -------------------------------------------------------------------------
