@@ -773,7 +773,7 @@ Nmap 'Open window chooser|Windows' - <Plug>(choosewin)
 " Adapts to project-specific indentation styles without manual configuration
 
 " ===============================================================================
-" Sleuth - Automatic indentation detection
+" Indentation and context
 " ===============================================================================
 " {{{
 " Repository: https://github.com/tpope/vim-sleuth
@@ -783,6 +783,13 @@ Plug 'tpope/vim-sleuth'
 " - expandtab/noexpandtab (tabs vs spaces)
 " - tabstop, shiftwidth (indentation width)
 " - Based on analysis of current buffer content
+
+" Shows current context of the file on the top
+Plug 'wellle/context.vim'
+" To enable the context use `:ContextEnable` and `:ContextDisable` and
+" `:ContextToggle`
+let g:context_enabled = 0
+
 " }}}
 
 " ===============================================================================
@@ -896,7 +903,8 @@ Nmap 'Open terminal in current files directory|GTFO' got
 Nmap 'Open file manager in current files directory|GTFO' gof
 " }}}
 
-" ===============================================================================
+
+"===============================================================================
 " Plugin Configuration Complete {{{
 " ===============================================================================
 " TODO: Check for a custom.plugins.vim and source it here for user extensions
