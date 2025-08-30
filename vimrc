@@ -8,7 +8,7 @@
 " Leader Key Configuration
 " -------------------------------------------------------------------------
 " Set comma as the leader key for custom mappings
-let mapleader = ","
+let mapleader = " "
 let maplocalleader = ","
 
 " -------------------------------------------------------------------------

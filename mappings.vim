@@ -1,38 +1,45 @@
 " =========================================================================
 " Key Mappings and Shortcuts
-" use zr/zm to open/close all folds, za to toggle fold under cursor
+" NOTE: use zr/zm to open/close all folds, za to toggle fold under cursor
 " =========================================================================
 " This file contains pure Vim key mappings
 " Plugin-specific mappings are defined in plugins.vim
-"
+" =========================================================================
+" Mappings using Nmap, Imap, Vmap, Xmap, Cmap will show up in :ShowDocs and
+" :BufferDocs with descriptions and categories (if provided)
+" regular nnoremap, inoremap, vnoremap, etc. will not show in the docs
+" =========================================================================
 " Debugging tips:
 " :verbose map <key>  - See where a mapping was defined
 " :map                - See all mappings
 " :nmap, :vmap, :imap - See mode-specific mappings
 " :map <leader>       - See all leader mappings
+" <leader>h           - Open interactive mapping documentation menu
+" :BufferDocs         - Open mapping documentation in a buffer
 " =========================================================================
 " -------------------------------------------------------------------------
-" Tab Management
+" Tab Management {{{
 " -------------------------------------------------------------------------
-" Note: Tabs are rarely used in favor of buffers, but mappings provided {{{
+" Note: Tabs are rarely used in favor of buffers, but mappings provided
 Nmap 'Create new tab|Tabs' <leader>tn :tabnew<CR>
 Nmap 'Close all other tabs|Tabs' <leader>to :tabonly<CR>
 Nmap 'Close current tab|Tabs' <leader>tc :tabclose<CR>
 Nmap 'Go to next tab|Tabs' <leader>tl :tabnext<CR>
 Nmap 'Go to previous tab|Tabs' <leader>th :tabprevious<CR>
+
 " }}}
 " -------------------------------------------------------------------------
-" Buffer Management
+" Buffer Management {{{
 " -------------------------------------------------------------------------
-" {{{
 Nmap 'List buffers and jump to one|Buffers' <leader>bl :ls<CR>:b<Space>
 Nmap 'Previous buffer|Buffers' [q :bp<CR>
 Nmap 'Next buffer|Buffers' ]q :bn<CR>
 Nmap 'Delete all hidden buffers|Buffers' bh :DeleteHiddenBuffers<CR>
 
-" Quick buffer switching with ,1 through ,9
-for n in range(1, 9)
-  execute 'Nmap ''Switch to buffer ' . n . '|Buffers'' <leader>' . n . ' :buffer ' . n . '<CR>'
+" Quick buffer switching with <leader>1 through 9
+Nmap 'Switch to buffer 1-9|Buffers' <leader>1 :buffer 1<CR>
+for n in range(2, 9)
+  execute 'nnoremap <silent> <leader>' . n . ' :buffer ' . n . '<CR>'
 endfor
 
 " Quick switch to alternate buffer
@@ -40,57 +47,53 @@ Nmap 'Toggle between two buffers|Buffers' <leader><Tab> <C-^>
 
 " }}}
 " -------------------------------------------------------------------------
-" Window Management (Splits)
+" Window Management (Splits) {{{
 " -------------------------------------------------------------------------
-" Window resizing {{{
 Nmap 'Increase window height|Windows' <leader>= :resize +3<CR>
 Nmap 'Decrease window height|Windows' <leader>- :resize -3<CR>
 Nmap 'Increase window width|Windows' <leader>> :vertical resize +3<CR>
 Nmap 'Decrease window width|Windows' <leader>< :vertical resize -3<CR>
-" Built-in window shortcuts:
-" C-w-f - Open file under cursor in new split
-" C-w-v - Split window vertically
-" C-w-s - Split window horizontally
 
 " Interactive resize mode
 Nmap 'Enter resize mode (arrows to resize)|Windows' <leader>rs :call ResizeMode()<CR>
 " }}}
-"
 " -------------------------------------------------------------------------
-" Quick Save/Quit and Quality of Life
+" Quick Save/Quit and Quality of Life {{{
 " -------------------------------------------------------------------------
-" {{{
 Nmap 'Save file|File' <leader>w :write<CR>
 Nmap 'Quit|File' <leader>q :quit<CR>
 Nmap 'Save and quit|File' <leader>x :xit<CR>
-Nmap 'Clear search highlighting|Search' <leader>h :nohlsearch<CR>
+
+" Enter after search will clear highlights
+nnoremap <silent> <CR> :nohlsearch<CR><CR>
+
 " }}}
-"
 " -------------------------------------------------------------------------
-" Terminal Mode
+" Terminal Mode {{{
 " -------------------------------------------------------------------------
-" {{{
 tnoremap <C-v><Esc> <C-\><C-n>
 " C-v Esc - Exit terminal mode (keeping as tnoremap for now)
 Nmap 'Open terminal at bottom|Terminal' <leader>c :botright term<CR>
+
 " }}}
 " -------------------------------------------------------------------------
-" Search and Replace
+" Search and Replace {{{
 " -------------------------------------------------------------------------
-" Replace current word throughout file {{{
+" Replace current word throughout file
 " Note: Visual Multi plugin provides similar functionality with Ctrl+d
 Nmap 'Replace word under cursor|Search' <leader>re :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
+
 " }}}
-"
 " -------------------------------------------------------------------------
-" Configuration Reload
+" Configuration Reload {{{
 " -------------------------------------------------------------------------
 Nmap 'Reload vimrc|Config' <leader><leader>so :source $MYVIMRC<CR>
 
+" }}}
 " -------------------------------------------------------------------------
-" Common Editor Shortcuts
+" Common Editor Shortcuts {{{
 " -------------------------------------------------------------------------
-" Ctrl+S to save (familiar for users coming from other editors) {{{
+" Ctrl+S to save (familiar for users coming from other editors)
 Nmap 'Save file|File' <C-s> :update<CR>
 Imap 'Save file|File' <C-s> <Esc>:update<CR>a
 Xmap 'Save file|File' <C-s> <Esc>:update<CR>gv
@@ -105,11 +108,10 @@ Xmap 'Undo|Edit' <C-z> <Esc>ugv
 Nmap 'Remove trailing whitespace|Edit' <leader>tw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 
 " }}}
-"
 " -------------------------------------------------------------------------
-" Emacs-style Cursor Movement
+" Emacs-style Cursor Movement {{{
 " -------------------------------------------------------------------------
-" Familiar keybindings for users coming from Emacs {{{
+" Familiar keybindings for users coming from Emacs
 " Insert mode mappings
 Imap 'Move to beginning of line|Emacs' <C-a> <Home>
 Imap 'Move to end of line|Emacs' <C-e> <End>
@@ -148,49 +150,51 @@ Xmap 'Move selection down|Lines' <M-Down> :m '>+1<CR>gv=gv
 Xmap 'Move selection up|Lines' <M-Up> :m '<-2<CR>gv=gv
 
 " }}}
-
 " -------------------------------------------------------------------------
-" Visual Mode Enhancements
+" Visual Mode Enhancements {{{
 " -------------------------------------------------------------------------
-" Stay in visual mode after indenting {{{
+" Stay in visual mode after indenting 
 Xmap 'Indent left and stay in visual mode|Edit' < <gv
 Xmap 'Indent right and stay in visual mode|Edit' > >gv
 
 " Paste without overwriting register (keeps yanked text)
 Xmap 'Paste without yanking replaced text|Edit' p "_dP
 Vmap 'Paste without yanking replaced text|Edit' p "_dP
+
 " }}}
+" -------------------------------------------------------------------------
+" Disable Problematic Keys {{{
+" -------------------------------------------------------------------------
+nnoremap Q <Nop>
 
+" }}}
 " -------------------------------------------------------------------------
-" Disable Problematic Keys
-" -------------------------------------------------------------------------
-Nmap 'Disable Ex mode|' Q <Nop>
-
-" -------------------------------------------------------------------------
-" Navigation Improvements
+" Navigation Improvements {{{
 " -------------------------------------------------------------------------
 " Better navigation for wrapped lines (uncomment if desired)
-" nnoremap j gj
+nnoremap j gj
 " j - Move by display line, not physical line
-" nnoremap k gk
+nnoremap k gk
 " k - Move by display line, not physical line
-" nnoremap gj j
+nnoremap gj j
 " gj - Move by physical line
-" nnoremap gk k
+nnoremap gk k
 " gk - Move by physical line
-
+" }}}
 " -------------------------------------------------------------------------
-" File Operations
+" File Operations {{{
 " -------------------------------------------------------------------------
 " Make current file executable (useful for scripts)
 Nmap 'Make file executable|File' <leader><leader>x :!chmod +x %<CR>
 
+" }}}
 " -------------------------------------------------------------------------
-" MapDocs System
+" MapDocs System {{{
 " -------------------------------------------------------------------------
 " Access the mapping documentation and interactive menu
-Nmap 'Open mapping documentation menu|Help' <leader><leader>m :ShowDocs<CR>
+Nmap 'Open mapping documentation menu|Help' <leader>h :ShowDocs<CR>
 
+" }}}
 " -------------------------------------------------------------------------
 " End of Mappings
 " -------------------------------------------------------------------------
