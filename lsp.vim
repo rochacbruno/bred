@@ -175,15 +175,15 @@ endif
 " Requirements: Install doc-lsp from source or pip
 "   - Custom LSP server for Python documentation assistance
 " Features: Documentation completion and suggestions for Python
-if executable('/home/rochacbruno/.local/bin/doc-lsp1')
-    call LspAddServer([{
-        \   'name': 'doc-lsp',
-        \   'filetype': 'python',
-        \   'path': '/home/rochacbruno/.local/bin/doc-lsp'
-        \ }])
-else
-   call Alert('Doc-LSP language server not found. Please install Doc LSP')
-endif
+" if executable('/home/rochacbruno/.local/bin/doc-lsp1')
+"     call LspAddServer([{
+"         \   'name': 'doc-lsp',
+"         \   'filetype': 'python',
+"         \   'path': '/home/rochacbruno/.local/bin/doc-lsp'
+"         \ }])
+" else
+"    call Alert('Doc-LSP language server not found. Please install Doc LSP')
+" endif
 
 " ---------------------------------------------------------------------------
 " Pyright Language Server (Python)

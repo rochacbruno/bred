@@ -192,7 +192,7 @@ Nmap 'Make file executable|File' <leader><leader>x :!chmod +x %<CR>
 " MapDocs System {{{
 " -------------------------------------------------------------------------
 " Access the mapping documentation and interactive menu
-Nmap 'Open mapping documentation menu|Help' <leader>h :ShowDocs<CR>
+Nmap 'Open mapping documentation on a buffer|Help' <leader>h :BufferDocs<CR>
 nnoremap <silent> <leader> :ShowDocs<CR>
 
 

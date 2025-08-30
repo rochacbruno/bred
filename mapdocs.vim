@@ -45,6 +45,7 @@ command! -nargs=+ Vmap call s:CreateMapping('v', <q-args>)
 command! -nargs=+ Xmap call s:CreateMapping('x', <q-args>)
 command! -nargs=+ Omap call s:CreateMapping('o', <q-args>)
 command! -nargs=+ Cmap call s:CreateMapping('c', <q-args>)
+command! -nargs=+ Tmap call s:CreateMapping('t', <q-args>)
 
 " Create mapping with documentation
 function! s:CreateMapping(mode, args) abort
@@ -106,36 +107,46 @@ endfunction
 
 " Build FZF source list from mapdocs with optional mode filter
 function! s:BuildFZFSourceFiltered(mode_filter) abort
-    " If mode_filter is empty, show all modes
-    let l:show_all = empty(a:mode_filter)
+    " mode_filter should contain modes in the desired order
+    " If empty, we'll use default order nvxicot
+    if empty(a:mode_filter)
+        let l:ordered_modes = ['n', 'v', 'x', 'i', 'c', 'o', 't']
+    else
+        let l:ordered_modes = a:mode_filter
+    endif
     
     let l:leader = get(g:, 'mapleader', '\')
     " Display leader key properly (show <Space> instead of empty space)
     let l:leader_display = l:leader == ' ' ? '<Space>' : l:leader
-    let l:uncategorized = []
-    let l:categorized = []
     
-    " Iterate through all modes
-    for [l:mode, l:mode_data] in items(g:mapdocs)
-        " Skip this mode if it's not in the filter
-        if !l:show_all && index(a:mode_filter, l:mode) == -1
+    " Build the final source list respecting mode order
+    let l:source = []
+    let l:first_mode = 1
+    
+    " Process modes in the specified order
+    for l:mode in l:ordered_modes
+        " Skip if this mode doesn't exist in mapdocs
+        if !has_key(g:mapdocs, l:mode)
             continue
         endif
         
+        let l:mode_data = g:mapdocs[l:mode]
         let l:mode_display = s:GetModeShort(l:mode)
+        let l:mode_uncategorized = []
+        let l:mode_categorized = []
         
-        " Collect top-level mappings (uncategorized)
+        " Collect uncategorized mappings for this mode
         for [l:key, l:desc] in items(l:mode_data)
             if type(l:desc) == type('')
                 " Format: [mode] key : description
                 let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
                 let l:line = printf("[%s] %-15s : %s", l:mode_display, l:display_key, l:desc)
                 " Store with description for sorting
-                call add(l:uncategorized, {'line': l:line . '|' . l:mode . '|' . l:key, 'desc': l:desc})
+                call add(l:mode_uncategorized, {'line': l:line . '|' . l:mode . '|' . l:key, 'desc': l:desc})
             endif
         endfor
         
-        " Collect categorized mappings
+        " Collect categorized mappings for this mode
         for [l:category, l:cat_data] in items(l:mode_data)
             if type(l:cat_data) == type({})
                 for [l:key, l:desc] in items(l:cat_data)
@@ -143,7 +154,7 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
                     " Include category in display
                     let l:line = printf("[%s] %-15s : [%s] %s", l:mode_display, l:display_key, l:category, l:desc)
                     " Store with category and description for sorting
-                    call add(l:categorized, {
+                    call add(l:mode_categorized, {
                         \ 'line': l:line . '|' . l:mode . '|' . l:key,
                         \ 'category': l:category,
                         \ 'desc': l:desc
@@ -151,35 +162,104 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
                 endfor
             endif
         endfor
+        
+        " Sort uncategorized alphabetically by description within this mode
+        call sort(l:mode_uncategorized, {a, b -> a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0})
+        
+        " Sort categorized first by category, then by description within this mode
+        call sort(l:mode_categorized, {a, b -> 
+            \ a.category != b.category ? 
+            \ (a.category < b.category ? -1 : 1) :
+            \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
+        \ })
+        
+        " Add mode separator if not the first mode and we have items
+        if !l:first_mode && (!empty(l:mode_uncategorized) || !empty(l:mode_categorized))
+            call add(l:source, '─────────────────────────────────────────────────|separator|separator')
+        endif
+        
+        " Add uncategorized items for this mode
+        for l:item in l:mode_uncategorized
+            call add(l:source, l:item.line)
+        endfor
+        
+        " Add separator between uncategorized and categorized within mode
+        if !empty(l:mode_uncategorized) && !empty(l:mode_categorized)
+            call add(l:source, '·····································································|separator|separator')
+        endif
+        
+        " Add categorized items for this mode
+        for l:item in l:mode_categorized
+            call add(l:source, l:item.line)
+        endfor
+        
+        if !empty(l:mode_uncategorized) || !empty(l:mode_categorized)
+            let l:first_mode = 0
+        endif
     endfor
     
-    " Sort uncategorized alphabetically by description
-    call sort(l:uncategorized, {a, b -> a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0})
-    
-    " Sort categorized first by category, then by description
-    call sort(l:categorized, {a, b -> 
-        \ a.category != b.category ? 
-        \ (a.category < b.category ? -1 : 1) :
-        \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
-    \ })
-    
-    " Build final source list: uncategorized first, then categorized
-    let l:source = []
-    
-    " Add uncategorized items
-    for l:item in l:uncategorized
-        call add(l:source, l:item.line)
-    endfor
-    
-    " Add separator if we have both types
-    if !empty(l:uncategorized) && !empty(l:categorized)
-        " Add a visual separator (this will be filtered out in selection)
-        call add(l:source, '─────────────────────────────────────────────────|separator|separator')
-    endif
-    
-    " Add categorized items
-    for l:item in l:categorized
-        call add(l:source, l:item.line)
+    " Add any remaining modes that weren't in the filter (at the end)
+    for [l:mode, l:mode_data] in items(g:mapdocs)
+        if index(l:ordered_modes, l:mode) != -1
+            " Already processed
+            continue
+        endif
+        
+        let l:mode_display = s:GetModeShort(l:mode)
+        let l:mode_uncategorized = []
+        let l:mode_categorized = []
+        
+        " Collect uncategorized mappings for this mode
+        for [l:key, l:desc] in items(l:mode_data)
+            if type(l:desc) == type('')
+                let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
+                let l:line = printf("[%s] %-15s : %s", l:mode_display, l:display_key, l:desc)
+                call add(l:mode_uncategorized, {'line': l:line . '|' . l:mode . '|' . l:key, 'desc': l:desc})
+            endif
+        endfor
+        
+        " Collect categorized mappings for this mode
+        for [l:category, l:cat_data] in items(l:mode_data)
+            if type(l:cat_data) == type({})
+                for [l:key, l:desc] in items(l:cat_data)
+                    let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
+                    let l:line = printf("[%s] %-15s : [%s] %s", l:mode_display, l:display_key, l:category, l:desc)
+                    call add(l:mode_categorized, {
+                        \ 'line': l:line . '|' . l:mode . '|' . l:key,
+                        \ 'category': l:category,
+                        \ 'desc': l:desc
+                    \ })
+                endfor
+            endif
+        endfor
+        
+        " Sort and add if we have any items
+        if !empty(l:mode_uncategorized) || !empty(l:mode_categorized)
+            call sort(l:mode_uncategorized, {a, b -> a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0})
+            call sort(l:mode_categorized, {a, b -> 
+                \ a.category != b.category ? 
+                \ (a.category < b.category ? -1 : 1) :
+                \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
+            \ })
+            
+            if !l:first_mode
+                call add(l:source, '─────────────────────────────────────────────────|separator|separator')
+            endif
+            
+            for l:item in l:mode_uncategorized
+                call add(l:source, l:item.line)
+            endfor
+            
+            if !empty(l:mode_uncategorized) && !empty(l:mode_categorized)
+                call add(l:source, '·····································································|separator|separator')
+            endif
+            
+            for l:item in l:mode_categorized
+                call add(l:source, l:item.line)
+            endfor
+            
+            let l:first_mode = 0
+        endif
     endfor
     
     return l:source
@@ -187,7 +267,8 @@ endfunction
 
 " Build FZF source list from mapdocs (backwards compatibility)
 function! s:BuildFZFSource() abort
-    return s:BuildFZFSourceFiltered([])
+    " Use default order: nvxicot
+    return s:BuildFZFSourceFiltered(['n', 'v', 'x', 'i', 'c', 'o', 't'])
 endfunction
 
 " Convert key notation to executable key sequence
@@ -395,6 +476,11 @@ function! s:HandleFZFSelection(line) abort
             else
                 call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
+        elseif l:mode == 't'
+            " For terminal mode, we need to be in a terminal window
+            " This is tricky - terminal mappings only work in terminal buffers
+            echo "[Terminal Mode] " . l:key_orig . " | Use in terminal buffer"
+            return
         else
             " Default to normal mode execution
             call feedkeys("\<Esc>", 'n')
@@ -438,8 +524,13 @@ function! s:ShowDocsWithFZF(modes) abort
         let s:has_saved_visual = 0
     endif
     
-    " Parse mode filter
-    let l:mode_filter = a:modes == '' ? [] : split(a:modes, '\zs')
+    " Parse mode filter - if empty, use default order
+    if a:modes == ''
+        " Default order: nvxicot (Normal, Visual, V-Line, Insert, Command, Operator, Terminal)
+        let l:mode_filter = ['n', 'v', 'x', 'i', 'c', 'o', 't']
+    else
+        let l:mode_filter = split(a:modes, '\zs')
+    endif
     
     " Build the source list
     let l:source = s:BuildFZFSourceFiltered(l:mode_filter)
@@ -505,6 +596,8 @@ function! s:GetModeShort(mode) abort
         return 'O'
     elseif a:mode == 'c'
         return 'C'
+    elseif a:mode == 't'
+        return 'T'
     else
         return a:mode
     endif
@@ -524,6 +617,8 @@ function! s:GetModeName(mode) abort
         return 'Operator-pending Mode'
     elseif a:mode == 'c'
         return 'Command Mode'
+    elseif a:mode == 't'
+        return 'Terminal Mode'
     else
         return 'Mode ' . a:mode
     endif
