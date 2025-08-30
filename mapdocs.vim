@@ -335,13 +335,46 @@ function! s:HandleFZFSelection(line) abort
                 call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
         elseif l:mode == 'v' || l:mode == 'x'
-            " For visual mode, enter visual mode first
-            call feedkeys("\<Esc>v", 'n')
-            if l:key =~ '<.*>'
-                let l:converted = s:ConvertKeyNotation(l:key)
-                call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
+            " For visual mode, we need to handle selection restoration carefully
+            if exists('s:has_saved_visual') && s:has_saved_visual
+                " First restore the selection
+                let l:restore_seq = "\<Esc>"
+                
+                " Go to start position
+                let l:restore_seq .= s:saved_visual_start_line . "G" . s:saved_visual_start_col . "|"
+                
+                " Enter the appropriate visual mode
+                if s:saved_visual_mode == 'V'
+                    let l:restore_seq .= "V"
+                elseif s:saved_visual_mode == "\<C-v>"
+                    let l:restore_seq .= "\<C-v>"
+                else
+                    let l:restore_seq .= "v"
+                endif
+                
+                " Go to end position
+                let l:restore_seq .= s:saved_visual_end_line . "G" . s:saved_visual_end_col . "|"
+                
+                " Send the restore sequence first
+                call feedkeys(l:restore_seq, 'n')
+                
+                " Then send the actual command separately
+                if l:key =~ '<.*>'
+                    let l:converted = s:ConvertKeyNotation(l:key)
+                    " Use 't' flag to allow mappings to be triggered
+                    call feedkeys(eval('"' . l:converted . '"'), 'mt')
+                else
+                    call feedkeys(l:key, 'mt')
+                endif
             else
-                call feedkeys(l:key, l:was_created ? 't' : 'm')
+                " No saved selection, just enter visual mode and execute
+                call feedkeys("\<Esc>v", 'n')
+                if l:key =~ '<.*>'
+                    let l:converted = s:ConvertKeyNotation(l:key)
+                    call feedkeys(eval('"' . l:converted . '"'), 'mt')
+                else
+                    call feedkeys(l:key, 'mt')
+                endif
             endif
         elseif l:mode == 'o'
             " For operator-pending mode, we need to start with an operator
@@ -377,13 +410,32 @@ endfunction
 
 " ShowDocs command using FZF
 " Usage: :ShowDocs [modes] - where modes is a string like 'n', 'ni', 'nix', etc.
-command! -nargs=? ShowDocs call s:ShowDocsWithFZF(<q-args>)
+" Can be used with a range to preserve visual selection: :'<,'>ShowDocs vx
+command! -nargs=? -range ShowDocs call s:ShowDocsWithFZF(<q-args>)
 
 function! s:ShowDocsWithFZF(modes) abort
     " Check if FZF is available
     if !exists(':FZF')
         echoerr "FZF is not available. Please install fzf.vim"
         return
+    endif
+    
+    " Save visual selection if we're in visual mode or have a range
+    if mode() =~# '[vV\<C-v>]' || line("'<") > 0
+        " Save the actual positions, not just the marks
+        let s:saved_visual_start_line = line("'<")
+        let s:saved_visual_start_col = col("'<")
+        let s:saved_visual_end_line = line("'>")
+        let s:saved_visual_end_col = col("'>")
+        let s:saved_visual_mode = visualmode()
+        let s:has_saved_visual = 1
+        " Also save the actual selected text to verify restoration
+        let s:saved_register = getreg('"')
+        normal! gvy
+        let s:saved_selection = getreg('"')
+        call setreg('"', s:saved_register)
+    else
+        let s:has_saved_visual = 0
     endif
     
     " Parse mode filter
