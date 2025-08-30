@@ -271,7 +271,7 @@ function! s:ConvertKeyNotation(key) abort
     return l:key_seq
 endfunction
 
-" Handler for FZF selection
+" Original handler for FZF selection
 function! s:HandleFZFSelection(line) abort
     " Extract the mode and key from the selected line
     " Format: display|mode|key
@@ -285,6 +285,25 @@ function! s:HandleFZFSelection(line) abort
             return
         endif
         
+        " For insert mode, just show info and let window close
+        if l:mode == 'i'
+            " Get the mapping info for display
+            let l:mapping = maparg(l:key_orig, 'i', 0, 1)
+            
+            " Build informative message
+            let l:msg = "[Insert Mode] " . l:key_orig
+            if !empty(l:mapping) && has_key(l:mapping, 'rhs')
+                let l:msg .= " → " . l:mapping.rhs
+            endif
+            
+            " Show message in status line
+            echo l:msg . " | Press key manually in insert mode"
+            
+            " Let FZF close naturally
+            return
+        endif
+        
+        " For non-insert modes, proceed with execution
         " Replace <leader> with actual leader key in the key sequence
         let l:leader = get(g:, 'mapleader', '\')
         let l:key = substitute(l:key_orig, '<leader>', l:leader, 'g')
@@ -314,19 +333,6 @@ function! s:HandleFZFSelection(line) abort
             else
                 " For simple keys, just send them directly
                 call feedkeys(l:key, l:was_created ? 't' : 'm')
-            endif
-        elseif l:mode == 'i'
-            " For insert mode mappings, we need to be in insert mode when the key is pressed
-            " Use startinsert to enter insert mode, then feedkeys to trigger the mapping
-            call feedkeys("\<Esc>", 'n')
-            " Use execute to run startinsert, then feedkeys to trigger the mapping
-            execute "startinsert"
-            if l:key =~ '<.*>'
-                let l:converted = s:ConvertKeyNotation(l:key)
-                " Use 'mt' flags to ensure mapping is triggered properly
-                call feedkeys(eval('"' . l:converted . '"'), 'mt')
-            else
-                call feedkeys(l:key, 'mt')
             endif
         elseif l:mode == 'v' || l:mode == 'x'
             " For visual mode, enter visual mode first
