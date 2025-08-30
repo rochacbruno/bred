@@ -104,8 +104,11 @@ function! s:CreateMapping(mode, args) abort
     endif
 endfunction
 
-" Build FZF source list from mapdocs
-function! s:BuildFZFSource() abort
+" Build FZF source list from mapdocs with optional mode filter
+function! s:BuildFZFSourceFiltered(mode_filter) abort
+    " If mode_filter is empty, show all modes
+    let l:show_all = empty(a:mode_filter)
+    
     let l:leader = get(g:, 'mapleader', '\')
     " Display leader key properly (show <Space> instead of empty space)
     let l:leader_display = l:leader == ' ' ? '<Space>' : l:leader
@@ -114,6 +117,11 @@ function! s:BuildFZFSource() abort
     
     " Iterate through all modes
     for [l:mode, l:mode_data] in items(g:mapdocs)
+        " Skip this mode if it's not in the filter
+        if !l:show_all && index(a:mode_filter, l:mode) == -1
+            continue
+        endif
+        
         let l:mode_display = s:GetModeShort(l:mode)
         
         " Collect top-level mappings (uncategorized)
@@ -177,6 +185,11 @@ function! s:BuildFZFSource() abort
     return l:source
 endfunction
 
+" Build FZF source list from mapdocs (backwards compatibility)
+function! s:BuildFZFSource() abort
+    return s:BuildFZFSourceFiltered([])
+endfunction
+
 " Convert key notation to executable key sequence
 function! s:ConvertKeyNotation(key) abort
     " For sequences with special keys, convert notation to escape sequences
@@ -184,6 +197,27 @@ function! s:ConvertKeyNotation(key) abort
     
     " Replace special key notations with their escape sequences
     " Using double backslash to properly escape in the string
+    
+    " Handle Meta (Alt) key combinations first (more specific patterns first)
+    let l:key_seq = substitute(l:key_seq, '<M-Backspace>', '\\<M-BS>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-BS>', '\\<M-BS>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-Up>', '\\<M-Up>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-Down>', '\\<M-Down>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-Left>', '\\<M-Left>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-Right>', '\\<M-Right>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-Tab>', '\\<M-Tab>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-CR>', '\\<M-CR>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-Enter>', '\\<M-Enter>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-C-Right>', '\\<M-C-Right>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-C-RightMouse>', '\\<M-C-RightMouse>', 'g')
+    
+    " Handle single Meta keys (M-a through M-z, etc)
+    let l:key_seq = substitute(l:key_seq, '<M-\([a-zA-Z0-9]\)>', '\\<M-\1>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-\[>', '\\<M-[>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-\]>', '\\<M-]>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<M-\\>', '\\<M-\\>', 'g')
+    
+    " Handle Control key combinations
     let l:key_seq = substitute(l:key_seq, '<C-w>', '\\<C-w>', 'g')
     let l:key_seq = substitute(l:key_seq, '<C-r>', '\\<C-r>', 'g')
     let l:key_seq = substitute(l:key_seq, '<C-a>', '\\<C-a>', 'g')
@@ -210,11 +244,29 @@ function! s:ConvertKeyNotation(key) abort
     let l:key_seq = substitute(l:key_seq, '<C-x>', '\\<C-x>', 'g')
     let l:key_seq = substitute(l:key_seq, '<C-y>', '\\<C-y>', 'g')
     let l:key_seq = substitute(l:key_seq, '<C-z>', '\\<C-z>', 'g')
+    
+    " Handle mouse events
+    let l:key_seq = substitute(l:key_seq, '<C-LeftMouse>', '\\<C-LeftMouse>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<C-RightMouse>', '\\<C-RightMouse>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<LeftMouse>', '\\<LeftMouse>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<RightMouse>', '\\<RightMouse>', 'g')
+    
+    " Handle other special keys
     let l:key_seq = substitute(l:key_seq, '<CR>', '\\<CR>', 'g')
     let l:key_seq = substitute(l:key_seq, '<Esc>', '\\<Esc>', 'g')
     let l:key_seq = substitute(l:key_seq, '<Tab>', '\\<Tab>', 'g')
     let l:key_seq = substitute(l:key_seq, '<BS>', '\\<BS>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Backspace>', '\\<BS>', 'g')
     let l:key_seq = substitute(l:key_seq, '<Space>', '\\<Space>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Del>', '\\<Del>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Home>', '\\<Home>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<End>', '\\<End>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Left>', '\\<Left>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Right>', '\\<Right>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Up>', '\\<Up>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<Down>', '\\<Down>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<PageUp>', '\\<PageUp>', 'g')
+    let l:key_seq = substitute(l:key_seq, '<PageDown>', '\\<PageDown>', 'g')
     
     return l:key_seq
 endfunction
@@ -244,10 +296,15 @@ function! s:HandleFZFSelection(line) abort
         endif
         
         " Don't try to close - FZF will handle window closing
+        " Get current mode to determine if we need to switch
+        let l:current_mode = mode()
+        
         " Execute the mapping based on mode
         if l:mode == 'n'
             " For normal mode, make sure we're in normal mode first
-            call feedkeys("\<Esc>", 'n')
+            if l:current_mode != 'n'
+                call feedkeys("\<Esc>", 'n')
+            endif
             
             " Handle different types of key sequences
             if l:key =~ '<.*>'
@@ -259,17 +316,40 @@ function! s:HandleFZFSelection(line) abort
                 call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
         elseif l:mode == 'i'
-            " For insert mode, enter insert mode first
-            call feedkeys('i', 'n')
+            " For insert mode mappings, we need to be in insert mode when the key is pressed
+            " Use startinsert to enter insert mode, then feedkeys to trigger the mapping
+            call feedkeys("\<Esc>", 'n')
+            " Use execute to run startinsert, then feedkeys to trigger the mapping
+            execute "startinsert"
+            if l:key =~ '<.*>'
+                let l:converted = s:ConvertKeyNotation(l:key)
+                " Use 'mt' flags to ensure mapping is triggered properly
+                call feedkeys(eval('"' . l:converted . '"'), 'mt')
+            else
+                call feedkeys(l:key, 'mt')
+            endif
+        elseif l:mode == 'v' || l:mode == 'x'
+            " For visual mode, enter visual mode first
+            call feedkeys("\<Esc>v", 'n')
             if l:key =~ '<.*>'
                 let l:converted = s:ConvertKeyNotation(l:key)
                 call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
             else
                 call feedkeys(l:key, l:was_created ? 't' : 'm')
             endif
-        elseif l:mode == 'v'
-            " For visual mode, enter visual mode first
-            call feedkeys('v', 'n')
+        elseif l:mode == 'o'
+            " For operator-pending mode, we need to start with an operator
+            " This is tricky - we'll default to normal mode
+            call feedkeys("\<Esc>", 'n')
+            if l:key =~ '<.*>'
+                let l:converted = s:ConvertKeyNotation(l:key)
+                call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
+            else
+                call feedkeys(l:key, l:was_created ? 't' : 'm')
+            endif
+        elseif l:mode == 'c'
+            " For command mode, enter command mode first
+            call feedkeys(":", 'n')
             if l:key =~ '<.*>'
                 let l:converted = s:ConvertKeyNotation(l:key)
                 call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 't' : 'm')
@@ -290,17 +370,21 @@ function! s:HandleFZFSelection(line) abort
 endfunction
 
 " ShowDocs command using FZF
-command! ShowDocs call s:ShowDocsWithFZF()
+" Usage: :ShowDocs [modes] - where modes is a string like 'n', 'ni', 'nix', etc.
+command! -nargs=? ShowDocs call s:ShowDocsWithFZF(<q-args>)
 
-function! s:ShowDocsWithFZF() abort
+function! s:ShowDocsWithFZF(modes) abort
     " Check if FZF is available
     if !exists(':FZF')
         echoerr "FZF is not available. Please install fzf.vim"
         return
     endif
     
+    " Parse mode filter
+    let l:mode_filter = a:modes == '' ? [] : split(a:modes, '\zs')
+    
     " Build the source list
-    let l:source = s:BuildFZFSource()
+    let l:source = s:BuildFZFSourceFiltered(l:mode_filter)
     
     if empty(l:source)
         echo "No mappings documented yet."
@@ -316,13 +400,23 @@ function! s:ShowDocsWithFZF() abort
         endif
     endfor
     
+    " Build header text based on mode filter
+    let l:header_text = 'Select mapping to execute (Enter) or ESC to cancel'
+    if !empty(l:mode_filter)
+        let l:mode_names = []
+        for l:m in l:mode_filter
+            call add(l:mode_names, s:GetModeName(l:m))
+        endfor
+        let l:header_text = 'Showing: ' . join(l:mode_names, ', ') . ' | ' . l:header_text
+    endif
+    
     " Create FZF options
     let l:fzf_options = {
         \ 'source': l:source,
         \ 'sink': function('s:HandleFZFSelection'),
         \ 'options': [
             \ '--prompt', 'Mappings> ',
-            \ '--header', 'Select mapping to execute (Enter) or ESC to cancel',
+            \ '--header', l:header_text,
             \ '--preview-window', 'hidden',
             \ '--with-nth', '1',
             \ '--delimiter', '|',
