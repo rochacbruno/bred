@@ -30,7 +30,9 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
 - **Modular Configuration**: Clean separation of concerns across multiple files
 - **Language Server Protocol**: Full LSP support for multiple languages
 - **Smart Plugin Management**: Auto-installation of vim-plug and plugins
-- **Custom Marks System**: Enhanced global marks with visual indicators
+- **Interactive Mapping Documentation**: MapDocs system with searchable FZF interface (press `<Space>` alone for menu or `<Space>h` for buffer docs)
+- **Custom Marks System**: Enhanced global marks (FlagMarks) with visual indicators and window-aware navigation
+- **Welcome Splash Screen**: Customizable startup screen with quick access to key functions
 - **GitHub Copilot**: AI-powered code completion
 - **Fuzzy Finding**: Fast file and text search with FZF
 - **Git Integration**: Comprehensive Git support with Fugitive
@@ -122,126 +124,271 @@ The configuration is split into logical modules for maintainability:
 | `commands.vim` | Custom commands and autocommands |
 | `lsp.vim` | Language Server Protocol configuration |
 | `flagmarks.vim` | Custom global marks system |
+| `mapdocs.vim` | Interactive mapping documentation system |
+| `splash.vim` | Welcome screen configuration |
 | `custom_colors.vim` | Color scheme adjustments |
 
-## Key Mappings
+## New Features
 
-### Leader Key
-The leader key is set to `,` (comma).
+### 📚 MapDocs - Interactive Mapping Documentation
 
-### 📁 File Navigation
+The MapDocs system provides an interactive, searchable interface for all key mappings:
+
+- **Interactive Menu**: Press `<Space>` alone to open FZF-powered mapping search
+- **Buffer Documentation**: Use `<Space>h` or `:BufferDocs` to view all mappings in a buffer
+- **Categorized Mappings**: All mappings are organized by category and mode
+- **Execute from Menu**: Select any mapping in the menu to execute it immediately
+- **Mode Filtering**: View mappings for specific modes with `:ShowDocs [modes]`
+- **Self-Documenting**: Mappings defined with `Nmap`, `Imap`, etc. automatically appear in docs
+
+### 🎨 Splash Screen
+
+A customizable welcome screen that appears when starting Vim without arguments:
+
+- **Quick Start Guide**: Shows essential commands and tips
+- **Configuration Info**: Displays Vim version and configuration path
+- **Foldable Sections**: Organized content with fold markers (`>>>` and `<<<`)
+- **Auto-Dismiss**: Disappears when you start editing or open a file
+- **Customizable**: Edit `~/.vim/splash_message.vim` to personalize
+
+### 🚩 FlagMarks - Enhanced Global Marks
+
+A powerful replacement for Vim's built-in marks with visual indicators and smart navigation:
+
+- **Visual Indicators**: Shows marks in the sign column as `>A`, `>B`, etc.
+- **Window-Aware**: Automatically switches windows when jumping to marks
+- **Interactive Menu**: `<Space>m` opens a searchable menu of all marks
+- **Quick Toggle**: `mm` jumps between the last two marks
+- **Persistent**: Marks are saved across Vim sessions
+
+## Quick Reference Cheatsheet
+
+> **Leader Key**: `<Space>` (spacebar)  
+> **Interactive Help**: Press `<Space>` alone to open the mapping documentation menu  
+> **Buffer Docs**: `<Space>h` to view all mappings in a buffer  
+> **Commands**: `:ShowDocs` or `:BufferDocs` for mapping documentation
+
+### 🎯 Most Used Commands
+
+| Key | Action | Key | Action |
+|-----|--------|-----|--------|
+| `<Space>` | Open mapping menu | `<Space>w` | Save file |
+| `<Space>ff` | Find files (FZF) | `<Space>fr` | Search text (ripgrep) |
+| `<Space>fb` | List buffers | `<Space>e` | File explorer |
+| `<Space>a` | LSP code actions | `<Space>d` | Go to definition |
+| `<C-d>` | Multi-cursor select | `gcc` | Toggle comment |
+| `ma` | Add flagmark | `mm` | Jump to last mark |
+| `<Space>m` | Flagmarks menu | `<Tab>` | Accept Copilot |
+
+## Complete Key Mappings Reference
+
+### 📁 File Navigation & Search
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `,f` | `:Files` | Fuzzy find files |
-| `,F` | `:Rg` | Search text with ripgrep |
-| `,b` | `:Buffers` | List buffers |
-| `,l` | `:Lines` | Search lines in current buffer |
-| `,g` | `:GFiles` | Git files |
-| `,e` | `:Lexplore` | File explorer (left) |
-| `,E` | `:Vexplore` | File explorer (vertical) |
+| `<Space>ff` | `:Files` | Fuzzy find files |
+| `<Space>fr` | `:Rg` | Search text with ripgrep |
+| `<Space>fb` | `:Buffers` | List buffers |
+| `<Space>fl` | `:Lines` | Search lines in current buffer |
+| `<Space>fg` | `:GFiles` | Git files |
+| `<Space>e` | `:Lexplore` | File explorer (left) |
+| `<Space>E` | `:Vexplore` | File explorer (vertical) |
+| `gf` | Go to file | Open file under cursor |
+| `<C-w>f` | Split & open | Split window and open file under cursor |
 
-### 💾 Essential Operations
+### 💾 File Operations
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `,w` | `:write` | Save file |
-| `,q` | `:quit` | Quit |
-| `,x` | `:xit` | Save and quit |
-| `,h` | `:nohlsearch` | Clear search highlighting |
-| `,,so` | `:source ~/.vim/vimrc` | Reload configuration |
-| `Ctrl+S` | `:update` | Save (all modes) |
-| `Ctrl+Z` | Undo | Undo (all modes) |
+| `<Space>w` | `:write` | Save file |
+| `<Space>q` | `:quit` | Quit |
+| `<Space>x` | `:xit` | Save and quit |
+| `<CR>` | `:nohlsearch` | Clear search highlighting (Enter key) |
+| `<Space><Space>so` | `:source ~/.vim/vimrc` | Reload configuration |
+| `<Space><Space>x` | `:!chmod +x %` | Make file executable |
+| `<C-s>` | `:update` | Save (all modes) |
+| `<C-z>` | Undo | Undo (all modes) |
+| `<Space>tw` | Remove trailing | Remove trailing whitespace |
 
 ### 📑 Buffer Management
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `,bl` | List buffers | List and select buffer |
+| `<Space>bl` | List buffers | List and select buffer |
+| `<Space>fb` | FZF buffers | Fuzzy search buffers |
 | `[q` | Previous buffer | Navigate backward |
 | `]q` | Next buffer | Navigate forward |
-| `,1-9` | Jump to buffer | Quick buffer access |
-| `,<Tab>` | Toggle buffers | Switch between two buffers |
-| `bda` | Delete hidden | Clean up buffer list |
+| `<Space>1-9` | Jump to buffer | Quick buffer access (1-9) |
+| `<Space><Tab>` | Toggle buffers | Switch between two buffers |
+| `bh` | Delete hidden | Clean up hidden buffers |
+| `<Space>bd` | Delete buffer | Delete current buffer (save first) |
+| `<Space>bx` | Force delete | Delete buffer without saving |
 
-### 🪟 Window Management
-
-| Key | Action | Description |
-|-----|--------|-------------|
-| `,=` | Increase height | Make window taller |
-| `,-` | Decrease height | Make window shorter |
-| `,>` | Increase width | Make window wider |
-| `,<` | Decrease width | Make window narrower |
-| `,rs` | Resize mode | Interactive resizing |
-| `-` | Window chooser | Navigate/swap windows |
-| `Ctrl+W g` | Goyo mode | Distraction-free writing |
-
-### 🧠 LSP Operations
+### 🪟 Window & Split Management
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `,a` | Code actions | Show available actions |
-| `,d` | Go to definition | Jump to declaration |
-| `,k` | Hover info | Show documentation |
+| `<C-w>h/j/k/l` | Navigate | Move between windows |
+| `<C-w>s` | Split horizontal | Create horizontal split |
+| `<C-w>v` | Split vertical | Create vertical split |
+| `<C-w>c` | Close window | Close current window |
+| `<C-w>o` | Only window | Close all other windows |
+| `<C-w>=` | Equalize | Make all windows equal size |
+| `<Space>=` | Increase height | Make window taller |
+| `<Space>-` | Decrease height | Make window shorter |
+| `<Space>>` | Increase width | Make window wider |
+| `<Space><` | Decrease width | Make window narrower |
+| `<Space>rs` | Resize mode | Interactive resizing (arrows to resize) |
+| `-` | Window chooser | Interactive window selection |
+| `<C-w>m` | Zoom toggle | Maximize/restore window |
+| `<C-w>g` | Goyo mode | Distraction-free writing |
+| `<C-w>gr` | Visual resize | Resize to selection |
+| `<C-w>gss` | Visual split | Split with selection |
+
+### 🧠 Language Server (LSP)
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<Space>a` | Code actions | Show available actions |
+| `<Space>d` | Go to definition | Jump to declaration |
+| `<Space>k` | Hover info | Show documentation |
+| `:LspDiagNext` | Next diagnostic | Jump to next error/warning |
+| `:LspDiagPrev` | Previous diagnostic | Jump to previous error/warning |
+| `:LspServers` | Show servers | List configured LSP servers |
 
 ### 🔀 Git Integration
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `Ctrl+G m` | Git messenger | Show commit under cursor |
+| `<C-g>m` | Git messenger | Show commit under cursor |
 | `:Gstatus` | Git status | Fugitive status window |
 | `:Gblame` | Git blame | Show line authors |
 | `:Gdiff` | Git diff | Compare changes |
+| `:GBrowse` | Open in GitHub | View file on GitHub |
 
-### ✏️ Multi-Cursor Editing
+### ✏️ Multi-Cursor Editing (Visual-Multi)
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `Ctrl+D` | Select word | Add cursor at word |
+| `<C-d>` | Select word | Add cursor at word under cursor |
 | `n/N` | Next/Previous | Navigate occurrences |
 | `[/]` | Cursor navigation | Move between cursors |
 | `q` | Skip occurrence | Skip and continue |
 | `Q` | Remove cursor | Delete current cursor |
 | `\\A` | Select all | Select all occurrences |
+| `<C-LeftMouse>` | Add cursor | Add cursor with mouse |
+| `<C-RightMouse>` | Select word | Select word with mouse |
+| `<M-C-RightMouse>` | Column select | Column selection with mouse |
 
-### 📝 Text Manipulation
+### ✂️ Text Editing & Manipulation
 
 | Key | Action | Description |
 |-----|--------|-------------|
 | `gcc` | Comment line | Toggle line comment |
 | `gc{motion}` | Comment motion | Comment selection |
-| `s{motion}` | Substitute | Replace with yanked |
-| `ss` | Substitute line | Replace entire line |
-| `,re` | Replace word | Replace current word |
-| `cs'"` | Change surround | Change ' to " |
-| `ds"` | Delete surround | Remove quotes |
-| `ysiw'` | Add surround | Wrap word in quotes |
+| `<C-/>` or `<C-_>` | Comment toggle | Toggle comment (all modes) |
+| `gcu` | Uncomment | Uncomment adjacent lines |
+| `<Space>re` | Replace word | Replace word under cursor globally |
+| `x` | Cut | Delete to register (vim-cutlass) |
+| `xx` | Cut line | Delete entire line to register |
+| `X` | Cut to EOL | Delete to end of line |
+| `<` / `>` | Indent | Indent left/right (stays in visual) |
+| `p` | Smart paste | Paste without yanking replaced text (visual) |
 
-### 🔄 Line Movement
-
-| Key | Action | Description |
-|-----|--------|-------------|
-| `Alt+j` | Move down | Move line/selection down |
-| `Alt+k` | Move up | Move line/selection up |
-| `Alt+↓` | Move down | Alternative with arrow |
-| `Alt+↑` | Move up | Alternative with arrow |
-
-### 🖥️ Terminal
+### 🔄 Surround Operations
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `,c` | Open terminal | Bottom terminal |
-| `Ctrl+V Esc` | Exit terminal | Return to normal mode |
+| `ysiw` + delimiter | Surround word | Add surround to inner word |
+| `yss` + delimiter | Surround line | Add surround to entire line |
+| `ds` + delimiter | Delete surround | Remove surrounding delimiters |
+| `cs` + old + new | Change surround | Change surrounding delimiters |
+| `S` + delimiter | Visual surround | Surround selection (visual mode) |
+
+### 🔁 Substitution (Subversive)
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `s{motion}` | Substitute | Replace motion with yanked text |
+| `ss` | Substitute line | Replace line with yanked text |
+| `S` | Substitute to EOL | Replace to end of line |
+| `<Space>s` | Prompted substitute | Replace with prompted text |
+| `<Space>ss` | Word substitute | Replace word across buffer |
+| `<Space><Space>s` | Smart case substitute | Smart case replacement |
+
+### ↕️ Line Movement
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<M-j>` / `<M-Down>` | Move down | Move line/selection down |
+| `<M-k>` / `<M-Up>` | Move up | Move line/selection up |
+
+### 🖥️ Terminal & External Tools
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<Space>c` | Open terminal | Bottom terminal |
+| `<C-v><Esc>` | Exit terminal | Return to normal mode |
+| `got` | Terminal here | Open terminal in file's directory |
+| `gof` | File manager | Open file manager in file's directory |
 
 ### 🏷️ Tab Management
 
 | Key | Action | Description |
 |-----|--------|-------------|
-| `,tn` | New tab | Create new tab |
-| `,tc` | Close tab | Close current tab |
-| `,to` | Tab only | Close other tabs |
-| `,tl` | Next tab | Go to next tab |
-| `,th` | Previous tab | Go to previous tab |
+| `<Space>tn` | New tab | Create new tab |
+| `<Space>tc` | Close tab | Close current tab |
+| `<Space>to` | Tab only | Close other tabs |
+| `<Space>tl` | Next tab | Go to next tab |
+| `<Space>th` | Previous tab | Go to previous tab |
+| `<C-w>T` | Window to tab | Move current window to new tab |
+
+### 📋 Yank History (Yoink)
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `p` / `P` | Smart paste | Paste with yank history |
+| `<C-n>` | Previous yank | Cycle to previous yank after paste |
+| `<C-p>` | Next yank | Cycle to next yank after paste |
+| `[y` / `]y` | Browse yanks | Navigate yank history |
+| `y` | Yank preserve | Yank without moving cursor |
+
+### 🎨 Visual Enhancements
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `gs` | Scratch buffer | Open scratch buffer |
+| `<M-w>` | Color picker | Open color picker (normal) |
+| `<M-c>` | Color picker | Open color picker (insert) |
+| `<Space>tm` | Table mode | Toggle table formatting mode |
+
+### 🤖 GitHub Copilot
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<Tab>` | Accept | Accept suggestion |
+| `<M-]>` | Next suggestion | Cycle to next suggestion |
+| `<M-[>` | Previous suggestion | Cycle to previous suggestion |
+| `<M-\>` | Request | Request suggestion |
+| `<M-Right>` | Accept word | Accept next word |
+| `<M-C-Right>` | Accept line | Accept next line |
+
+### 🎯 EasyMotion
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<Space><Space>` + motion | Trigger | Activate EasyMotion for any motion |
+| `<Space><Space>w` | Word forward | Jump to word forward |
+| `<Space><Space>b` | Word backward | Jump to word backward |
+| `<Space><Space>f` + char | Find char | Jump to character |
+
+### 🔧 Auto Pairs
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<M-b>` | Back insert | Back insert pair |
+| `<M-n>` | Jump next | Jump to next closed pair |
+| `<M-p>` | Toggle | Toggle auto pairs on/off |
 
 ## Plugins
 
