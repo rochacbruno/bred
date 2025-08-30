@@ -193,6 +193,8 @@ Nmap 'Make file executable|File' <leader><leader>x :!chmod +x %<CR>
 " -------------------------------------------------------------------------
 " Access the mapping documentation and interactive menu
 Nmap 'Open mapping documentation menu|Help' <leader>h :ShowDocs<CR>
+nnoremap <silent> <leader> :ShowDocs<CR>
+
 
 " }}}
 " -------------------------------------------------------------------------
