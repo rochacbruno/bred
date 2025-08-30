@@ -107,6 +107,8 @@ endfunction
 " Build FZF source list from mapdocs
 function! s:BuildFZFSource() abort
     let l:leader = get(g:, 'mapleader', '\')
+    " Display leader key properly (show <Space> instead of empty space)
+    let l:leader_display = l:leader == ' ' ? '<Space>' : l:leader
     let l:uncategorized = []
     let l:categorized = []
     
@@ -118,7 +120,7 @@ function! s:BuildFZFSource() abort
         for [l:key, l:desc] in items(l:mode_data)
             if type(l:desc) == type('')
                 " Format: [mode] key : description
-                let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
+                let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
                 let l:line = printf("[%s] %-15s : %s", l:mode_display, l:display_key, l:desc)
                 " Store with description for sorting
                 call add(l:uncategorized, {'line': l:line . '|' . l:mode . '|' . l:key, 'desc': l:desc})
@@ -129,7 +131,7 @@ function! s:BuildFZFSource() abort
         for [l:category, l:cat_data] in items(l:mode_data)
             if type(l:cat_data) == type({})
                 for [l:key, l:desc] in items(l:cat_data)
-                    let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
+                    let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
                     " Include category in display
                     let l:line = printf("[%s] %-15s : [%s] %s", l:mode_display, l:display_key, l:category, l:desc)
                     " Store with category and description for sorting
@@ -381,6 +383,8 @@ command! -nargs=? BufferDocs call s:ShowDocsBuffer(<q-args>)
 function! s:ShowDocsBuffer(position) abort
     " Get the actual leader key
     let l:leader = get(g:, 'mapleader', '\')
+    " Display leader key properly (show <Space> instead of empty space)
+    let l:leader_display = l:leader == ' ' ? '<Space>' : l:leader
     
     " Determine split position
     let l:pos = a:position == '' ? 'right' : a:position
@@ -407,7 +411,7 @@ function! s:ShowDocsBuffer(position) abort
                 " First show top-level mappings
                 for [l:key, l:value] in items(l:mode_data)
                     if type(l:value) == type('')
-                        let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
+                        let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
                         call add(l:lines, printf('  %-15s %s', l:display_key, l:value))
                     endif
                 endfor
@@ -421,7 +425,7 @@ function! s:ShowDocsBuffer(position) abort
                     if type(l:cat_data) == type({})
                         call add(l:lines, '  [' . l:cat . ']')
                         for [l:key, l:desc] in items(l:cat_data)
-                            let l:display_key = substitute(l:key, '<leader>', l:leader, 'g')
+                            let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
                             call add(l:lines, printf('    %-13s %s', l:display_key, l:desc))
                         endfor
                         call add(l:lines, '')
