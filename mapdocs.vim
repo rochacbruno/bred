@@ -551,13 +551,13 @@ function! s:ShowDocsWithFZF(modes) abort
     
     " Build header text based on mode filter
     let l:header_text = 'Select mapping to execute (Enter) or ESC to cancel'
-    if !empty(l:mode_filter)
-        let l:mode_names = []
-        for l:m in l:mode_filter
-            call add(l:mode_names, s:GetModeName(l:m))
-        endfor
-        let l:header_text = 'Showing: ' . join(l:mode_names, ', ') . ' | ' . l:header_text
-    endif
+    " if !empty(l:mode_filter)
+    "     let l:mode_names = []
+    "     for l:m in l:mode_filter
+    "         call add(l:mode_names, s:GetModeName(l:m))
+    "     endfor
+    "     let l:header_text = 'Showing: ' . join(l:mode_names, ', ') . ' | ' . l:header_text
+    " endif
     
     " Create FZF options
     let l:fzf_options = {

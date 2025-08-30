@@ -41,6 +41,16 @@ function! ShowSplash() abort
     " Read the splash file content
     silent! execute '0read ' . l:splash_file
     
+    " Interpolate variables
+    let l:vim_version = v:version / 100 . '.' . v:version % 100
+    let l:vimrc_path = expand($MYVIMRC != '' ? $MYVIMRC : '~/.vimrc')
+    let l:current_date = strftime('%Y-%m-%d %H:%M:%S')
+    
+    " Replace variables in the buffer
+    silent! %s/\$VIMVERSION/\=l:vim_version/g
+    silent! %s/\$MYVIMRC/\=l:vimrc_path/g
+    silent! %s/\$DATE/\=l:current_date/g
+    
     " Remove the empty line at the end if it exists
     if line('$') > 1 && getline('$') == ''
         normal! Gdd

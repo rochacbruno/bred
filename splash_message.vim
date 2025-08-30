@@ -1,5 +1,5 @@
 ╔══════════════════════════════════════╗
-║                  Vim                 ║
+║              Vim $VIMVERSION                 ║
 ║                                      ║
 ║  'spacebar'     to see key mappings  ║
 ║  'i'            to start editing     ║
@@ -7,7 +7,7 @@
 ║  ':q'           to exit Vim          ║
 ╚══════════════════════════════════════╝
 Quick Reference:
-────────────────────────────────────────
+────────────────────────────────────────────
 • spc            Open command menu
 • spc + h        Mappings documentation
 • spc + e        Open file explorer
@@ -21,11 +21,13 @@ Quick Reference:
 • Ctrl + /       Comment line
 • Ctrl + s       Save file
 • Ctrl + z       Undo
-────────────────────────────────────────
+────────────────────────────────────────────
 This is a VIM 9 config by:
-Bruno Cesar Rocha | rochacbruno.com
-Docs: github.com/rochacbruno/vim9
-────────────────────────────────────────
+Bruno Cesar Rocha | https://rochacbruno.com
+Docs: https://github.com/rochacbruno/vim9
+Config: $MYVIMRC
+Date: $DATE
+────────────────────────────────────────────
 Press enter for more info >>>
 
     Plugins: >>>
