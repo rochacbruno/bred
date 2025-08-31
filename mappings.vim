@@ -60,9 +60,9 @@ Nmap 'Enter resize mode (arrows to resize)|Windows' <leader>rs :call ResizeMode(
 " -------------------------------------------------------------------------
 " Quick Save/Quit and Quality of Life {{{
 " -------------------------------------------------------------------------
-Nmap 'Save file|File' <leader>w :write<CR>
-Nmap 'Quit|File' <leader>q :quit<CR>
-Nmap 'Save and quit|File' <leader>x :xit<CR>
+Nmap 'Save file|Files' <leader>w :write<CR>
+Nmap 'Quit|Files' <leader>q :quit<CR>
+Nmap 'Save and quit|Files' <leader>x :xit<CR>
 
 " Enter after search will clear highlights
 nnoremap <silent> <CR> :nohlsearch<CR><CR>
@@ -94,9 +94,9 @@ Nmap 'Reload vimrc|Config' <leader><leader>so :source $MYVIMRC<CR>
 " Common Editor Shortcuts {{{
 " -------------------------------------------------------------------------
 " Ctrl+S to save (familiar for users coming from other editors)
-Nmap 'Save file|File' <C-s> :update<CR>
-Imap 'Save file|File' <C-s> <Esc>:update<CR>a
-Xmap 'Save file|File' <C-s> <Esc>:update<CR>gv
+Nmap 'Save file|Files' <C-s> :update<CR>
+Imap 'Save file|Files' <C-s> <Esc>:update<CR>a
+Xmap 'Save file|Files' <C-s> <Esc>:update<CR>gv
 
 " Ctrl+Z to undo (familiar for users coming from other editors)
 Nmap 'Undo|Edit' <C-z> u
@@ -185,7 +185,7 @@ nnoremap gk k
 " File Operations {{{
 " -------------------------------------------------------------------------
 " Make current file executable (useful for scripts)
-Nmap 'Make file executable|File' <leader><leader>x :!chmod +x %<CR>
+Nmap 'Make file executable|Files' <leader><leader>x :!chmod +x %<CR>
 
 " }}}
 " -------------------------------------------------------------------------

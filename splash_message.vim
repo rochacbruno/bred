@@ -1,33 +1,27 @@
 ╔══════════════════════════════════════╗
 ║              Vim $VIMVERSION                 ║
 ║                                      ║
-║  'spacebar'     to see key mappings  ║
+║  'spacebar'     open command menu    ║
 ║  'i'            to start editing     ║
 ║  ':e filename'  to open a file       ║
 ║  ':q'           to exit Vim          ║
 ╚══════════════════════════════════════╝
-Quick Reference:
-────────────────────────────────────────────
-• spc            Open command menu
 • spc + h        Mappings documentation
 • spc + e        Open file explorer
 • spc + ff       Find files
 • spc + fr       Search text in files
-• spc + fg       Find in git files
 • spc + fb       List open buffers
 • spc + fl       Search text in buffer
 • spc + fh       Recent files
+• spc + gf       Find in git files
 • [q or ]q       Next/Previous buffer
 • Ctrl + /       Comment line
-• Ctrl + s       Save file
-• Ctrl + z       Undo
 ────────────────────────────────────────────
-This is a VIM 9 config by:
-Bruno Cesar Rocha | https://rochacbruno.com
+This is a VIM 9 config by Bruno Cesar Rocha 
+https://rochacbruno.com
 Docs: https://github.com/rochacbruno/vim9
 Config: $MYVIMRC
 Date: $DATE
-────────────────────────────────────────────
 Press enter for more info >>>
 
     Plugins: >>>

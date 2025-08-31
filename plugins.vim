@@ -83,12 +83,18 @@ Plug 'chrisbra/matchit'
 if executable('fzf')
   Plug 'junegunn/fzf.vim'
   " Key mappings:
-  Nmap 'Search lines in current buffer|FZF' <leader>fl :Lines<CR>
-  Nmap 'Find files|FZF' <leader>ff :Files<CR>
-  Nmap 'Search text with ripgrep|FZF' <leader>fr :Rg<CR>
-  Nmap 'List open buffers|FZF' <leader>fb :Buffers<CR>
-  Nmap 'Git files|FZF' <leader>fg :GFiles<CR>
-  Nmap 'Recent Files|FZF' <leader>fh :History<CR>
+  Nmap 'Find files|Files' <leader>ff :Files<CR>
+  Nmap 'List open buffers|Files' <leader>fb :Buffers<CR>
+  Nmap 'Search text with ripgrep|Files' <leader>fr :Rg<CR>
+  Nmap 'Search lines in current buffer|Files' <leader>fl :Lines<CR>
+  Nmap 'Changes on buffers|Files' <leader>fc :Changes<CR>
+  Nmap 'Recent Files|Files' <leader>fh :History<CR>
+  Nmap 'Jumplist|Files' <leader>fj :Jumps<CR>
+
+  Nmap 'Commits|Git' <leader>gc :Commits<CR>
+  Xmap 'Commits affecting selection|Git' <leader>gc :Commits<CR>
+  Nmap 'Git files|Git' <leader>gf :GFiles<CR>
+  Nmap 'Git status|Git' <leader>gs :GFiles?<CR>
 else
   echo "fzf is not installed, please install it to use fzf.vim"
 endif
@@ -237,7 +243,8 @@ Plug 'tpope/vim-rhubarb'
 Plug 'rhysd/git-messenger.vim'
 let g:git_messenger_no_default_mappings = v:true
 " Key mappings:
-Nmap 'Show git commit info|Git' <C-g>m <Plug>(git-messenger)
+Nmap 'Show git commit info|Git' <leader>gm <Plug>(git-messenger)
+
 " }}}
 
 " ===============================================================================
@@ -254,12 +261,14 @@ Plug 'tpope/vim-commentary'
 Nmap 'Uncomment adjacent commented lines|Commentary' gcu
 Nmap 'Comment Toggle|Commentary' <C-/> <Plug>CommentaryLine
 Imap 'Comment Toggle|Commentary' <C-/> <Esc><Plug>CommentaryLineA
-Xmap 'Comment Toggle|Commentary' <C-/> <Esc><Plug>Commentary
+Xmap 'Comment Toggle|Commentary' <C-/> <Plug>Commentarygv
+Omap 'Comment Toggle|Commentary' <C-/> <Plug>Commentary
 
 " the following mappings are for keyboards where Ctrl+/ is not possible
 nnoremap <silent> <C-_> <Plug>CommentaryLine
 inoremap <silent> <C-_> <Esc><Plug>CommentaryLineA
-xnoremap <silent> <C-_> <Esc><Plug>Commentary
+xnoremap <silent> <C-_> <Plug>Commentarygv
+onoremap <silent> <C-_> <Plug>Commentary
 
 " }}}
 
