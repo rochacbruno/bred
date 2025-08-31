@@ -83,17 +83,18 @@ Plug 'chrisbra/matchit'
 if executable('fzf')
   Plug 'junegunn/fzf.vim'
   " Key mappings:
-  Nmap 'Find files|Files' <leader>ff :Files<CR>
-  Nmap 'List open buffers|Files' <leader>fb :Buffers<CR>
-  Nmap 'Search text with ripgrep|Files' <leader>fr :Rg<CR>
-  Nmap 'Search lines in current buffer|Files' <leader>fl :Lines<CR>
-  Nmap 'Changes on buffers|Files' <leader>fc :Changes<CR>
-  Nmap 'Recent Files|Files' <leader>fh :History<CR>
-  Nmap 'Jumplist|Files' <leader>fj :Jumps<CR>
+  Nmap 'List open buffers|Buffers' <leader>b :Buffers<CR>
+  Nmap 'Find files|Files' <leader>f :Files<CR>
+  Nmap 'Git files|Git' <leader>g :GFiles<CR>
+  Nmap 'Jumplist|Edit' <leader>j :Jumps<CR>
+  Nmap 'lines in current buffer|Search' <leader>l :Lines<CR>
+  Nmap 'text with ripgrep|Search' <silent><leader>r :Rg<CR>
+  
+  Nmap 'Recent Files|Files' <leader>rf :History<CR>
+  Nmap 'Changes on buffers|Edit' <leader>cb :Changes<CR>
 
   Nmap 'Commits|Git' <leader>gc :Commits<CR>
   Xmap 'Commits affecting selection|Git' <leader>gc :Commits<CR>
-  Nmap 'Git files|Git' <leader>gf :GFiles<CR>
   Nmap 'Git status|Git' <leader>gs :GFiles?<CR>
 else
   echo "fzf is not installed, please install it to use fzf.vim"
@@ -550,10 +551,10 @@ Plug 'easymotion/vim-easymotion'
 " Key mappings:
 " Document EasyMotion mappings without overriding them
 Nmap 'Trigger EasyMotion for any motion|EasyMotion' <leader><leader>
-" ,,w         - Jump to word beginnings
-" ,,f{char}   - Find character with hints
-" ,,j         - Jump to lines below
-" ,,k         - Jump to lines above
+" <leader><leader>w         - Jump to word beginnings
+" <leader><leader>f{char}   - Find character with hints
+" <leader><leader>j         - Jump to lines below
+" <leader><leader>k         - Jump to lines above
 " }}}
 
 " ===============================================================================
