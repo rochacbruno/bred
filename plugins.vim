@@ -88,6 +88,7 @@ if executable('fzf')
   Nmap 'Search text with ripgrep|FZF' <leader>fr :Rg<CR>
   Nmap 'List open buffers|FZF' <leader>fb :Buffers<CR>
   Nmap 'Git files|FZF' <leader>fg :GFiles<CR>
+  Nmap 'Recent Files|FZF' <leader>fh :History<CR>
 else
   echo "fzf is not installed, please install it to use fzf.vim"
 endif
@@ -144,19 +145,22 @@ Imap 'Request suggestion|Copilot' <M-\>
 Imap 'Accept next word|Copilot' <M-Right>
 Imap 'Accept next line|Copilot' <M-C-Right>
 Imap 'Accept suggestion|Copilot' <Tab>
-" :Copilot panel to open the copilot panel
+" Use :Copilot panel to open the copilot panel
 Plug 'github/copilot.vim'
+
 " }}}
 
 " Vim DevIcons - File type icons {{{
 " Devicons - Requires a patched font, like Nerd Font
 Plug 'ryanoasis/vim-devicons'
+
 " }}}
 
 " Mistfly Statusline - Enhanced status line {{{
 Plug 'bluz71/vim-mistfly-statusline'
 let g:mistflyWithSearchCount = v:true
 let g:mistflyWithIndentStatus = v:true
+
 " }}}
 
 " Auto Pairs - Automatic bracket pairing {{{
@@ -168,18 +172,21 @@ Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsMoveCharacter = ""
 let g:AutoPairsShortcutBackInsert = ""
 let g:AutoPairsShortcutFastWrap = ""
+
 " }}}
 
 " GitGutter - Git diff in sign column {{{
 " Show git diff in the sign column
 " + added, ~ modified, - removed
 Plug 'airblade/vim-gitgutter'
+
 " }}}
 
 
 " Colorizer - Highlight color codes {{{
 " :ColorHighlight
 Plug 'chrisbra/Colorizer'
+
 " }}}
 
 " ===============================================================================
@@ -204,6 +211,7 @@ let g:VM_maps['Find Subword Under'] = '<C-d>'  " Replace visual C-n
 Nmap 'Add cursor with Ctrl+Click|Visual Multi' <C-LeftMouse> <Plug>(VM-Mouse-Cursor)
 Nmap 'Select word with Ctrl+Right|Visual Multi' <C-RightMouse> <Plug>(VM-Mouse-Word)
 Nmap 'Column selection|Visual Multi' <M-C-RightMouse> <Plug>(VM-Mouse-Column)
+
 " }}}
 
 " ===============================================================================
