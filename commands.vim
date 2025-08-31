@@ -20,13 +20,13 @@ set autoread
 if has('unix')
   " Use CursorHold to check periodically (every 4 seconds by default)
   autocmd CursorHold,CursorHoldI * checktime
-  
+
   " Also check when entering/leaving insert mode and when saving
   autocmd InsertEnter,InsertLeave,BufWritePost * checktime
-  
+
   " Check when window gains focus or entering buffer
   autocmd FocusGained,BufEnter,WinEnter * checktime
-  
+
   " Reduce the time before CursorHold triggers (in milliseconds)
   " Default is 4000 (4 seconds), setting to 1000 (1 second)
   set updatetime=1000
