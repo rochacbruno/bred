@@ -72,6 +72,12 @@ augroup autosession
     " Save session when exiting (only if no files passed)
     autocmd VimLeave * {
         if len(v:argv) == 1
+            # Close Splash buffer before saving session to avoid duplication
+            for buf in getbufinfo()
+                if buf.name =~ 'Splash' || bufname(buf.bufnr) =~ 'Splash'
+                    execute 'bdelete! ' .. buf.bufnr
+                endif
+            endfor
             mksession!
         endif
     }
