@@ -32,8 +32,8 @@ Nmap 'Go to previous tab|Tabs' <leader>th :tabprevious<CR>
 " Buffer Management {{{
 " -------------------------------------------------------------------------
 Nmap 'List buffers and jump to one|Buffers' <leader>bl :ls<CR>:b<Space>
-Nmap 'Previous buffer|Buffers' [q :bp<CR>
-Nmap 'Next buffer|Buffers' ]q :bn<CR>
+Nmap 'Previous buffer|Buffers' [b :bp<CR>
+Nmap 'Next buffer|Buffers' ]b :bn<CR>
 Nmap 'Delete all hidden buffers|Buffers' bh :DeleteHiddenBuffers<CR>
 
 " Quick buffer switching with <leader>1 through 9

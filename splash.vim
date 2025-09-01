@@ -78,8 +78,8 @@ function! ShowSplash() abort
     " set folding based on marker
     setlocal foldmethod=marker
     setlocal foldlevel=0
-    setlocal fmr=>>>,<<<
-    setlocal ft=vim    
+    setlocal fmr={,}
+    setlocal ft=help    
     " Center the content if the window is wide enough
     setlocal nowrap
     
