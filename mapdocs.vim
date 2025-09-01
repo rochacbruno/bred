@@ -758,10 +758,24 @@ function! s:ShowDocsBuffer(position) abort
             
             " Display uncategorized mappings if any
             if !empty(l:uncategorized)
-                call add(l:lines, '| Key | Description |')
-                call add(l:lines, '|-----|-------------|')
+                " Calculate max width for alignment
+                let l:max_key_width = 5  " minimum width for 'Key' header
                 for l:item in l:uncategorized
-                    call add(l:lines, '| `' . l:item.key . '` | ' . l:item.desc . ' |')
+                    let l:key_width = strlen(l:item.key) + 2  " +2 for backticks
+                    if l:key_width > l:max_key_width
+                        let l:max_key_width = l:key_width
+                    endif
+                endfor
+                
+                " Create aligned table
+                let l:header_key = '| ' . 'Key' . repeat(' ', l:max_key_width - 3) . ' | Description |'
+                let l:separator = '|' . repeat('-', l:max_key_width + 2) . '|-------------|'
+                call add(l:lines, l:header_key)
+                call add(l:lines, l:separator)
+                for l:item in l:uncategorized
+                    let l:key_display = '`' . l:item.key . '`'
+                    let l:padding = repeat(' ', l:max_key_width - strlen(l:key_display))
+                    call add(l:lines, '| ' . l:key_display . l:padding . ' | ' . l:item.desc . ' |')
                 endfor
                 call add(l:lines, '')
             endif
@@ -777,10 +791,24 @@ function! s:ShowDocsBuffer(position) abort
                     \ a.order != b.order ? (a.order < b.order ? -1 : 1) : 
                     \ (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)})
                 
-                call add(l:lines, '| Key | Description |')
-                call add(l:lines, '|-----|-------------|')
+                " Calculate max width for alignment in this category
+                let l:max_key_width = 5  " minimum width for 'Key' header
                 for l:item in l:categories[l:category]
-                    call add(l:lines, '| `' . l:item.key . '` | ' . l:item.desc . ' |')
+                    let l:key_width = strlen(l:item.key) + 2  " +2 for backticks
+                    if l:key_width > l:max_key_width
+                        let l:max_key_width = l:key_width
+                    endif
+                endfor
+                
+                " Create aligned table
+                let l:header_key = '| ' . 'Key' . repeat(' ', l:max_key_width - 3) . ' | Description |'
+                let l:separator = '|' . repeat('-', l:max_key_width + 2) . '|-------------|'
+                call add(l:lines, l:header_key)
+                call add(l:lines, l:separator)
+                for l:item in l:categories[l:category]
+                    let l:key_display = '`' . l:item.key . '`'
+                    let l:padding = repeat(' ', l:max_key_width - strlen(l:key_display))
+                    call add(l:lines, '| ' . l:key_display . l:padding . ' | ' . l:item.desc . ' |')
                 endfor
                 call add(l:lines, '')
             endfor
