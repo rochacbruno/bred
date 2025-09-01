@@ -658,51 +658,132 @@ function! s:ShowDocsBuffer(position) abort
     " Determine split position
     let l:pos = a:position == '' ? 'right' : a:position
     
-    " Create the content
+    " Create the content in markdown format
     let l:lines = []
     
     " Check if we have any docs
     if empty(g:mapdocs)
         let l:lines = ['No mappings documented yet.']
     else
-        call add(l:lines, 'MAPPING DOCUMENTATION')
-        call add(l:lines, '=' . repeat('=', 62))
+        call add(l:lines, '# Vim Keybinding Documentation')
+        call add(l:lines, '')
+        call add(l:lines, 'Leader key: `' . l:leader_display . '`')
+        call add(l:lines, 'Open in Browser: `<space>mp` or `:ComposerStart`')
         call add(l:lines, '')
         
-        " Iterate through modes
-        for [l:mode, l:mode_data] in items(g:mapdocs)
-            if !empty(l:mode_data)
-                let l:mode_name = s:GetModeName(l:mode)
-                call add(l:lines, l:mode_name . ' Mappings')
-                call add(l:lines, repeat('-', len(l:mode_name . ' Mappings')))
-                call add(l:lines, '')
+        " Define mode order and friendly names
+        let l:mode_order = ['n', 'v', 'x', 'i', 'c', 'o', 't']
+        let l:mode_names = {
+            \ 'n': 'Normal Mode',
+            \ 'v': 'Visual Mode',
+            \ 'x': 'Visual Mode (Line)',
+            \ 'i': 'Insert Mode',
+            \ 'c': 'Command Mode',
+            \ 'o': 'Operator-pending Mode',
+            \ 't': 'Terminal Mode'
+        \ }
+        
+        " Process modes in defined order
+        for l:mode in l:mode_order
+            if !has_key(g:mapdocs, l:mode)
+                continue
+            endif
+            
+            let l:mode_data = g:mapdocs[l:mode]
+            if empty(l:mode_data)
+                continue
+            endif
+            
+            let l:mode_name = get(l:mode_names, l:mode, 'Mode ' . l:mode)
+            call add(l:lines, '## ' . l:mode_name)
+            call add(l:lines, '')
+            
+            " Collect all mappings for this mode, grouped by category
+            let l:categories = {}
+            let l:uncategorized = []
+            
+            for [l:key, l:value] in items(l:mode_data)
+                " Extract description and order based on value type
+                let l:desc = ''
+                let l:order = 999
                 
-                " First show top-level mappings
-                for [l:key, l:value] in items(l:mode_data)
-                    if type(l:value) == type('')
+                if type(l:value) == type('')
+                    " Old format: just a string description
+                    let l:desc = l:value
+                    let l:order = 999
+                    " Add to uncategorized
+                    let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
+                    let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
+                    call add(l:uncategorized, {'key': l:display_key, 'desc': l:desc, 'order': l:order})
+                elseif type(l:value) == type({})
+                    if has_key(l:value, 'desc')
+                        " New format: dict with 'desc' and 'order'
+                        let l:desc = l:value.desc
+                        let l:order = get(l:value, 'order', 999)
+                        " Add to uncategorized
                         let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
-                        call add(l:lines, printf('  %-15s %s', l:display_key, l:value))
-                    endif
-                endfor
-                
-                if !empty(filter(copy(l:mode_data), 'type(v:val) == type("")'))
-                    call add(l:lines, '')
-                endif
-                
-                " Then show categorized mappings
-                for [l:cat, l:cat_data] in items(l:mode_data)
-                    if type(l:cat_data) == type({})
-                        call add(l:lines, '  [' . l:cat . ']')
-                        for [l:key, l:desc] in items(l:cat_data)
-                            let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
-                            call add(l:lines, printf('    %-13s %s', l:display_key, l:desc))
+                        let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
+                        call add(l:uncategorized, {'key': l:display_key, 'desc': l:desc, 'order': l:order})
+                    else
+                        " This is a category with nested mappings
+                        let l:category = l:key
+                        if !has_key(l:categories, l:category)
+                            let l:categories[l:category] = []
+                        endif
+                        
+                        for [l:cat_key, l:cat_value] in items(l:value)
+                            let l:cat_desc = ''
+                            let l:cat_order = 999
+                            
+                            if type(l:cat_value) == type('')
+                                let l:cat_desc = l:cat_value
+                                let l:cat_order = 999
+                            elseif type(l:cat_value) == type({})
+                                let l:cat_desc = l:cat_value.desc
+                                let l:cat_order = get(l:cat_value, 'order', 999)
+                            endif
+                            
+                            let l:display_key = substitute(l:cat_key, '<leader>', l:leader_display, 'g')
+                            let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
+                            call add(l:categories[l:category], {'key': l:display_key, 'desc': l:cat_desc, 'order': l:cat_order})
                         endfor
-                        call add(l:lines, '')
                     endif
+                endif
+            endfor
+            
+            " Sort uncategorized mappings by order, then by key
+            call sort(l:uncategorized, {a, b -> 
+                \ a.order != b.order ? (a.order < b.order ? -1 : 1) : 
+                \ (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)})
+            
+            " Display uncategorized mappings if any
+            if !empty(l:uncategorized)
+                call add(l:lines, '| Key | Description |')
+                call add(l:lines, '|-----|-------------|')
+                for l:item in l:uncategorized
+                    call add(l:lines, '| `' . l:item.key . '` | ' . l:item.desc . ' |')
                 endfor
-                
                 call add(l:lines, '')
             endif
+            
+            " Display categorized mappings
+            let l:sorted_categories = sort(keys(l:categories))
+            for l:category in l:sorted_categories
+                call add(l:lines, '### ' . l:category)
+                call add(l:lines, '')
+                
+                " Sort mappings within category by order, then by key
+                call sort(l:categories[l:category], {a, b -> 
+                    \ a.order != b.order ? (a.order < b.order ? -1 : 1) : 
+                    \ (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)})
+                
+                call add(l:lines, '| Key | Description |')
+                call add(l:lines, '|-----|-------------|')
+                for l:item in l:categories[l:category]
+                    call add(l:lines, '| `' . l:item.key . '` | ' . l:item.desc . ' |')
+                endfor
+                call add(l:lines, '')
+            endfor
         endfor
     endif
     
@@ -741,13 +822,14 @@ function! s:ShowDocsBuffer(position) abort
     call setline(1, l:lines)
     
     " Make it read-only and set options
-    setlocal nomodifiable
+    " setlocal nomodifiable " Allowing user to copy text
     setlocal readonly
     setlocal buftype=nofile
     setlocal noswapfile
     setlocal nowrap
     setlocal number
     setlocal relativenumber
+    setlocal filetype=markdown
     
     " Set up key mappings for this buffer
     nnoremap <buffer> q :close<CR>
