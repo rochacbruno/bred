@@ -21,51 +21,53 @@
 " Tab Management {{{
 " -------------------------------------------------------------------------
 " Note: Tabs are rarely used in favor of buffers, but mappings provided
-Nmap 'Create new tab|Tabs' <leader>tn :tabnew<CR>
-Nmap 'Close all other tabs|Tabs' <leader>to :tabonly<CR>
-Nmap 'Close current tab|Tabs' <leader>tc :tabclose<CR>
-Nmap 'Go to next tab|Tabs' <leader>tl :tabnext<CR>
-Nmap 'Go to previous tab|Tabs' <leader>th :tabprevious<CR>
+Nmap 'create new|Tabs' <leader>tn :tabnew<CR>
+Nmap 'close all other|Tabs' <leader>to :tabonly<CR>
+Nmap 'close current|Tabs' <leader>tc :tabclose<CR>
+Nmap 'go to next|Tabs' <leader>tl :tabnext<CR>
+Nmap 'go to previous|Tabs' <leader>th :tabprevious<CR>
 
 " }}}
 " -------------------------------------------------------------------------
 " Buffer Management {{{
 " -------------------------------------------------------------------------
-Nmap 'List buffers and jump to one|Buffers' <leader>bl :ls<CR>:b<Space>
-Nmap 'Previous buffer|Buffers' [b :bp<CR>
-Nmap 'Next buffer|Buffers' ]b :bn<CR>
-Nmap 'Close all hidden buffers|Buffers' <leader>bh :DeleteHiddenBuffers<CR>
-Nmap 'Close all buffers|Buffers' <leader>bd :bufdo bdelete<CR>
+Nmap 'list and jump to one|Buffers' <leader>bl :ls<CR>:b<Space>
+Nmap 'previous|Buffers|2' [b :bp<CR>
+Nmap 'next|Buffers|2' ]b :bn<CR>
+Nmap 'previous|Buffers|2' [q :bp<CR>
+Nmap 'next|Buffers|2' ]q :bn<CR>
+Nmap 'close all hidden|Buffers' <leader>bh :DeleteHiddenBuffers<CR>
+Nmap 'close all|Buffers|2' <leader>bd :bufdo bdelete<CR>
 
 " NOTE: More buffer mappings on plugins.vim 
 
 " Quick buffer switching with <leader>1 through 9
-Nmap 'Switch to buffer 1-9|Buffers' <leader>1 :buffer 1<CR>
+Nmap 'switch to 1-9|Buffers' <leader>1 :buffer 1<CR>
 for n in range(2, 9)
   execute 'nnoremap <silent> <leader>' . n . ' :buffer ' . n . '<CR>'
 endfor
 
 " Quick switch to alternate buffer
-Nmap 'Toggle between two buffers|Buffers' <leader><Tab> <C-^>
+Nmap 'alternate|Buffers|2' <leader><Tab> <C-^>
 
 " }}}
 " -------------------------------------------------------------------------
 " Window Management (Splits) {{{
 " -------------------------------------------------------------------------
-Nmap 'Increase window height|Windows' <leader>= :resize +3<CR>
-Nmap 'Decrease window height|Windows' <leader>- :resize -3<CR>
-Nmap 'Increase window width|Windows' <leader>> :vertical resize +3<CR>
-Nmap 'Decrease window width|Windows' <leader>< :vertical resize -3<CR>
+Nmap 'increase height|Windows' <leader>= :resize +3<CR>
+Nmap 'decrease height|Windows' <leader>- :resize -3<CR>
+Nmap 'increase width|Windows' <leader>> :vertical resize +3<CR>
+Nmap 'decrease width|Windows' <leader>< :vertical resize -3<CR>
 
 " Interactive resize mode
-Nmap 'Enter resize mode (arrows to resize)|Windows' <leader>rs :call ResizeMode()<CR>
+Nmap 'resize mode|Windows' <leader>rs :call ResizeMode()<CR>
 " }}}
 " -------------------------------------------------------------------------
 " Quick Save/Quit and Quality of Life {{{
 " -------------------------------------------------------------------------
-Nmap 'Save file|Files' <leader>w :write<CR>
-Nmap 'Quit|Files' <leader>q :quit<CR>
-Nmap 'Save and quit|Files' <leader>x :xit<CR>
+Nmap 'save|Files' <leader>w :write<CR>
+Nmap 'quit|Files' <leader>q :quit<CR>
+Nmap 'save and quit|Files' <leader>x :xit<CR>
 
 " Enter after search will clear highlights
 nnoremap <silent> <CR> :nohlsearch<CR><CR>
@@ -76,7 +78,7 @@ nnoremap <silent> <CR> :nohlsearch<CR><CR>
 " -------------------------------------------------------------------------
 tnoremap <C-v><Esc> <C-\><C-n>
 " C-v Esc - Exit terminal mode (keeping as tnoremap for now)
-Nmap 'Open terminal at bottom|Terminal' <leader>c :botright term<CR>
+Nmap 'open at bottom|Terminal' <leader>c :botright term<CR>
 
 " }}}
 " -------------------------------------------------------------------------
@@ -84,22 +86,25 @@ Nmap 'Open terminal at bottom|Terminal' <leader>c :botright term<CR>
 " -------------------------------------------------------------------------
 " Replace current word throughout file
 " Note: Visual Multi plugin provides similar functionality with Ctrl+d
-Nmap 'Replace word under cursor|Search' <leader>re :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
+Nmap 'replace word under cursor|Search' <leader>re :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
+Vmap 'replace word under cursor in selection|Search' <leader>re :s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
+Nmap 'replace word under cursor in line|Search' <leader>rl :s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
+
 
 " }}}
 " -------------------------------------------------------------------------
 " Configuration Reload {{{
 " -------------------------------------------------------------------------
-Nmap 'Reload vimrc|Config' <leader><leader>so :source $MYVIMRC<CR>
+Nmap 'reload vimrc|Config' <leader><leader>so :source $MYVIMRC<CR>
 
 " }}}
 " -------------------------------------------------------------------------
 " Common Editor Shortcuts {{{
 " -------------------------------------------------------------------------
 " Ctrl+S to save (familiar for users coming from other editors)
-Nmap 'Save file|Files' <C-s> :update<CR>
-Imap 'Save file|Files' <C-s> <Esc>:update<CR>a
-Xmap 'Save file|Files' <C-s> <Esc>:update<CR>gv
+Nmap 'save|Files|2' <C-s> :update<CR>
+Imap 'save|Files' <C-s> <Esc>:update<CR>a
+Xmap 'save|Files' <C-s> <Esc>:update<CR>gv
 
 " Ctrl+Z to undo (familiar for users coming from other editors)
 Nmap 'Undo|Edit' <C-z> u
@@ -108,7 +113,7 @@ Xmap 'Undo|Edit' <C-z> <Esc>ugv
 
 
 "Remove all trailing whitespace
-Nmap 'Remove trailing whitespace|Edit' <leader>tw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
+Nmap 'remove / trim trailing whitespace|Edit' <leader>tw :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 
 " }}}
 " -------------------------------------------------------------------------
@@ -124,13 +129,13 @@ Nmap 'Remove trailing whitespace|Edit' <leader>tw :let _s=@/<Bar>:%s/\s\+$//e<Ba
 " Imap 'Kill to end of line|Emacs' <C-k> <C-o>D
 " Imap 'Delete word backward|Emacs' <M-Backspace> <C-o>dB
 " Command mode mappings
-Cmap 'Move to beginning|Emacs' <C-a> <Home>
-Cmap 'Move to end|Emacs' <C-e> <End>
-Cmap 'Move forward|Emacs' <C-f> <Right>
-Cmap 'Move backward|Emacs' <C-b> <Left>
-Cmap 'Delete character|Emacs' <C-d> <Del>
-Cmap 'Kill to beginning|Emacs' <C-k> <C-u>
-Cmap 'Delete word|Emacs' <M-Backspace> <C-w>
+Cmap 'move to beginning|Emacs' <C-a> <Home>
+Cmap 'move to end|Emacs' <C-e> <End>
+Cmap 'move forward|Emacs' <C-f> <Right>
+Cmap 'move backward|Emacs' <C-b> <Left>
+Cmap 'delete character|Emacs' <C-d> <Del>
+Cmap 'kill to beginning|Emacs' <C-k> <C-u>
+Cmap 'delete word|Emacs' <M-Backspace> <C-w>
 
 " -------------------------------------------------------------------------
 
@@ -138,31 +143,31 @@ Cmap 'Delete word|Emacs' <M-Backspace> <C-w>
 " -------------------------------------------------------------------------
 " Move lines up and down while maintaining indentation
 " Using Alt+j/k
-Nmap 'Move line down|Lines' <M-j> :m .+1<CR>==
-Nmap 'Move line up|Lines' <M-k> :m .-2<CR>==
-Imap 'Move line down|Lines' <M-j> <Esc>:m .+1<CR>==gi
-Imap 'Move line up|Lines' <M-k> <Esc>:m .-2<CR>==gi
-Xmap 'Move selection down|Lines' <M-j> :m '>+1<CR>gv=gv
-Xmap 'Move selection up|Lines' <M-k> :m '<-2<CR>gv=gv
+Nmap 'move down|Lines' <M-j> :m .+1<CR>==
+Nmap 'move up|Lines' <M-k> :m .-2<CR>==
+Imap 'move down|Lines' <M-j> <Esc>:m .+1<CR>==gi
+Imap 'move up|Lines' <M-k> <Esc>:m .-2<CR>==gi
+Xmap 'move selection down|Lines' <M-j> :m '>+1<CR>gv=gv
+Xmap 'move selection up|Lines' <M-k> :m '<-2<CR>gv=gv
 " Using Alt+Arrow keys
-Nmap 'Move line down|Lines' <M-Down> :m .+1<CR>==
-Nmap 'Move line up|Lines' <M-Up> :m .-2<CR>==
-Imap 'Move line down|Lines' <M-Down> <Esc>:m .+1<CR>==gi
-Imap 'Move line up|Lines' <M-Up> <Esc>:m .-2<CR>==gi
-Xmap 'Move selection down|Lines' <M-Down> :m '>+1<CR>gv=gv
-Xmap 'Move selection up|Lines' <M-Up> :m '<-2<CR>gv=gv
+Nmap 'move down|Lines' <M-Down> :m .+1<CR>==
+Nmap 'move up|Lines' <M-Up> :m .-2<CR>==
+Imap 'move down|Lines' <M-Down> <Esc>:m .+1<CR>==gi
+Imap 'move up|Lines' <M-Up> <Esc>:m .-2<CR>==gi
+Xmap 'move selection down|Lines' <M-Down> :m '>+1<CR>gv=gv
+Xmap 'move selection up|Lines' <M-Up> :m '<-2<CR>gv=gv
 
 " }}}
 " -------------------------------------------------------------------------
 " Visual Mode Enhancements {{{
 " -------------------------------------------------------------------------
 " Stay in visual mode after indenting 
-Xmap 'Indent left and stay in visual mode|Edit' < <gv
-Xmap 'Indent right and stay in visual mode|Edit' > >gv
+Xmap 'indent left and stay in visual mode|Edit' < <gv
+Xmap 'indent right and stay in visual mode|Edit' > >gv
 
 " Paste without overwriting register (keeps yanked text)
-Xmap 'Paste without yanking replaced text|Edit' p "_dP
-Vmap 'Paste without yanking replaced text|Edit' p "_dP
+Xmap 'paste without yanking replaced text|Edit' p "_dP
+Vmap 'paste without yanking replaced text|Edit' p "_dP
 
 " }}}
 " -------------------------------------------------------------------------
@@ -185,21 +190,21 @@ nnoremap gk k
 " gk - Move by physical line
 
 "Hitting esc twice will close quickfix/location list if open
-Nmap 'Close Quick Window and clear highlight|Windows' <Esc><Esc> :cclose<CR>:lclose<CR>:nohlsearch<CR>
+Nmap 'close quick action and clear highlight|Windows|3' <Esc><Esc> :cclose<CR>:lclose<CR>:nohlsearch<CR>
 
 " }}}
 " -------------------------------------------------------------------------
 " File Operations {{{
 " -------------------------------------------------------------------------
 " Make current file executable (useful for scripts)
-Nmap 'Make file executable|Files' <leader><leader>x :!chmod +x %<CR>
+Nmap 'make executable|Files' <leader><leader>x :!chmod +x %<CR>
 
 " }}}
 " -------------------------------------------------------------------------
 " MapDocs System {{{
 " -------------------------------------------------------------------------
 " Access the mapping documentation and interactive menu
-Nmap 'Open mapping documentation on a buffer|Help' <leader>h :BufferDocs<CR>
+Nmap 'open mapping documentation on a buffer|Help' <leader>h :BufferDocs<CR>
 nnoremap <silent> <leader> :ShowDocs<CR>
 
 
@@ -207,68 +212,65 @@ nnoremap <silent> <leader> :ShowDocs<CR>
 " ---------------------------------------------------------------
 "  Docs Only For The MapDocs System (do not remove these lines)
 " ---------------------------------------------------------------
-Imap 'Indent|Edit' <C-T>
-Imap 'Outdent|Edit' <C-D>
-Imap 'Repeat last Insert|Edit' <C-A>
-Imap 'Delete word backward|Edit' <C-W>
-Imap 'Delete to last insert in the current line|Edit' <C-U>
-Imap 'Next Completion|Edit' <C-N>
-Imap 'Previous Completion|Edit' <C-P>
-Imap 'Cancel completion|Edit' <C-E>
-Imap 'Insert char above cursor|Edit' <C-Y>
-Imap 'Insert char below cursor|Edit' <C-E>
+Imap 'indent|Edit' <C-T>
+Imap 'outdent|Edit' <C-D>
+Imap 'repeat last Insert|Edit' <C-A>
+Imap 'delete word backward|Edit' <C-W>
+Imap 'delete to last insert in the current line|Edit' <C-U>
+Imap 'next Completion|Edit' <C-N>
+Imap 'previous Completion|Edit' <C-P>
+Imap 'cancel completion|Edit' <C-E>
+Imap 'insert char above cursor|Edit' <C-Y>
+Imap 'insert char below cursor|Edit' <C-E>
 
-Nmap 'Redraw screen|View' <C-L>
-Nmap 'Go to first line of file|Navigation' gg
-Nmap 'Go to last line of file|Navigation' G
-Nmap 'Go to end of line|Navigation' $
-Nmap 'Go to beginning of line|Navigation' 0
-Nmap 'Go to first non-blank character of line|Navigation' ^
-Nmap 'Go to matching bracket|Navigation' %
+Nmap 'redraw screen|View' <C-L>
+Nmap 'go to first line of file|Navigation' gg
+Nmap 'go to last line of file|Navigation' G
+Nmap 'go to end of line|Navigation' $
+Nmap 'go to beginning of line|Navigation' 0
+Nmap 'go to first non-blank character of line|Navigation' ^
+Nmap 'go to matching bracket|Navigation' %
 
-Nmap 'Indent N lines|Edit' N>>
-Nmap 'Outdent N lines|Edit' N<<
-Nmap 'Restore Indentation N Lines|Edit' N==
-Nmap 'Go to line N|Navigation' Ngg
-Nmap 'Cursor to the middle of the screen|Navigation' M
-Nmap 'Cursor to the top of the screen|Navigation' H
-Nmap 'Cursor to the bottom of the screen|Navigation' L
+Nmap 'indent N lines|Edit' N>>
+Nmap 'outdent N lines|Edit' N<<
+Nmap 'restore Indentation N Lines|Edit' N==
+Nmap 'go to line N|Navigation' Ngg
+Nmap 'cursor to the middle of the screen|Navigation' M
+Nmap 'cursor to the top of the screen|Navigation' H
+Nmap 'cursor to the bottom of the screen|Navigation' L
+Nmap 'go to file under cursor|Navigation' gf
 
-Nmap 'New line above current line|Edit' O
-Nmap 'New line below current line|Edit' o
-Nmap 'Insert before cursor|Edit' I
-Nmap 'Insert at end of line|Edit' A
-Nmap 'Append after cursor|Edit' a
+Nmap 'new line above current line|Edit' O
+Nmap 'new line below current line|Edit' o
+Nmap 'insert before cursor|Edit' I
+Nmap 'insert at end of line|Edit' A
+Nmap 'append after cursor|Edit' a
 Nmap 'delete N lines and start insert|Edit' Ncc
 
-Nmap 'Move window focus left|Windows' <C-w>h
-Nmap 'Move window focus down|Windows' <C-w>j
-Nmap 'Move window focus up|Windows' <C-w>k
-Nmap 'Move window focus right|Windows' <C-w>l
-Nmap 'Split window horizontally|Windows' <C-w>s
-Nmap 'Split window vertically|Windows' <C-w>v
-Nmap 'Close current window|Windows' <C-w>c
-Nmap 'Quit current window|Windows' <C-w>q
-Nmap 'Equalize window sizes|Windows' <C-w>=
-Nmap 'Go to previous window|Windows' <C-w>p
-Nmap 'Go to Nth window|Windows' <C-w>N
-Nmap 'Go to last window|Windows' <C-w>W
-Nmap 'Rotate windows up|Windows' <C-w>R
-Nmap 'Rotate windows down|Windows' <C-w>r
-Nmap 'Move current window to new tab|Windows' <C-w>T
-Nmap 'Close all other windows|Windows' <C-w>o
-Nmap 'Move current window to left|Windows' <C-w>H
-Nmap 'Move current window to bottom|Windows' <C-w>J
-Nmap 'Move current window to top|Windows' <C-w>K
-Nmap 'Move current window to right|Windows' <C-w>L
-Nmap 'Split window and jump to symbol|Windows' <C-w>]
-Nmap 'Split window and go to file under cursor|Windows' <C-w>f
-Nmap 'Go to file under cursor|Navigation' gf
-Nmap 'Go to another window|Windows' <C-w>ARROWS
-Nmap 'Exchange windows|Windows' <C-w>x
-
-Nmap 'Swap Window|Windows' --s<ID>
-Nmap 'Jump Windows|Windows' --  
+Nmap 'move focus left|Windows' <C-w>h
+Nmap 'move focus down|Windows' <C-w>j
+Nmap 'move focus up|Windows' <C-w>k
+Nmap 'move focus right|Windows' <C-w>l
+Nmap 'split horizontally|Windows|3' <C-w>s
+Nmap 'split vertically|Windows|3' <C-w>v
+Nmap 'close current|Windows|3' <C-w>c
+Nmap 'quit current|Windows' <C-w>q
+Nmap 'equalize sizes|Windows' <C-w>=
+Nmap 'go to previous|Windows' <C-w>p
+Nmap 'go to Nth|Windows' <C-w>N
+Nmap 'go to last|Windows' <C-w>W
+Nmap 'rotate up|Windows' <C-w>R
+Nmap 'rotate down|Windows|3' <C-w>r
+Nmap 'move current to new tab|Windows' <C-w>T
+Nmap 'close all other|Windows|3' <C-w>o
+Nmap 'move current to left|Windows' <C-w>H
+Nmap 'move current to bottom|Windows' <C-w>J
+Nmap 'move current to top|Windows' <C-w>K
+Nmap 'move current to right|Windows' <C-w>L
+Nmap 'split and jump to symbol|Windows' <C-w>]
+Nmap 'split and go to file under cursor|Windows' <C-w>f
+Nmap 'go to another|Windows|3' <C-w>ARROWS
+Nmap 'exchanges|Windows' <C-w>x
 
 " -------------------------------------------------------------------------
 " End of Mappings

@@ -19,8 +19,9 @@ let g:netrw_winsize = 25                  " Width of explorer window
 let g:netrw_keepdir = 0                   " Keep current directory synced
 runtime! plugin/netrwPlugin.vim          " Load netrw plugin
 " Key mappings:
-Nmap 'Open explorer on left|Files' <leader>e :Lexplore<CR>
+Nmap 'Open explorer on left|Files|1' <leader>e :Lexplore<CR>
 Nmap 'Open explorer in vertical split|Files' <leader>E :Vexplore<CR>
+
 " }}}
 
 " LSP - Language Server Protocol support {{{
@@ -83,19 +84,19 @@ Plug 'chrisbra/matchit'
 if executable('fzf')
   Plug 'junegunn/fzf.vim'
   " Key mappings:
-  Nmap 'List open buffers|Buffers' <leader>b :Buffers<CR>
-  Nmap 'Find files|Files' <leader>f :Files<CR>
-  Nmap 'Git files|Git' <leader>g :GFiles<CR>
-  Nmap 'Jumplist|Edit' <leader>j :Jumps<CR>
-  Nmap 'lines in current buffer|Search' <leader>l :Lines<CR>
-  Nmap 'text with ripgrep|Search' <silent><leader>r :Rg<CR>
+  Nmap 'list|Buffers|0' <leader>b :Buffers<CR>
+  Nmap 'find|Files|0' <leader>f :Files<CR>
+  Nmap 'tracked files|Git|0' <leader>g :GFiles<CR>
+  Nmap 'jumplist|Edit|1' <leader>j :Jumps<CR>
+  Nmap 'lines in current buffer|Search|0' <leader>l :Lines<CR>
+  Nmap 'text with ripgrep|Search|0' <silent><leader>r :Rg<CR>
   
-  Nmap 'Recent Files|Files' <leader>rf :History<CR>
-  Nmap 'Changes on buffers|Edit' <leader>cb :Changes<CR>
+  Nmap 'recent|Files|0' <leader>rf :History<CR>
+  Nmap 'changes on buffers|Edit|1' <leader>cb :Changes<CR>
 
-  Nmap 'Commits|Git' <leader>gc :Commits<CR>
-  Xmap 'Commits affecting selection|Git' <leader>gc :Commits<CR>
-  Nmap 'Git status|Git' <leader>gs :GFiles?<CR>
+  Nmap 'commits|Git|0' <leader>gc :Commits<CR>
+  Xmap 'commits affecting selection|Git|0' <leader>gc :Commits<CR>
+  Nmap 'status|Git|0' <leader>gs :GFiles?<CR>
 else
   echo "fzf is not installed, please install it to use fzf.vim"
 endif
@@ -203,8 +204,9 @@ Plug 'chrisbra/Colorizer'
 " Visual Multi - Multiple cursor support {{{
 " Key mappings:
 " Document Visual Multi mappings without overriding them
-Nmap 'Select word under cursor / Add next occurrence|Edit Cursor' <C-d>
+Nmap 'Select word under cursor / Add next occurrence|Edit Cursor|2' <C-d>
 Xmap 'Add next occurrence|Edit Cursor' <C-d>
+
 " n/N         - Next/previous occurrence
 " [/]         - Next/previous cursor
 " q           - Skip current and find next
@@ -244,7 +246,7 @@ Plug 'tpope/vim-rhubarb'
 Plug 'rhysd/git-messenger.vim'
 let g:git_messenger_no_default_mappings = v:true
 " Key mappings:
-Nmap 'Show git commit info|Git' <leader>gm <Plug>(git-messenger)
+Nmap 'Show git commit info|Git|2' <leader>gm <Plug>(git-messenger)
 
 " }}}
 
@@ -259,11 +261,11 @@ Nmap 'Show git commit info|Git' <leader>gm <Plug>(git-messenger)
 
 Plug 'tpope/vim-commentary'
 
-Nmap 'Uncomment adjacent commented lines|Edit Comment' gcu
-Nmap 'Comment Toggle|Edit Comment' <C-/> <Plug>CommentaryLine
-Imap 'Comment Toggle|Edit Comment' <C-/> <Esc><Plug>CommentaryLineA
-Xmap 'Comment Toggle|Edit Comment' <C-/> <Plug>Commentarygv
-Omap 'Comment Toggle|Edit Comment' <C-/> <Plug>Commentary
+Nmap 'uncomment adjacent commented lines|Edit' gcu
+Nmap 'comment|Edit|1' <C-/> <Plug>CommentaryLine
+Imap 'comment|Edit' <C-/> <Esc><Plug>CommentaryLineA
+Xmap 'comment|Edit' <C-/> <Plug>Commentarygv
+Omap 'comment|Edit' <C-/> <Plug>Commentary
 
 " the following mappings are for keyboards where Ctrl+/ is not possible
 nnoremap <silent> <C-_> <Plug>CommentaryLine
@@ -503,7 +505,7 @@ Imap 'Toggle Goyo mode|Windows' <C-w>g <Esc>:Goyo<CR>
 Plug 'dhruvasagar/vim-zoom'
 " Key mappings:
 " Document Vim Zoom mappings without overriding them
-Nmap 'Toggle window zoom (maximize/restore)|Windows' <C-w>m
+Nmap 'Toggle window zoom (maximize/restore)|Windows|3' <C-w>m
 " }}}
 
 " ===============================================================================
@@ -713,8 +715,8 @@ Omap 'Current viewable text|Text Objects' iv :exec "normal! HVL"<cr>
 " Delete buffers without affecting window layout
 Plug 'moll/vim-bbye'
 " Key mappings:
-Nmap 'Close buffer (save first)|Buffers' <leader>bc :Bdelete<CR>
-Nmap 'Force close buffer (no save)|Buffers' <leader>bx :Bdelete!<CR>
+Nmap 'Close buffer (save first)|Buffers|2' <leader>bc :Bdelete<CR>
+Nmap 'Force close buffer (no save)|Buffers|2' <leader>bx :Bdelete!<CR>
 
 " }}}
 
@@ -775,7 +777,10 @@ Plug 'yegappan/mru'
 Plug 't9md/vim-choosewin'
 let g:choosewin_overlay_enable = 1        " Show window markers as overlay
 " Key mappings:
-Nmap 'Open window chooser|Windows' - <Plug>(choosewin)
+Nmap 'Open window chooser|Windows|3' - <Plug>(choosewin)
+Nmap 'Swap Window|Windows|3' --s<ID>
+Nmap 'Jump Windows|Windows|3' --  
+Nmap 'Swap with previous window|Windows|3' --ss
 " Operations in chooser:
 " s      - Swap with selected window
 " S      - Swap and stay in current window

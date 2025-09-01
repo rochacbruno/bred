@@ -22,7 +22,7 @@ endif
 let g:mapdocs = {}
 let g:mapdocs_created = {}
 
-" Parse documentation string (description|category)
+" Parse documentation string (description|category|order)
 function! s:ParseDocString(docstr) abort
     " Remove surrounding quotes if present
     let l:str = a:docstr
@@ -30,11 +30,14 @@ function! s:ParseDocString(docstr) abort
         let l:str = l:str[1:-2]
     endif
     
-    " Split by | to get description and optional category
+    " Split by | to get description, optional category, and optional order
     let l:parts = split(l:str, '|')
     let l:desc = trim(get(l:parts, 0, ''))
     let l:category = trim(get(l:parts, 1, ''))
-    return [l:desc, l:category]
+    let l:order = trim(get(l:parts, 2, ''))
+    " Convert order to number (default to 999 for no explicit order)
+    let l:order_num = l:order == '' ? 999 : str2nr(l:order)
+    return [l:desc, l:category, l:order_num]
 endfunction
 
 " Enhanced mapping commands with built-in documentation
@@ -65,8 +68,8 @@ function! s:CreateMapping(mode, args) abort
     let l:lhs = l:match[3]      " The mapping key
     let l:rhs = l:match[4]      " The command to execute (optional)
     
-    " Parse documentation
-    let [l:desc, l:category] = s:ParseDocString(l:docstr)
+    " Parse documentation (now includes order)
+    let [l:desc, l:category, l:order] = s:ParseDocString(l:docstr)
     
     if l:desc == ''
         echoerr "Description cannot be empty"
@@ -89,19 +92,20 @@ function! s:CreateMapping(mode, args) abort
     endif
     
     " Store documentation (always, whether or not we created a mapping)
+    " Now we store as a dictionary with desc and order
     if !has_key(g:mapdocs, a:mode)
         let g:mapdocs[a:mode] = {}
     endif
     
     if l:category == ''
         " No category - store at top level
-        let g:mapdocs[a:mode][l:lhs] = l:desc
+        let g:mapdocs[a:mode][l:lhs] = {'desc': l:desc, 'order': l:order}
     else
         " With category
         if !has_key(g:mapdocs[a:mode], l:category)
             let g:mapdocs[a:mode][l:category] = {}
         endif
-        let g:mapdocs[a:mode][l:category][l:lhs] = l:desc
+        let g:mapdocs[a:mode][l:category][l:lhs] = {'desc': l:desc, 'order': l:order}
     endif
 endfunction
 
@@ -119,12 +123,20 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
     " Display leader key properly (show <spc> instead of empty space)
     let l:leader_display = l:leader == ' ' ? '<spc>' : l:leader
     
-    " Build the final source list respecting mode order
-    let l:source = []
-    let l:first_mode = 1
+    " Collect ALL items from all modes first
+    let l:all_ordered_items = []  " Items with explicit order (< 999)
+    let l:all_unordered_items = []  " Items without explicit order (= 999)
     
-    " Process modes in the specified order
-    for l:mode in l:ordered_modes
+    " Process ALL modes (ordered ones first, then remaining)
+    let l:all_modes = copy(l:ordered_modes)
+    for [l:mode, l:mode_data] in items(g:mapdocs)
+        if index(l:all_modes, l:mode) == -1
+            call add(l:all_modes, l:mode)
+        endif
+    endfor
+    
+    " Process all modes
+    for l:mode in l:all_modes
         " Skip if this mode doesn't exist in mapdocs
         if !has_key(g:mapdocs, l:mode)
             continue
@@ -132,40 +144,77 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
         
         let l:mode_data = g:mapdocs[l:mode]
         let l:mode_display = s:GetModeShort(l:mode)
-        let l:mode_uncategorized = []
-        let l:mode_categorized = []
         
         " Collect uncategorized mappings for this mode
-        for [l:key, l:desc] in items(l:mode_data)
-            if type(l:desc) == type('')
-                " Try to get the raw mapping
-                let l:raw_mapping = ''
-                if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
-                    let l:mapping = maparg(l:key, l:mode, 0, 1)
-                    if !empty(l:mapping) && has_key(l:mapping, 'rhs')
-                        " Remove <silent> from display
-                        let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
-                        let l:raw_mapping = ' | ' . l:raw_mapping
-                    endif
+        for [l:key, l:data] in items(l:mode_data)
+            " Handle both old format (string) and new format (dict with desc and order)
+            if type(l:data) == type('')
+                " Old format: just a string description
+                let l:desc = l:data
+                let l:order = 999
+            elseif type(l:data) == type({}) && !has_key(l:data, l:key)
+                " New format: dict with 'desc' and 'order'
+                " (not a category, which would have nested keys)
+                if has_key(l:data, 'desc')
+                    let l:desc = l:data.desc
+                    let l:order = get(l:data, 'order', 999)
+                else
+                    continue  " This is a category, skip it
                 endif
-                " Format: [mode] key : description | raw_mapping
-                " Store the clean key for execution (without <silent>)
-                let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
-                let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
-                " Replace <Space> with <spc> in display
-                let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
-                let l:line = printf("[%s] %-18s : %s%s", l:mode_display, l:display_key, l:desc, l:raw_mapping)
-                call add(l:mode_uncategorized, {
-                    \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
-                    \ 'desc': l:desc
-                \ })
+            else
+                continue  " This is a category
+            endif
+            
+            " Try to get the raw mapping
+            let l:raw_mapping = ''
+            if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
+                let l:mapping = maparg(l:key, l:mode, 0, 1)
+                if !empty(l:mapping) && has_key(l:mapping, 'rhs')
+                    " Remove <silent> from display
+                    let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
+                    let l:raw_mapping = ' | ' . l:raw_mapping
+                endif
+            endif
+            " Format: [mode] key : description | raw_mapping
+            " Store the clean key for execution (without <silent>)
+            let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
+            let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
+            " Replace <Space> with <spc> in display
+            let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
+            let l:line = printf("[%s] %-18s : %s%s", l:mode_display, l:display_key, l:desc, l:raw_mapping)
+            
+            let l:item = {
+                \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
+                \ 'desc': l:desc,
+                \ 'order': l:order,
+                \ 'category': '',
+                \ 'mode': l:mode
+            \ }
+            
+            " Add to ordered or unordered list based on order value
+            if l:order < 999
+                call add(l:all_ordered_items, l:item)
+            else
+                call add(l:all_unordered_items, l:item)
             endif
         endfor
         
         " Collect categorized mappings for this mode
         for [l:category, l:cat_data] in items(l:mode_data)
-            if type(l:cat_data) == type({})
-                for [l:key, l:desc] in items(l:cat_data)
+            if type(l:cat_data) == type({}) && !has_key(l:cat_data, 'desc')
+                " This is a category (has nested mappings, not a 'desc' key)
+                for [l:key, l:data] in items(l:cat_data)
+                    " Handle both old format (string) and new format (dict)
+                    if type(l:data) == type('')
+                        let l:desc = l:data
+                        let l:order = 999
+                    elseif type(l:data) == type({})
+                        let l:desc = l:data.desc
+                        let l:order = get(l:data, 'order', 999)
+                    else
+                        continue
+                    endif
+                    
                     " Try to get the raw mapping
                     let l:raw_mapping = ''
                     if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
@@ -183,147 +232,61 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
                     let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
                     " Include category in display
                     let l:line = printf("[%s] %-18s : [%s] %s%s", l:mode_display, l:display_key, l:category, l:desc, l:raw_mapping)
-                    call add(l:mode_categorized, {
+                    
+                    let l:item = {
                         \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
                         \ 'category': l:category,
-                        \ 'desc': l:desc
-                    \ })
+                        \ 'desc': l:desc,
+                        \ 'order': l:order,
+                        \ 'mode': l:mode
+                    \ }
+                    
+                    " Add to ordered or unordered list based on order value
+                    if l:order < 999
+                        call add(l:all_ordered_items, l:item)
+                    else
+                        call add(l:all_unordered_items, l:item)
+                    endif
                 endfor
             endif
         endfor
-        
-        " Sort uncategorized alphabetically by description
-        call sort(l:mode_uncategorized, {a, b -> a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0})
-        
-        " Sort categorized first by category, then by description
-        call sort(l:mode_categorized, {a, b -> 
-            \ a.category != b.category ? 
-            \ (a.category < b.category ? -1 : 1) :
-            \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
-        \ })
-        
-        " Add mode separator if not the first mode and we have items
-        if !l:first_mode && (!empty(l:mode_uncategorized) || !empty(l:mode_categorized))
-            call add(l:source, '─────────────────────────────────────────────────|separator|separator')
-        endif
-        
-        " Add uncategorized items for this mode
-        for l:item in l:mode_uncategorized
-            call add(l:source, l:item.line)
-        endfor
-        
-        " Add separator between uncategorized and categorized within mode
-        if !empty(l:mode_uncategorized) && !empty(l:mode_categorized)
-            call add(l:source, '·····································································|separator|separator')
-        endif
-        
-        " Add categorized items for this mode
-        for l:item in l:mode_categorized
-            call add(l:source, l:item.line)
-        endfor
-        
-        if !empty(l:mode_uncategorized) || !empty(l:mode_categorized)
-            let l:first_mode = 0
-        endif
     endfor
     
-    " Add any remaining modes that weren't in the filter (at the end)
-    for [l:mode, l:mode_data] in items(g:mapdocs)
-        if index(l:ordered_modes, l:mode) != -1
-            " Already processed
-            continue
-        endif
-        
-        let l:mode_display = s:GetModeShort(l:mode)
-        let l:mode_uncategorized = []
-        let l:mode_categorized = []
-        
-        " Collect uncategorized mappings for this mode
-        for [l:key, l:desc] in items(l:mode_data)
-            if type(l:desc) == type('')
-                " Try to get the raw mapping
-                let l:raw_mapping = ''
-                if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
-                    let l:mapping = maparg(l:key, l:mode, 0, 1)
-                    if !empty(l:mapping) && has_key(l:mapping, 'rhs')
-                        " Remove <silent> from display
-                        let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
-                        let l:raw_mapping = ' | ' . l:raw_mapping
-                    endif
-                endif
-                " Store the clean key for execution (without <silent>)
-                let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
-                let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
-                " Replace <Space> with <spc> in display
-                let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
-                let l:line = printf("[%s] %-18s : %s%s", l:mode_display, l:display_key, l:desc, l:raw_mapping)
-                call add(l:mode_uncategorized, {
-                    \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
-                    \ 'desc': l:desc
-                \ })
-            endif
-        endfor
-        
-        " Collect categorized mappings for this mode
-        for [l:category, l:cat_data] in items(l:mode_data)
-            if type(l:cat_data) == type({})
-                for [l:key, l:desc] in items(l:cat_data)
-                    " Try to get the raw mapping
-                    let l:raw_mapping = ''
-                    if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
-                        let l:mapping = maparg(l:key, l:mode, 0, 1)
-                        if !empty(l:mapping) && has_key(l:mapping, 'rhs')
-                            " Remove <silent> from display
-                            let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
-                            let l:raw_mapping = ' | ' . l:raw_mapping
-                        endif
-                    endif
-                    " Store the clean key for execution (without <silent>)
-                    let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
-                    let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
-                    " Replace <Space> with <spc> in display
-                    let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
-                    let l:line = printf("[%s] %-18s : [%s] %s%s", l:mode_display, l:display_key, l:category, l:desc, l:raw_mapping)
-                    call add(l:mode_categorized, {
-                        \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
-                        \ 'category': l:category,
-                        \ 'desc': l:desc
-                    \ })
-                endfor
-            endif
-        endfor
-        
-        " Sort and add if we have any items
-        if !empty(l:mode_uncategorized) || !empty(l:mode_categorized)
-            call sort(l:mode_uncategorized, {a, b -> a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0})
-            call sort(l:mode_categorized, {a, b -> 
-                \ a.category != b.category ? 
-                \ (a.category < b.category ? -1 : 1) :
-                \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
-            \ })
-            
-            if !l:first_mode
-                call add(l:source, '─────────────────────────────────────────────────|separator|separator')
-            endif
-            
-            for l:item in l:mode_uncategorized
-                call add(l:source, l:item.line)
-            endfor
-            
-            if !empty(l:mode_uncategorized) && !empty(l:mode_categorized)
-                call add(l:source, '·····································································|separator|separator')
-            endif
-            
-            for l:item in l:mode_categorized
-                call add(l:source, l:item.line)
-            endfor
-            
-            let l:first_mode = 0
-        endif
+    " Sort ordered items by order number only
+    call sort(l:all_ordered_items, {a, b -> 
+        \ a.order != b.order ?
+        \ (a.order < b.order ? -1 : 1) :
+        \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
+    \ })
+    
+    " Sort unordered items by category, then description
+    call sort(l:all_unordered_items, {a, b -> 
+        \ a.category != b.category ?
+        \ (a.category < b.category ? -1 : 1) :
+        \ (a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0)
+    \ })
+    
+    " Build final source list
+    let l:source = []
+    
+    " Add all ordered items first (these appear at the top)
+    for l:item in l:all_ordered_items
+        call add(l:source, l:item.line)
+    endfor
+    
+    " Add separator if we have both ordered and unordered items
+    if !empty(l:all_ordered_items) && !empty(l:all_unordered_items)
+        call add(l:source, '─────────────────────────────────────────────────|separator|separator')
+    endif
+    
+    " Add all unordered items
+    for l:item in l:all_unordered_items
+        call add(l:source, l:item.line)
     endfor
     
     return l:source
 endfunction
+
 " Build FZF source list from mapdocs (backwards compatibility)
 function! s:BuildFZFSource() abort
     " Use default order: nvxicot

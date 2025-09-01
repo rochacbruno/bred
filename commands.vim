@@ -92,6 +92,16 @@ augroup GitCommit
 augroup END
 
 
+" If I am on insert mode and I leave the terminal, when I come back I want to
+" be in normal mode
+augroup AutoNormalOnFocusLost
+  autocmd!
+  autocmd FocusLost * if mode() ==# 'i' | call feedkeys("\<Esc>", 'n') | endif
+augroup END
+
+
+
+
 " -------------------------------------------------------------------------
 " End of Commands
 " -------------------------------------------------------------------------
