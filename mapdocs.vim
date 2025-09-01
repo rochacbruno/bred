@@ -758,24 +758,36 @@ function! s:ShowDocsBuffer(position) abort
             
             " Display uncategorized mappings if any
             if !empty(l:uncategorized)
-                " Calculate max width for alignment
-                let l:max_key_width = 5  " minimum width for 'Key' header
+                " Calculate max widths for proper alignment
+                let l:max_key_width = 3  " minimum for 'Key'
+                let l:max_desc_width = 11  " minimum for 'Description'
+                
                 for l:item in l:uncategorized
-                    let l:key_width = strlen(l:item.key) + 2  " +2 for backticks
-                    if l:key_width > l:max_key_width
-                        let l:max_key_width = l:key_width
+                    let l:key_len = strlen(l:item.key)
+                    if l:key_len > l:max_key_width
+                        let l:max_key_width = l:key_len
+                    endif
+                    let l:desc_len = strlen(l:item.desc)
+                    if l:desc_len > l:max_desc_width
+                        let l:max_desc_width = l:desc_len
                     endif
                 endfor
                 
-                " Create aligned table
-                let l:header_key = '| ' . 'Key' . repeat(' ', l:max_key_width - 3) . ' | Description |'
-                let l:separator = '|' . repeat('-', l:max_key_width + 2) . '|-------------|'
-                call add(l:lines, l:header_key)
+                " Add padding for readability
+                let l:max_key_width = l:max_key_width + 2
+                let l:max_desc_width = l:max_desc_width + 2
+                
+                " Create aligned table with proper column widths
+                let l:header = '| ' . printf('%-' . l:max_key_width . 's', 'Key') . ' | ' . printf('%-' . l:max_desc_width . 's', 'Description') . ' |'
+                let l:separator = '|' . repeat('-', l:max_key_width + 2) . '|' . repeat('-', l:max_desc_width + 2) . '|'
+                
+                call add(l:lines, l:header)
                 call add(l:lines, l:separator)
+                
                 for l:item in l:uncategorized
-                    let l:key_display = '`' . l:item.key . '`'
-                    let l:padding = repeat(' ', l:max_key_width - strlen(l:key_display))
-                    call add(l:lines, '| ' . l:key_display . l:padding . ' | ' . l:item.desc . ' |')
+                    let l:key_cell = printf('%-' . l:max_key_width . 's', '`' . l:item.key . '`')
+                    let l:desc_cell = printf('%-' . l:max_desc_width . 's', l:item.desc)
+                    call add(l:lines, '| ' . l:key_cell . ' | ' . l:desc_cell . ' |')
                 endfor
                 call add(l:lines, '')
             endif
@@ -791,24 +803,36 @@ function! s:ShowDocsBuffer(position) abort
                     \ a.order != b.order ? (a.order < b.order ? -1 : 1) : 
                     \ (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)})
                 
-                " Calculate max width for alignment in this category
-                let l:max_key_width = 5  " minimum width for 'Key' header
+                " Calculate max widths for proper alignment in this category
+                let l:max_key_width = 3  " minimum for 'Key'
+                let l:max_desc_width = 11  " minimum for 'Description'
+                
                 for l:item in l:categories[l:category]
-                    let l:key_width = strlen(l:item.key) + 2  " +2 for backticks
-                    if l:key_width > l:max_key_width
-                        let l:max_key_width = l:key_width
+                    let l:key_len = strlen(l:item.key)
+                    if l:key_len > l:max_key_width
+                        let l:max_key_width = l:key_len
+                    endif
+                    let l:desc_len = strlen(l:item.desc)
+                    if l:desc_len > l:max_desc_width
+                        let l:max_desc_width = l:desc_len
                     endif
                 endfor
                 
-                " Create aligned table
-                let l:header_key = '| ' . 'Key' . repeat(' ', l:max_key_width - 3) . ' | Description |'
-                let l:separator = '|' . repeat('-', l:max_key_width + 2) . '|-------------|'
-                call add(l:lines, l:header_key)
+                " Add padding for readability
+                let l:max_key_width = l:max_key_width + 2
+                let l:max_desc_width = l:max_desc_width + 2
+                
+                " Create aligned table with proper column widths
+                let l:header = '| ' . printf('%-' . l:max_key_width . 's', 'Key') . ' | ' . printf('%-' . l:max_desc_width . 's', 'Description') . ' |'
+                let l:separator = '|' . repeat('-', l:max_key_width + 2) . '|' . repeat('-', l:max_desc_width + 2) . '|'
+                
+                call add(l:lines, l:header)
                 call add(l:lines, l:separator)
+                
                 for l:item in l:categories[l:category]
-                    let l:key_display = '`' . l:item.key . '`'
-                    let l:padding = repeat(' ', l:max_key_width - strlen(l:key_display))
-                    call add(l:lines, '| ' . l:key_display . l:padding . ' | ' . l:item.desc . ' |')
+                    let l:key_cell = printf('%-' . l:max_key_width . 's', '`' . l:item.key . '`')
+                    let l:desc_cell = printf('%-' . l:max_desc_width . 's', l:item.desc)
+                    call add(l:lines, '| ' . l:key_cell . ' | ' . l:desc_cell . ' |')
                 endfor
                 call add(l:lines, '')
             endfor
