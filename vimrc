@@ -15,6 +15,7 @@ let maplocalleader = ","
 " Load Configuration Modules
 " -------------------------------------------------------------------------
 " Order matters: functions and commands first, then plugins, then settings
+source ~/.vim/kitty.vim          " Kitty terminal integration
 source ~/.vim/mapdocs.vim        " Documentation for custom mappings
 source ~/.vim/functions.vim      " Custom utility functions
 source ~/.vim/commands.vim       " Custom commands and autocommands
