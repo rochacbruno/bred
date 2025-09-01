@@ -903,15 +903,15 @@ command! FlagQuick call FlagQuick()
 " Key Mappings
 " -------------------------------------------------------------------------
 " Core mark management mappings (ma, md, mn, mp, etc.)
-Nmap 'Add flag mark at current position|Flagmarks' ma :FlagAdd<CR>
-Nmap 'Delete flag mark at current line|Flagmarks' md :FlagDelete<CR>
-Nmap 'Jump to next flag mark|Flagmarks' mn :FlagNext<CR>
-Nmap 'Jump to previous flag mark|Flagmarks' mp :FlagPrev<CR>
-Nmap 'Clear all marks in current file|Flagmarks' mc :FlagClearFile<CR>
-Nmap 'Clear all marks globally|Flagmarks' mC :FlagClearAll<CR>
-Nmap 'List all flag marks|Flagmarks' ml :FlagList<CR>
-Nmap 'Toggle between last two flag marks|Flagmarks' mt :FlagToggle<CR>
-Nmap 'Quick jump to mark (prompt)|Flagmarks' mq :FlagQuick<CR>
+Nmap 'Add flag mark at current position|Edit Marks' ma :FlagAdd<CR>
+Nmap 'Delete flag mark at current line|Edit Marks' md :FlagDelete<CR>
+Nmap 'Jump to next flag mark|Edit Marks' mn :FlagNext<CR>
+Nmap 'Jump to previous flag mark|Edit Marks' mp :FlagPrev<CR>
+Nmap 'Clear all marks in current file|Edit Marks' mc :FlagClearFile<CR>
+Nmap 'Clear all marks globally|Edit Marks' mC :FlagClearAll<CR>
+Nmap 'List all flag marks|Edit Marks' ml :FlagList<CR>
+Nmap 'Toggle between last two flag marks|Edit Marks' mt :FlagToggle<CR>
+Nmap 'Quick jump to mark (prompt)|Edit Marks' mq :FlagQuick<CR>
 
 " -------------------------------------------------------------------------
 " Window-Aware Navigation Mappings
@@ -919,16 +919,17 @@ Nmap 'Quick jump to mark (prompt)|Flagmarks' mq :FlagQuick<CR>
 " These mappings (lowercase 'm') provide window-aware navigation behavior.
 " If a mark's file is open in another window, jump to that window instead
 " of opening the file in the current window.
-Nmap 'Jump to last mark (window-aware)|Flagmarks' mm :FlagGo<CR>
-Nmap 'Jump to next mark (window-aware)|Flagmarks' mn :FlagNext<CR>
-Nmap 'Jump to prev mark (window-aware)|Flagmarks' mp :FlagPrev<CR>
-Nmap 'Open flagmarks menu (window-aware)|Flagmarks' <leader>m :FlagMenuWindow<CR>
+Nmap 'Jump to last mark (window-aware)|Edit Marks' mm :FlagGo<CR>
+Nmap 'Jump to next mark (window-aware)|Edit Marks' mn :FlagNext<CR>
+Nmap 'Jump to prev mark (window-aware)|Edit Marks' mp :FlagPrev<CR>
+Nmap 'Open flagmarks menu (window-aware)|Edit Marks' <leader>m :FlagMenuWindow<CR>
 
 " Generate mappings for direct mark access (mga, mgb, mgc, etc.)
 " These allow quick jumping to specific marks with window awareness
-for s:i in range(char2nr('a'), char2nr('z'))
+Nmap 'Jump to mark a-z (window aware)|Edit Marks' mga :FlagGo a<CR>
+for s:i in range(char2nr('b'), char2nr('z'))
     let s:letter = nr2char(s:i)
-    execute 'Nmap ''Jump to mark ' . s:letter . ' (window-aware)|Flagmarks'' mg' . s:letter . ' :FlagGo ' . s:letter . '<CR>'
+    execute 'nnoremap mg' . s:letter . ' :FlagGo ' . s:letter . '<CR>'
 endfor
 
 " -------------------------------------------------------------------------
@@ -936,16 +937,17 @@ endfor
 " -------------------------------------------------------------------------
 " These mappings (uppercase 'M') force navigation to occur in the current
 " window, ignoring any existing windows that might contain the target file.
-Nmap 'Jump to last mark (same window)|Flagmarks' Mm :FlagGoSame<CR>
-Nmap 'Jump to next mark (same window)|Flagmarks' Mn :FlagNextSame<CR>
-Nmap 'Jump to prev mark (same window)|Flagmarks' Mp :FlagPrevSame<CR>
-Nmap 'Open flagmarks menu (same window)|Flagmarks' <leader>M :FlagMenuSame<CR>
+Nmap 'Jump to last mark (same window)|Edit Marks' Mm :FlagGoSame<CR>
+Nmap 'Jump to next mark (same window)|Edit Marks' Mn :FlagNextSame<CR>
+Nmap 'Jump to prev mark (same window)|Edit Marks' Mp :FlagPrevSame<CR>
+Nmap 'Open flagmarks menu (same window)|Edit Marks' <leader>M :FlagMenuSame<CR>
 
 " Generate same-window mappings for direct mark access (Mga, Mgb, Mgc, etc.)
 " These force opening files in current window regardless of existing windows
-for s:i in range(char2nr('a'), char2nr('z'))
+Nmap 'Jump to mark a-z (same window)|Edit Marks' Mga :FlagGoSame a<CR>
+for s:i in range(char2nr('b'), char2nr('z'))
     let s:letter = nr2char(s:i)
-    execute 'Nmap ''Jump to mark ' . s:letter . ' (same window)|Flagmarks'' Mg' . s:letter . ' :FlagGoSame ' . s:letter . '<CR>'
+    execute 'nnoremap Mg' . s:letter . ' :FlagGoSame ' . s:letter . '<CR>'
 endfor
 
 " -------------------------------------------------------------------------

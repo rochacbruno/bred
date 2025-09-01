@@ -27,7 +27,7 @@ function! ShowSplash() abort
     endif
     
     " Check if splash.md exists
-    let l:splash_file = expand('~/.vim/splash_message.vim')
+    let l:splash_file = expand('~/.vim/splash_message.txt')
     if !filereadable(l:splash_file)
         return
     endif

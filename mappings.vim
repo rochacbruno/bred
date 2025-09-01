@@ -34,7 +34,10 @@ Nmap 'Go to previous tab|Tabs' <leader>th :tabprevious<CR>
 Nmap 'List buffers and jump to one|Buffers' <leader>bl :ls<CR>:b<Space>
 Nmap 'Previous buffer|Buffers' [b :bp<CR>
 Nmap 'Next buffer|Buffers' ]b :bn<CR>
-Nmap 'Delete all hidden buffers|Buffers' bh :DeleteHiddenBuffers<CR>
+Nmap 'Close all hidden buffers|Buffers' <leader>bh :DeleteHiddenBuffers<CR>
+Nmap 'Close all buffers|Buffers' <leader>bd :bufdo bdelete<CR>
+
+" NOTE: More buffer mappings on plugins.vim 
 
 " Quick buffer switching with <leader>1 through 9
 Nmap 'Switch to buffer 1-9|Buffers' <leader>1 :buffer 1<CR>
@@ -180,6 +183,10 @@ nnoremap gj j
 " gj - Move by physical line
 nnoremap gk k
 " gk - Move by physical line
+
+"Hitting esc twice will close quickfix/location list if open
+Nmap 'Close Quick Window and clear highlight|Windows' <Esc><Esc> :cclose<CR>:lclose<CR>:nohlsearch<CR>
+
 " }}}
 " -------------------------------------------------------------------------
 " File Operations {{{

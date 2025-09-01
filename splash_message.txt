@@ -1,8 +1,7 @@
 ╔══════════════════════════════════════╗
-║              *Vim* $VIMVERSION                 ║
-║                                      ║
+║              *BRed*                    ║
+║       `B`runo `R`ocha `ed`itor             ║
 ║  *spacebar*     open command menu      ║
-║                                      ║
 ╚══════════════════════════════════════╝
 • `spc` + *e*        Open `e`xplorer
 • `spc` + *f*        Open `f`iles
@@ -19,7 +18,8 @@
 • `:q`             Exit           
 ────────────────────────────────────────────
 Author: Bruno C Rocha http://rochacbruno.com
-Docs: https://github.com/rochacbruno/vim9
+Docs: https://github.com/rochacbruno/bred
+Vim: $VIMVERSION
 Config: $MYVIMRC
 Date: $DATE
 Press enter for more info {
