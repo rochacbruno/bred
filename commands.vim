@@ -98,6 +98,12 @@ augroup AutoNormalOnFocusLost
   autocmd FocusLost * if mode() ==# 'i' | call feedkeys("\<Esc>", 'n') | endif
 augroup END
 
+" Exit insert mode when switching windows with mouse
+augroup AutoNormalOnWindowSwitch
+  autocmd!
+  autocmd WinLeave * if mode() ==# 'i' | call feedkeys("\<Esc>", 'n') | endif
+augroup END
+
 " -------------------------------------------------------------------------
 " End of Commands
 " -------------------------------------------------------------------------
