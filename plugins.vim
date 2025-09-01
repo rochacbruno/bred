@@ -471,7 +471,7 @@ Plug 'KabbAmine/vCoolor.vim'
 " Key mappings:
 " Document vCoolor mappings without overriding them
 Imap 'Open color picker|Edit Color' <M-c>
-Nmap 'Open color picker|Edir Color' <M-w>
+Nmap 'Open color picker|Edit Color' <M-w>
 " }}}
 
 " ===============================================================================

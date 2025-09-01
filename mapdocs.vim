@@ -115,9 +115,9 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
         let l:ordered_modes = a:mode_filter
     endif
     
-    let l:leader = get(g:, 'mapleader', '\')
-    " Display leader key properly (show <Space> instead of empty space)
-    let l:leader_display = l:leader == ' ' ? '<Space>' : l:leader
+    let l:leader = get(g:, 'mapleader', '\\')
+    " Display leader key properly (show <spc> instead of empty space)
+    let l:leader_display = l:leader == ' ' ? '<spc>' : l:leader
     
     " Build the final source list respecting mode order
     let l:source = []
@@ -138,11 +138,27 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
         " Collect uncategorized mappings for this mode
         for [l:key, l:desc] in items(l:mode_data)
             if type(l:desc) == type('')
-                " Format: [mode] key : description
-                let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
-                let l:line = printf("[%s] %-15s : %s", l:mode_display, l:display_key, l:desc)
-                " Store with description for sorting
-                call add(l:mode_uncategorized, {'line': l:line . '|' . l:mode . '|' . l:key, 'desc': l:desc})
+                " Try to get the raw mapping
+                let l:raw_mapping = ''
+                if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
+                    let l:mapping = maparg(l:key, l:mode, 0, 1)
+                    if !empty(l:mapping) && has_key(l:mapping, 'rhs')
+                        " Remove <silent> from display
+                        let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
+                        let l:raw_mapping = ' | ' . l:raw_mapping
+                    endif
+                endif
+                " Format: [mode] key : description | raw_mapping
+                " Store the clean key for execution (without <silent>)
+                let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
+                let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
+                " Replace <Space> with <spc> in display
+                let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
+                let l:line = printf("[%s] %-18s : %s%s", l:mode_display, l:display_key, l:desc, l:raw_mapping)
+                call add(l:mode_uncategorized, {
+                    \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
+                    \ 'desc': l:desc
+                \ })
             endif
         endfor
         
@@ -150,12 +166,25 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
         for [l:category, l:cat_data] in items(l:mode_data)
             if type(l:cat_data) == type({})
                 for [l:key, l:desc] in items(l:cat_data)
-                    let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
+                    " Try to get the raw mapping
+                    let l:raw_mapping = ''
+                    if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
+                        let l:mapping = maparg(l:key, l:mode, 0, 1)
+                        if !empty(l:mapping) && has_key(l:mapping, 'rhs')
+                            " Remove <silent> from display
+                            let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
+                            let l:raw_mapping = ' | ' . l:raw_mapping
+                        endif
+                    endif
+                    " Store the clean key for execution (without <silent>)
+                    let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
+                    let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
+                    " Replace <Space> with <spc> in display
+                    let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
                     " Include category in display
-                    let l:line = printf("[%s] %-15s : [%s] %s", l:mode_display, l:display_key, l:category, l:desc)
-                    " Store with category and description for sorting
+                    let l:line = printf("[%s] %-18s : [%s] %s%s", l:mode_display, l:display_key, l:category, l:desc, l:raw_mapping)
                     call add(l:mode_categorized, {
-                        \ 'line': l:line . '|' . l:mode . '|' . l:key,
+                        \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
                         \ 'category': l:category,
                         \ 'desc': l:desc
                     \ })
@@ -163,10 +192,10 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
             endif
         endfor
         
-        " Sort uncategorized alphabetically by description within this mode
+        " Sort uncategorized alphabetically by description
         call sort(l:mode_uncategorized, {a, b -> a.desc < b.desc ? -1 : a.desc > b.desc ? 1 : 0})
         
-        " Sort categorized first by category, then by description within this mode
+        " Sort categorized first by category, then by description
         call sort(l:mode_categorized, {a, b -> 
             \ a.category != b.category ? 
             \ (a.category < b.category ? -1 : 1) :
@@ -212,9 +241,26 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
         " Collect uncategorized mappings for this mode
         for [l:key, l:desc] in items(l:mode_data)
             if type(l:desc) == type('')
-                let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
-                let l:line = printf("[%s] %-15s : %s", l:mode_display, l:display_key, l:desc)
-                call add(l:mode_uncategorized, {'line': l:line . '|' . l:mode . '|' . l:key, 'desc': l:desc})
+                " Try to get the raw mapping
+                let l:raw_mapping = ''
+                if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
+                    let l:mapping = maparg(l:key, l:mode, 0, 1)
+                    if !empty(l:mapping) && has_key(l:mapping, 'rhs')
+                        " Remove <silent> from display
+                        let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
+                        let l:raw_mapping = ' | ' . l:raw_mapping
+                    endif
+                endif
+                " Store the clean key for execution (without <silent>)
+                let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
+                let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
+                " Replace <Space> with <spc> in display
+                let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
+                let l:line = printf("[%s] %-18s : %s%s", l:mode_display, l:display_key, l:desc, l:raw_mapping)
+                call add(l:mode_uncategorized, {
+                    \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
+                    \ 'desc': l:desc
+                \ })
             endif
         endfor
         
@@ -222,10 +268,24 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
         for [l:category, l:cat_data] in items(l:mode_data)
             if type(l:cat_data) == type({})
                 for [l:key, l:desc] in items(l:cat_data)
-                    let l:display_key = substitute(l:key, '<leader>', l:leader_display, 'g')
-                    let l:line = printf("[%s] %-15s : [%s] %s", l:mode_display, l:display_key, l:category, l:desc)
+                    " Try to get the raw mapping
+                    let l:raw_mapping = ''
+                    if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode) && index(g:mapdocs_created[l:mode], l:key) >= 0
+                        let l:mapping = maparg(l:key, l:mode, 0, 1)
+                        if !empty(l:mapping) && has_key(l:mapping, 'rhs')
+                            " Remove <silent> from display
+                            let l:raw_mapping = substitute(l:mapping.rhs, '<silent>\s*', '', 'g')
+                            let l:raw_mapping = ' | ' . l:raw_mapping
+                        endif
+                    endif
+                    " Store the clean key for execution (without <silent>)
+                    let l:clean_key = substitute(l:key, '<silent>', '', 'gi')
+                    let l:display_key = substitute(l:clean_key, '<leader>', l:leader_display, 'g')
+                    " Replace <Space> with <spc> in display
+                    let l:display_key = substitute(l:display_key, '<Space>', '<spc>', 'gi')
+                    let l:line = printf("[%s] %-18s : [%s] %s%s", l:mode_display, l:display_key, l:category, l:desc, l:raw_mapping)
                     call add(l:mode_categorized, {
-                        \ 'line': l:line . '|' . l:mode . '|' . l:key,
+                        \ 'line': l:line . '|' . l:mode . '|' . l:clean_key,
                         \ 'category': l:category,
                         \ 'desc': l:desc
                     \ })
@@ -264,7 +324,6 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
     
     return l:source
 endfunction
-
 " Build FZF source list from mapdocs (backwards compatibility)
 function! s:BuildFZFSource() abort
     " Use default order: nvxicot
@@ -630,8 +689,8 @@ command! -nargs=? BufferDocs call s:ShowDocsBuffer(<q-args>)
 function! s:ShowDocsBuffer(position) abort
     " Get the actual leader key
     let l:leader = get(g:, 'mapleader', '\')
-    " Display leader key properly (show <Space> instead of empty space)
-    let l:leader_display = l:leader == ' ' ? '<Space>' : l:leader
+    " Display leader key properly (show <spc> instead of empty space)
+    let l:leader_display = l:leader == ' ' ? '<spc>' : l:leader
     
     " Determine split position
     let l:pos = a:position == '' ? 'right' : a:position
