@@ -28,7 +28,10 @@ augroup END
 " Use colorcolumn to create dimming effect
 augroup DimInactiveWindows
   autocmd!
-  autocmd WinEnter * set colorcolumn=
+  " save current colorcolumn setting
+  let g:saved_colorcolumn = &l:colorcolumn
+  " set colorcolumn to empty when entering window
+  autocmd WinEnter * execute 'let &l:colorcolumn=g:saved_colorcolumn'
   autocmd WinLeave * let &l:colorcolumn=join(range(1,999),',')
 augroup END
 
