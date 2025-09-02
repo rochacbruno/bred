@@ -148,17 +148,21 @@ if empty_args != ""
         if counter == 0 " Very first file - just navigate to it
           silent bnext
           silent bprev
+          silent exe "filetype detect"
         else " Start a new tab for files 5, 9, etc.
           silent exe "tabedit" i
+          silent exe "filetype detect"
         endif
       else
         if counter % 4 == 1 " Second file - create vertical split
           silent exe "vsplit" i
+          silent exe "filetype detect"
         else
           if counter % 4 == 3 " Fourth file - move to right pane first
             silent exe "normal \<C-w>l"
           endif
           silent exe "split" i 
+          silent exe "filetype detect"
           " Third and fourth files - create horizontal split
         endif
       endif
