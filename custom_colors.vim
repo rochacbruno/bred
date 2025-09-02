@@ -25,6 +25,21 @@ augroup CustomColors
     autocmd BufWinEnter * call s:ApplyCustomColors()
 augroup END
 
+" Use colorcolumn to create dimming effect
+augroup DimInactiveWindows
+  autocmd!
+  autocmd WinEnter * set colorcolumn=
+  autocmd WinLeave * let &l:colorcolumn=join(range(1,999),',')
+augroup END
+
+" Very subtle dim - adjust the color to your preference
+" This works well with the purify colorscheme
+highlight ColorColumn guibg=#252932
+
+" Underline the word under the cursor
+" highlight WordUnderCursor cterm=underline gui=underline guibg=#3c3836
+highlight WordUnderCursor cterm=underline gui=underline
+
 " -------------------------------------------------------------------------
 " End of Custom Colors
 " -------------------------------------------------------------------------

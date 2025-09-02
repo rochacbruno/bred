@@ -10,7 +10,6 @@
 " Used by LSP for displaying notifications
 " Args: msg - The message to display
 function! Alert(msg)
-  \" Create an autocommand group for alerts
   augroup MyAlerts
     autocmd!
     execute 'autocmd VimEnter * echomsg "' . a:msg . '"'

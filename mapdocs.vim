@@ -667,8 +667,8 @@ function! s:ShowDocsBuffer(position) abort
     else
         call add(l:lines, '# Vim Keybinding Documentation')
         call add(l:lines, '')
-        call add(l:lines, 'Leader key: `' . l:leader_display . '`')
-        call add(l:lines, 'Open in Browser: `<space>mp` or `:ComposerStart`')
+        call add(l:lines, 'Leader key: `' . l:leader_display . '`  ')
+        call add(l:lines, '<!-- Open in Browser: `<space>mp` or `:ComposerStart` -->')
         call add(l:lines, '')
         
         " Define mode order and friendly names

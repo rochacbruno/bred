@@ -1,18 +1,11 @@
-" Define a custom command 'EHere' that opens a file in the current file's
-" directory
-command! -nargs=1 EHere edit %:h/<args>
-
-
-" Auto commands
-" On normal mode numbers are relative but in insert mode they are absolute
+" On normal mode numbers are relative but in insert mode they are absolute {{{
 augroup numbertoggle
   autocmd!
   autocmd InsertEnter * set norelativenumber
   autocmd InsertLeave * set relativenumber
 augroup END
-
-
-" Automatic reload changed files
+" }}}
+" Automatic reload changed files {{{
 " when files are changed externally automatically reload them
 set autoread
 
@@ -38,10 +31,8 @@ autocmd FileChangedShell * {
     echo 'Warning: File changed on disk, you have unsaved changes!'
   endif
 }
-
-
-" -----------------------------
-" Autosave - here as reference, but disabled
+" }}}
+" Autosave - here as reference, but disabled {{{
 " -----------------------------
 " set noswapfile
 
@@ -55,11 +46,9 @@ autocmd FileChangedShell * {
 "         endif
 "     }
 " augroup END
-
-
 " -----------------------------
-" Autosession
-" -----------------------------
+" }}}
+" Autosession - save and restore session {{{
 augroup autosession
     autocmd!
     " Load session if Vim was started without files
@@ -82,17 +71,16 @@ augroup autosession
         endif
     }
 augroup END
-
-
+" }}}
+" When editing git commit messages (make it easy to save/exit) {{{
 augroup GitCommit
   autocmd!
   autocmd BufRead,BufNewFile COMMIT_EDITMSG nnoremap <buffer> q :wq<CR>
   autocmd BufRead,BufNewFile COMMIT_EDITMSG nnoremap <buffer> a :cq<CR>
   autocmd BufRead,BufNewFile COMMIT_EDITMSG startinsert
 augroup END
-
-" If I am on insert mode and I leave the terminal, when I come back I want to
-" be in normal mode
+" }}}
+" If I am on insert mode and I leave the terminal, when I come back I want to be in normal mode {{{
 augroup AutoNormalOnFocusLost
   autocmd!
   autocmd FocusLost * if mode() ==# 'i' | call feedkeys("\<Esc>", 'n') | endif
@@ -103,8 +91,23 @@ augroup AutoNormalOnWindowSwitch
   autocmd!
   autocmd WinLeave * if mode() ==# 'i' | call feedkeys("\<Esc>", 'n') | endif
 augroup END
+" }}}
+" Auto-highlight word under cursor {{{
+augroup HighlightWordUnderCursor
+    autocmd!
+    autocmd CursorMoved,CursorMovedI * call HighlightWord()
+augroup END
 
-" -------------------------------------------------------------------------
-" End of Commands
-" -------------------------------------------------------------------------
-
+function! HighlightWord()
+    if exists('w:word_match_id')
+        silent! call matchdelete(w:word_match_id)
+    endif
+    
+    let word = expand('<cword>')
+    if !empty(word)
+        let w:word_match_id = matchadd('WordUnderCursor', '\V\<' . escape(word, '\') . '\>')
+    endif
+endfunction
+" }}}
+" 
+" vim: set foldmethod=marker foldlevel=0:
