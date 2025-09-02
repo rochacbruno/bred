@@ -2,6 +2,10 @@
 " Only if running in kitty terminal 
 if $TERM =~# 'kitty'
 
+  " Map Alt key combinations to escape sequences for fzf
+  set <M-a> = "\ea"
+  set <M-d> = "\ed"
+
   " Mouse support
   set mouse=a
   set ttymouse=sgr
