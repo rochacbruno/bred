@@ -31,4 +31,6 @@ else
     source ~/.vim/custom_colors.vim  " Color scheme fixes and customizations
     source ~/.vim/mappings.vim       " Key mappings and shortcuts
     source ~/.vim/splash.vim         " Splash screen for empty Vim startup
+    source ~/.vim/snippets.vim       " Snippets from abbreviations
 endif
+
