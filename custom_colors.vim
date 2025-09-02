@@ -38,10 +38,13 @@ augroup END
 " Very subtle dim - adjust the color to your preference
 " This works well with the purify colorscheme
 highlight ColorColumn guibg=#252932
+highlight CursorLine guibg=#252932 cterm=NONE gui=NONE
+highlight CursorLineNr guibg=#252932 cterm=NONE gui=NONE
 
 " Underline the word under the cursor
 " highlight WordUnderCursor cterm=underline gui=underline guibg=#3c3836
 highlight WordUnderCursor cterm=underline gui=underline
+
 
 " -------------------------------------------------------------------------
 " End of Custom Colors
