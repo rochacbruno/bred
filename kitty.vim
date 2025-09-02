@@ -1,4 +1,3 @@
-
 " Only if running in kitty terminal 
 if $TERM =~# 'kitty'
 

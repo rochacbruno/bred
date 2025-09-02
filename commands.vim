@@ -109,5 +109,12 @@ function! HighlightWord()
     endif
 endfunction
 " }}}
+" When editing markdown set conceallevel to 0 {{{
+" This prevents hiding of certain markdown syntax elements
+augroup MarkdownConceal
+  autocmd!
+  autocmd FileType markdown setlocal conceallevel=0
+augroup END
+" }}}
 " 
 " vim: set foldmethod=marker foldlevel=0:
