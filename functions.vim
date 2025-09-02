@@ -135,39 +135,49 @@ endfunction
 " Layout Logic Implementation
 " -------------------------------------------------------------------------
 " Process command line arguments and create the appropriate layout
-let empty_args = expand("##") " Get all command line arguments
-if empty_args != ""
-  let args = split(expand("##"), '\(\\\)\@<!\s') " Split arguments on unescaped spaces
-  if len(args) < 5 " Only apply layout for 4 or fewer files
-    let counter = 0
-    argdelete * " Clear existing argument list
-    argadd % " Add current buffer to argument list
-    " Process each file and arrange in grid layout
-    for i in args
-      if counter % 4 == 0 " First file in each group of 4
-        if counter == 0 " Very first file - just navigate to it
-          silent bnext
-          silent bprev
-          silent exe "filetype detect"
-        else " Start a new tab for files 5, 9, etc.
-          silent exe "tabedit" i
-          silent exe "filetype detect"
-        endif
-      else
-        if counter % 4 == 1 " Second file - create vertical split
-          silent exe "vsplit" i
-          silent exe "filetype detect"
-        else
-          if counter % 4 == 3 " Fourth file - move to right pane first
-            silent exe "normal \<C-w>l"
+" This needs to run after Vim has fully initialized to avoid conflicts
+function! AutoLayoutFiles()
+  let empty_args = expand("##") " Get all command line arguments
+  if empty_args != ""
+    let args = split(expand("##"), '\(\\\)\@<!\s') " Split arguments on unescaped spaces
+    if len(args) < 5 " Only apply layout for 4 or fewer files
+      let counter = 0
+      argdelete * " Clear existing argument list
+      argadd % " Add current buffer to argument list
+      " Process each file and arrange in grid layout
+      for i in args
+        if counter % 4 == 0 " First file in each group of 4
+          if counter == 0 " Very first file - just navigate to it
+            silent bnext
+            silent bprev
+            silent exe "filetype detect"
+          else " Start a new tab for files 5, 9, etc.
+            silent exe "tabedit" i
+            silent exe "filetype detect"
           endif
-          silent exe "split" i 
-          silent exe "filetype detect"
-          " Third and fourth files - create horizontal split
+        else
+          if counter % 4 == 1 " Second file - create vertical split
+            silent exe "vsplit" i
+            silent exe "filetype detect"
+          else
+            if counter % 4 == 3 " Fourth file - move to right pane first
+              silent exe "normal \<C-w>l"
+            endif
+            silent exe "split" i 
+            silent exe "filetype detect"
+            " Third and fourth files - create horizontal split
+          endif
         endif
-      endif
-      let counter += 1
-    endfor
+        let counter += 1
+      endfor
+    endif
   endif
-endif
+endfunction
+
+" Run the auto-layout only once after Vim has fully started
+" This prevents interference with ftplugins and other initialization
+augroup AutoLayoutOnStart
+  autocmd!
+  autocmd VimEnter * ++once call AutoLayoutFiles()
+augroup END
 

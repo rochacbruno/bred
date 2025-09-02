@@ -2,6 +2,9 @@
 " Markdown
 " ==================================================================
 
+" Prevent hiding of certain markdown syntax elements
+setlocal conceallevel=0
+
 iabbrev <buffer> ppause <!-- pause -->
 iabbrev <buffer> peos <!-- end_slide -->
 iabbrev <buffer> pcolayout <!-- column_layout: [3, 2] -->
