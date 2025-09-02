@@ -49,8 +49,4 @@ if $TERM =~# 'kitty'
   " using a color theme with a background color in terminals such as
   " kitty that do not support background color erase.
   let &t_ut=''
-
-  " Make alt+a and alt+d work in vim
-  let &t_TI = "\e[>1;4;2m"
-  let &t_TE = "\e[>1;4;0m"
 endif
