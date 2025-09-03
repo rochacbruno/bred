@@ -169,32 +169,62 @@ Plug 'dense-analysis/ale'
 " ALE Configuration (currently disabled in favor of LSP)
 " Uncomment the following lines to enable ALE:
 " let g:ale_disable_lsp = 1                           " Disable ALE's LSP features
-" let g:ale_set_signs = 1                             " Show signs in gutter
-" let g:ale_set_highlights = 1                        " Highlight problematic lines
-" let g:ale_virtualtext_cursor = 1                    " Show errors as virtual text
+let g:ale_set_signs = 1                             " Show signs in gutter
+let g:ale_set_highlights = 1                        " Highlight problematic lines
+let g:ale_virtualtext_cursor = 1                    " Show errors as virtual text
 " highlight ALEError ctermbg=none cterm=underline     " Error highlighting style
 " let g:ale_lint_on_save = 1                          " Lint when saving
 " let g:ale_lint_on_insert_leave = 1                  " Lint when leaving insert mode
 " let g:ale_lint_on_text_change = 'never'             " Don't lint while typing
 " let g:ale_linters_explicit = 1                      " Only use configured linters
-" let g:ale_linters = {
-"     \ 'python': ['ruff', 'mypy', 'pylsp'],
-"     \ 'rust': ['analyzer', 'cargo'],
-"     \ 'sh': ['shellcheck'],
-" \ }
-" let g:ale_fixers = {
-"     \ '*': ['trim_whitespace'],
-"     \ 'python': ['ruff'],
-"     \ 'rust': ['rustfmt'],
-" \ }
-" let g:ale_rust_cargo_use_clippy = 1                 " Use clippy for Rust
+let g:ale_linters = {
+    \ 'python': ['flake8', 'ruff'],
+    \ 'rust': ['analyzer', 'cargo'],
+    \ 'sh': ['shellcheck'],
+\ }
+let g:ale_fixers = {
+    \ 'python': ['ruff_format', 'isort', 'black', 'ruff', 'add_blank_lines_for_python_control_statements', 'remove_trailing_lines', 'trim_whitespace'],
+    \ 'rust': ['rustfmt'],
+\ }
+
+" let g:ale_set_balloons = 1                           " Show error messages in balloons
+" let g:ale_python_auto_uv = v:true 
+let g:ale_rust_cargo_use_clippy = 1                 " Use clippy for Rust
 " let g:ale_rust_cargo_check_tests = 1                " Check test code
 " let g:ale_rust_cargo_check_examples = 1             " Check example code
 " let g:ale_warn_about_trailing_whitespace = 0        " Don't warn about whitespace
 " let g:ale_lsp_show_message_severity = 'information' " Show all message levels
 " let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
-" let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
-" nnoremap <leader>L :ALEFix<CR>                      " ,L - Run fixers
+let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
+let g:ale_virtualtext_cursor = 'current'
+
+" let g:ale_virtualtext_cursor = 0
+let g:ale_echo_cursor = 1
+
+let g:ale_python_black_executable = 'black'
+let g:ale_python_black_options = '-l 80'
+let g:ale_python_black_auto_uv = v:true
+let g:ale_python_black_use_global = v:true
+let g:ale_python_flake8_options = '--max-line-length=80'
+let g:ale_python_flake8_auto_uv = v:true
+let g:ale_python_flake8_use_global = v:true
+let g:ale_python_isort_auto_uv = v:true
+let g:ale_python_isort_use_global = v:true
+let g:ale_python_isort_options = '--profile black'
+let g:ale_python_ruff_format_auto_uv = v:true
+let g:ale_python_ruff_format_use_global = v:true
+let g:ale_python_ruff_format_options = '--line-length=80'
+let g:ale_python_ruff_auto_uv = v:true
+let g:ale_python_ruff_use_global = v:true
+let g:ale_python_ruff_options = '--line-length=80'
+
+
+
+Nmap 'Toggle ALE linting|ALE|2' <leader>Lt :ALEToggle<CR>
+Nmap 'Fix current file|Linter|2' <leader>L :ALEFix<CR>
+
+
+
 
 " }}}
 " ===============================================================================

@@ -12,6 +12,12 @@ function! s:ApplyCustomColors()
     highlight! link lineflyVisual IncSearch
     highlight! link lineflyCommand WildMenu
     highlight! link lineflyReplace ErrorMsg
+
+    
+    " Highlight Inlay hints
+    highlight! link LspInlayHints Comment
+    highlight! link LspInlayHintsType Comment
+    highlight! link LspInlayHintsParam Comment
 endfunction
 
 " Apply colors on startup
