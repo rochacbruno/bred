@@ -34,6 +34,7 @@ set encoding=UTF-8            " Use UTF-8 encoding for better character support
 set ttymouse=sgr              " Better mouse support in terminal
 set cc=80                     " Highlight column 80 for line length guidance
 set cursorline                " Highlight the current line
+set fillchars+=vert:\▏        " Use thin vertical line for splits
 
 " }}}
 " -------------------------------------------------------------------------
