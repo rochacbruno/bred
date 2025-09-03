@@ -98,6 +98,25 @@ Plug 'chrisbra/Colorizer'
 
 " IndentLine - Show indentation guides
 Plug 'Yggdroot/indentLine'
+let g:indentLine_FileTypeExclude = ['help', 'nerdtree', 'vista', 'markdown', 'text']
+" let g:indentLine_char = '│'
+" let g:indentLine_char = '┊'
+" let g:indentLine_char = '┆'
+" let g:indentLine_char = '┋'
+" let g:indentLine_char = '┊'
+" let g:indentLine_char = '┊'
+let g:indentLine_char = '▏'
+" let g:indentLine_color_term = 239
+" let g:indentLine_color_gui = '#505050'
+" let g:indentLine_concealcursor = 'nc'
+" let g:indentLine_setConceal = 1
+" let g:indentLine_showFirstIndentLevel = v:false
+" let g:indentLine_showTrailingBlanklineIndent = v:false
+" let g:indentLine_showCurrentContext = v:true
+" let g:indentLine_context_patterns = ['class', 'function', 'method', 'if', 'while', 'for', 'switch', 'case', 'try', 'catch', 'def', 'import', 'from', 'with', 'object', 'list', 'dictionary']
+" Enable indentLine for all buffers except excluded filetypes
+" autocmd BufEnter * if index(g:indentLine_FileTypeExclude, &filetype) < 0 | IndentLinesEnable | else | IndentLinesDisable | endif
+
 
 " HighlightedYank - Highlight yanked text 
 Plug 'machakann/vim-highlightedyank'

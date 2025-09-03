@@ -6,6 +6,12 @@ function! s:ApplyCustomColors()
     highlight! link MistflyVisual IncSearch
     highlight! link MistflyCommand WildMenu
     highlight! link MistflyReplace ErrorMsg
+    " If using linefly on neovim 
+    highlight! link lineflyNormal DiffChange
+    highlight! link lineflyInsert WildMenu
+    highlight! link lineflyVisual IncSearch
+    highlight! link lineflyCommand WildMenu
+    highlight! link lineflyReplace ErrorMsg
 endfunction
 
 " Apply colors on startup
