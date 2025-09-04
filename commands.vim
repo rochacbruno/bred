@@ -12,13 +12,14 @@ set autoread
 " Check for file changes more frequently
 if has('unix')
   " Use CursorHold to check periodically (every 4 seconds by default)
-  autocmd CursorHold,CursorHoldI * checktime
+  " Skip checktime in command-line window to avoid E11 error
+  autocmd CursorHold,CursorHoldI * if getcmdwintype() == '' | checktime | endif
 
   " Also check when entering/leaving insert mode and when saving
-  autocmd InsertEnter,InsertLeave,BufWritePost * checktime
+  autocmd InsertEnter,InsertLeave,BufWritePost * if getcmdwintype() == '' | checktime | endif
 
   " Check when window gains focus or entering buffer
-  autocmd FocusGained,BufEnter,WinEnter * checktime
+  autocmd FocusGained,BufEnter,WinEnter * if getcmdwintype() == '' | checktime | endif
 
   " Reduce the time before CursorHold triggers (in milliseconds)
   " Default is 4000 (4 seconds), setting to 1000 (1 second)
