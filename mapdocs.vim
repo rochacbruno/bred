@@ -5,9 +5,14 @@
 " Usage:
 "   Nmap 'description|category' <lhs> <rhs>  - Create mapping with documentation
 "   Nmap 'description|category' <lhs>        - Document existing mapping only
+"   Map modes 'description|category' <lhs> <rhs> - Create mapping in multiple modes
 "   
 " The second form (without <rhs>) allows documenting built-in Vim mappings
 " or plugin-provided mappings without overriding them.
+"
+" Map command accepts mode letters: n (normal), v (visual), x (visual-only), 
+" i (insert), c (command), o (operator), t (terminal)
+" Example: Map nv 'description|category' <leader>x :command<CR>
 
 " Initialize global dictionaries
 if !exists("g:mapdocs")
@@ -49,6 +54,40 @@ command! -nargs=+ Xmap call s:CreateMapping('x', <q-args>)
 command! -nargs=+ Omap call s:CreateMapping('o', <q-args>)
 command! -nargs=+ Cmap call s:CreateMapping('c', <q-args>)
 command! -nargs=+ Tmap call s:CreateMapping('t', <q-args>)
+
+" New universal Map command that accepts modes as first argument
+" Syntax: Map nvxicot 'description|category|order' <lhs> <rhs>
+command! -nargs=+ Map call s:CreateMultiModeMapping(<q-args>)
+
+" Create multi-mode mapping with documentation
+function! s:CreateMultiModeMapping(args) abort
+    " Parse the arguments - expect: modes 'description|category|order' <lhs> [<rhs>]
+    " First, extract the modes (non-whitespace before first quote)
+    let l:match = matchlist(a:args, '^\s*\(\S\+\)\s\+\(.*\)$')
+    
+    if empty(l:match)
+        echoerr "Usage: Map <modes> 'description|category|order' <lhs> [<rhs>]"
+        return
+    endif
+    
+    let l:modes = l:match[1]
+    let l:rest_args = l:match[2]
+    
+    " Split modes into individual characters
+    let l:mode_list = split(l:modes, '\zs')
+    
+    " Create mapping for each mode
+    for l:mode in l:mode_list
+        " Validate mode
+        if index(['n', 'v', 'x', 'i', 'c', 'o', 't'], l:mode) == -1
+            echoerr "Invalid mode: " . l:mode . " (valid modes: n, v, x, i, c, o, t)"
+            continue
+        endif
+        
+        " Call the original CreateMapping for each mode
+        call s:CreateMapping(l:mode, l:rest_args)
+    endfor
+endfunction
 
 " Create mapping with documentation
 function! s:CreateMapping(mode, args) abort
