@@ -14,7 +14,7 @@
 " :map                - See all mappings
 " :nmap, :vmap, :imap - See mode-specific mappings
 " :map <leader>       - See all leader mappings
-" <leader>h           - Open interactive mapping documentation menu
+" <leader>            - Open interactive mapping documentation menu
 " :BufferDocs         - Open mapping documentation in a buffer
 " =========================================================================
 " -------------------------------------------------------------------------
@@ -193,12 +193,19 @@ nnoremap gk k
 "Hitting esc twice will close quickfix/location list if open
 Nmap 'close quick action and clear highlight|Windows|3' <Esc><Esc> :cclose<CR>:lclose<CR>:nohlsearch<CR>
 
+Nmap 'open quickfix list|Windows' <leader>co :copen<CR>
+Nmap 'close quickfix list|Windows' <leader>cc :cclose<CR>
+
+
 " }}}
 " -------------------------------------------------------------------------
 " File Operations {{{
 " -------------------------------------------------------------------------
 " Make current file executable (useful for scripts)
 Nmap 'make executable|Files' <leader><leader>x :!chmod +x %<CR>
+
+"Copy current file path to clipboard
+Nmap 'copy current file path|Files' <leader>fp :let@+=expand('%:p')<CR>
 
 " }}}
 " -------------------------------------------------------------------------
