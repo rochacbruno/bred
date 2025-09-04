@@ -110,8 +110,6 @@ function! HighlightWord()
     endif
 endfunction
 " }}}
-"
-
 " Command-line completion improvements {{{
 " Clear command line before navigating history or using completion
 cnoremap <Up> <C-U><Up>
@@ -124,5 +122,4 @@ augroup cmdcomplete
     autocmd CmdlineChanged : call wildtrigger()
 augroup END
 " }}}
-
 " vim: set foldmethod=marker foldlevel=0:

@@ -191,7 +191,7 @@ nnoremap gk k
 " gk - Move by physical line
 
 "Hitting esc twice will close quickfix/location list if open
-Nmap 'close quick action and clear highlight|Windows|3' <Esc><Esc> :cclose<CR>:lclose<CR>:nohlsearch<CR>
+Nmap 'close quick action and clear highlight|Windows|3' <silent><C-\> :cclose<CR>:lclose<CR>:nohlsearch<CR>
 
 Nmap 'open quickfix list|Windows' <leader>co :copen<CR>
 Nmap 'close quickfix list|Windows' <leader>cc :cclose<CR>
