@@ -143,6 +143,7 @@ if executable('fzf')
   " Key mappings:
   Nmap 'list|Buffers|0' <leader>b :Buffers<CR>
   Nmap 'find|Files|0' <leader>f :Files<CR>
+  Nmap 'in current dir|Files|0' <leader>fd :execute 'Files ' . expand('%:h')<CR>
   Nmap 'tracked files|Git|0' <leader>g :GFiles<CR>
   Nmap 'jumplist|Edit|1' <leader>j :Jumps<CR>
   Nmap 'lines in current buffer|Search|0' <leader>l :Lines<CR>

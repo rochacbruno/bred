@@ -50,8 +50,22 @@ augroup END
 " Very subtle dim - adjust the color to your preference
 " This works well with the purify colorscheme
 highlight ColorColumn guibg=#252932
+
 highlight CursorLine guibg=#252932 cterm=NONE gui=NONE
 highlight CursorLineNr guibg=#252932 cterm=NONE gui=NONE
+highlight CursorColumn guibg=#252932 cterm=NONE gui=NONE
+
+" when in insertmode cursorline is just underlined
+" when in other modes it is a solid background
+augroup CursorLineMode
+  autocmd!
+  autocmd InsertEnter * highlight CursorLine guibg=NONE cterm=underline gui=underline
+  autocmd InsertLeave * highlight CursorLine guibg=#252932 cterm=NONE gui=NONE
+  " when in insertmode the CursorColumn is disabled
+    autocmd InsertEnter * setlocal nocursorcolumn
+    autocmd InsertLeave * setlocal cursorcolumn
+augroup END
+
 
 " Underline the word under the cursor
 " highlight WordUnderCursor cterm=underline gui=underline guibg=#3c3836

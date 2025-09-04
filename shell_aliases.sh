@@ -8,4 +8,7 @@ alias vimrcc='vim ~/.vim/commands.vim'
 alias vimrcp='vim ~/.vim/plugins.vim'
 alias vimrco='vim ~/.vim/options.vim'
 alias vimrcm='vim ~/.vim/mappings.vim'
-alias vimrcw='vim ~/.vim/whichkey.vim'
+# open vim and put clipboard content in new line
+alias vimp='vim "+norm Go" "+put +"'
+# open vim without any plugins or custom configurations
+alias vimc='vim --clean'

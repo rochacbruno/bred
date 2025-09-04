@@ -1,4 +1,3 @@
-
 " =========================================================================
 " Custom Functions
 " =========================================================================
@@ -181,3 +180,32 @@ augroup AutoLayoutOnStart
   autocmd VimEnter * ++once call AutoLayoutFiles()
 augroup END
 
+" -------------------------------------------------------------------------
+" Force Quit All With Confirmation
+" -------------------------------------------------------------------------
+" Asks for confirmation before force quitting all buffers without saving
+function! ForceQuitAll()
+    " Check if there are any modified buffers
+    let l:modified_count = 0
+    for l:buf in getbufinfo({'bufloaded': 1})
+        if l:buf.changed
+            let l:modified_count += 1
+        endif
+    endfor
+    
+    " Build confirmation message
+    if l:modified_count > 0
+        echo "FORCE QUIT: You have " . l:modified_count . " unsaved buffer(s). Quit anyway? (y/N): "
+    else
+        echo "Quit Vim? (y/N): "
+    endif
+    
+    " Get user confirmation
+    let l:confirm = nr2char(getchar())
+    
+    if l:confirm ==? 'y'
+        qa!
+    else
+        echo "Cancelled"
+    endif
+endfunction

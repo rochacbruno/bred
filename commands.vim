@@ -109,5 +109,19 @@ function! HighlightWord()
     endif
 endfunction
 " }}}
-" 
+"
+
+" Command-line completion improvements {{{
+" Clear command line before navigating history or using completion
+cnoremap <Up> <C-U><Up>
+cnoremap <Down> <C-U><Down>
+cnoremap <C-p> <C-U><C-p>
+cnoremap <C-n> <C-U><C-n>
+
+augroup cmdcomplete
+    au!
+    autocmd CmdlineChanged : call wildtrigger()
+augroup END
+" }}}
+
 " vim: set foldmethod=marker foldlevel=0:

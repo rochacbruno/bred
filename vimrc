@@ -32,6 +32,7 @@ else
         source ~/.vim/mappings.vim       " Key mappings and shortcuts
         source ~/.vim/splash.vim         " Splash screen for empty Vim startup
         source ~/.vim/snippets.vim       " Snippets from abbreviations
+        source ~/.vim/newwin.vim         " Custom new window command
     else
         " =========================================================================
         " NEOVIM CONFIGURATION - Use compatibility versions

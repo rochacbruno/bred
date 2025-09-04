@@ -68,6 +68,7 @@ Nmap 'resize mode|Windows' <leader>rs :call ResizeMode()<CR>
 Nmap 'save|Files' <leader>w :write<CR>
 Nmap 'quit|Files' <leader>q :quit<CR>
 Nmap 'save and quit|Files' <leader>x :xit<CR>
+Nmap 'force quit all with confirmation|Windows|3' <C-w>Q :call ForceQuitAll()<CR>
 
 " Enter after search will clear highlights
 nnoremap <silent> <CR> :nohlsearch<CR><CR>
@@ -103,7 +104,7 @@ Nmap 'reload vimrc|Config' <leader><leader>so :source $MYVIMRC<CR>
 " -------------------------------------------------------------------------
 " Ctrl+S to save (familiar for users coming from other editors)
 Nmap 'save|Files|2' <C-s> :update<CR>
-Imap 'save|Files' <C-s> <Esc>:update<CR>a
+Imap 'save|Files' <C-s> <Esc>:update<CR>
 Xmap 'save|Files' <C-s> <Esc>:update<CR>gv
 
 " Ctrl+Z to undo (familiar for users coming from other editors)
@@ -271,10 +272,14 @@ Nmap 'split and jump to symbol|Windows' <C-w>]
 Nmap 'split and go to file under cursor|Windows' <C-w>f
 Nmap 'go to another|Windows|3' <C-w>ARROWS
 Nmap 'exchanges|Windows' <C-w>x
-
+" }}}
+" =========================================================================
+" Easter Eggs and Fun Mappings {{{
+" =========================================================================
+nnoremap <leader>sm :smile<CR>
+" =========================================================================
+" }}}
 " -------------------------------------------------------------------------
 " End of Mappings
 " -------------------------------------------------------------------------
-
-
 " vim: set foldmethod=marker foldlevel=0:

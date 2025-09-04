@@ -26,7 +26,10 @@ set termguicolors             " Enable 24-bit RGB colors
 set signcolumn=auto           " Show sign column when needed (for git, diagnostics)
 set undofile                  " Persist undo history between sessions
 set wildmenu                  " Enhanced command-line completion
-set wildmode=longest:full,full  " Complete longest common match, then full
+" set wildmode=longest:full,full  " Complete longest common match, then full
+set wildmode=noselect:lastused,full " Command-line completion mode
+set wildoptions+=pum            " Use popup menu for command-line completion
+set wildoptions+=fuzzy         " Enable fuzzy matching in command-line completion
 set wildignorecase            " Case-insensitive file completion
 set ttimeout ttimeoutlen=10   " Quick escape key response
 set timeout timeoutlen=500    " Time to wait for mapped sequences
