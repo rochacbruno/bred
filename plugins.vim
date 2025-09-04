@@ -14,7 +14,7 @@ let g:netrw_browse_split = 4              " Open files in previous window
 let g:netrw_altv = 1                      " Open splits to the right
 let g:netrw_winsize = 25                  " Width of explorer window
 let g:netrw_keepdir = 0                   " Keep current directory synced
-runtime! plugin/netrwPlugin.vim          " Load netrw plugin
+let g:netrw_preview = 1                   " Preview files in explorer
 Nmap 'Open explorer on left|Files|1' <leader>e :Lexplore<CR>
 Nmap 'Open explorer in vertical split|Files' <leader>E :Vexplore<CR>
 
@@ -466,20 +466,6 @@ Nmap 'Cut to end of line|Edit' X D
 
 " }}}
 " ===============================================================================
-" EasyMotion - Visual motion hints {{{
-" ===============================================================================
-" Provides visual hints for quick cursor positioning
-Plug 'easymotion/vim-easymotion'
-
-" Document EasyMotion mappings without overriding them
-Nmap 'Trigger EasyMotion for any motion|Edit Motion' <leader><leader>
-Nmap 'Jump to word beginnings|Edit Motion' <leader><leader>w         
-Nmap 'Find character with hints|Edit Motion' <leader><leader>f{char}   
-Nmap 'Jump to lines below|Edit Motion' <leader><leader>j         
-Nmap 'Jump to lines above|Edit Motion' <leader><leader>k         
-
-" }}}
-" ===============================================================================
 " Abolish - Smart substitution with case variants {{{
 " ===============================================================================
 " Handles multiple case variants in substitutions (Word/word/WORD)
@@ -619,20 +605,6 @@ Nmap 'Swap with previous window|Windows|3' --ss
 
 " }}}
 " ===============================================================================
-" Automatic Indentation Detection {{{
-" ===============================================================================
-
-" Automatically detect and set indentation settings based on file content
-" Adapts to project-specific indentation styles without manual configuration
-
-" ===============================================================================
-" Indentation and context
-" ===============================================================================
-" {{{
-" Repository: https://github.com/tpope/vim-sleuth
-
-" }}}
-" ===============================================================================
 " VRC - Vim REST Console - HTTP client {{{
 " ===============================================================================
 " Execute HTTP requests with results in separate buffer
@@ -653,7 +625,6 @@ let g:vrc_curl_opts = {
 "    {"data": "value"}
 " 3. Key mappings:
 "    Ctrl-j  - Execute request under cursor
-" }}}
 Nmap 'Execute HTTP request under cursor|REST' <C-j> 
 Vmap 'Execute selected HTTP request|REST' <C-j>
 Imap 'Execute HTTP request under cursor|REST' <C-j>
