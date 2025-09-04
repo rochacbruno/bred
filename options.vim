@@ -30,6 +30,7 @@ set wildmenu                  " Enhanced command-line completion
 set wildmode=noselect:lastused,full " Command-line completion mode
 set wildoptions+=pum            " Use popup menu for command-line completion
 set wildoptions+=fuzzy         " Enable fuzzy matching in command-line completion
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.pyc,*.class,*.jar,*.zip,*.tar.gz,*.tar.bz2,*.png,*.jpg,*.jpeg,*.gif,*.bmp,*.svg,*.ico,node_modules,.git,.hg,.svn  " Ignore common binary and version control files
 set wildignorecase            " Case-insensitive file completion
 set ttimeout ttimeoutlen=10   " Quick escape key response
 set timeout timeoutlen=500    " Time to wait for mapped sequences
@@ -38,6 +39,8 @@ set ttymouse=sgr              " Better mouse support in terminal
 set cc=80                     " Highlight column 80 for line length guidance
 set cursorline                " Highlight the current line
 set fillchars+=vert:\▏        " Use thin vertical line for splits
+set vb                        " Enable visual bell instead of beeping
+set t_vb=.                    " Disable visual bell flash
 
 " }}}
 " -------------------------------------------------------------------------

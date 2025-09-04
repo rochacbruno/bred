@@ -37,7 +37,7 @@ Nmap 'next|Buffers|2' ]b :bn<CR>
 Nmap 'previous|Buffers|2' [q :bp<CR>
 Nmap 'next|Buffers|2' ]q :bn<CR>
 Nmap 'close all hidden|Buffers' <leader>bh :DeleteHiddenBuffers<CR>
-Nmap 'close all|Buffers|2' <leader>bd :bufdo bdelete<CR>
+Nmap 'close all|Buffers|2' <leader>ba :bufdo bdelete<CR>
 
 " NOTE: More buffer mappings on plugins.vim 
 
@@ -207,6 +207,9 @@ Nmap 'make executable|Files' <leader><leader>x :!chmod +x %<CR>
 "Copy current file path to clipboard
 Nmap 'copy current file path|Files' <leader>fp :let@+=expand('%:p')<CR>
 
+
+Nmap 'open or create file under cursor|Navigation' gF :e <cfile><CR>
+
 " }}}
 " -------------------------------------------------------------------------
 " MapDocs System {{{
@@ -230,6 +233,27 @@ Imap 'previous Completion|Edit' <C-P>
 Imap 'cancel completion|Edit' <C-E>
 Imap 'insert char above cursor|Edit' <C-Y>
 Imap 'insert char below cursor|Edit' <C-E>
+Imap 'word completion|Edit' <C-N>
+Imap 'word completion|Edit' <C-P>
+Imap 'cancel completion|Edit' <C-E>
+Imap 'line completion|Edit' <C-X><C-L>
+Imap 'file name completion|Edit' <C-X><C-F>
+
+Imap 'calculator|Edit' <C-R>=
+Imap 'execute a command|Edit' <C-o>
+
+Nmap 'pull word under cursor into command line|Edit' <C-R><C-W>
+Nmap 'pull Word under cursor into command line|Edit' <C-R><C-A>
+Nmap 'pull line under cursor into command line|Edit' <C-R><C-L>
+
+Nmap 'next jump in jumplist|Navigation' <C-O>
+Nmap 'previous jump in jumplist|Navigation' <C-I>
+
+Nmap 'lowercase line|Edit' guu
+Nmap 'uppercase line|Edit' gUU
+Nmap 'lowercase word|Edit' viwu
+Nmap 'uppercase word|Edit' viwU
+Nmap 'uppercase to end of line|Edit' gU$
 
 Nmap 'redraw screen|View' <C-L>
 Nmap 'go to first line of file|Navigation' gg
@@ -279,6 +303,11 @@ Nmap 'split and jump to symbol|Windows' <C-w>]
 Nmap 'split and go to file under cursor|Windows' <C-w>f
 Nmap 'go to another|Windows|3' <C-w>ARROWS
 Nmap 'exchanges|Windows' <C-w>x
+
+
+Cmap 'undo all changes|Edit' :e!<cr>
+
+
 " }}}
 " =========================================================================
 " Easter Eggs and Fun Mappings {{{

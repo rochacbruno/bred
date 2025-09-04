@@ -147,8 +147,13 @@ if executable('fzf')
   Nmap 'tracked files|Git|0' <leader>g :GFiles<CR>
   Nmap 'jumplist|Edit|1' <leader>j :Jumps<CR>
   Nmap 'lines in current buffer|Search|0' <leader>l :Lines<CR>
+  Nmap 'lines in buffer with word under cursor|Search|0' <leader>lw :execute 'Lines ' . expand('<cword>')<CR>
+  Nmap 'lines in buffer with line under cursor|Search|0' <leader>lL :execute  'Lines ' . getline('.')<CR>
+
   Nmap 'text with ripgrep|Search|0' <silent><leader>r :Rg<CR>
-  
+  Nmap 'text with word under cursor|Search|0' <silent><leader>rw :execute 'RG ' . expand('<cword>')<CR>
+  Nmap 'text with line under cursor|Search|0' <silent><leader>rL :execute 'RG ' . getline('.')<CR>
+
   Nmap 'recent|Files|0' <leader>rf :History<CR>
   Nmap 'changes on buffers|Edit|1' <leader>cb :Changes<CR>
 
