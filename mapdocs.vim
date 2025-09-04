@@ -162,20 +162,12 @@ function! s:BuildFZFSourceFiltered(mode_filter) abort
     " Display leader key properly (show <spc> instead of empty space)
     let l:leader_display = l:leader == ' ' ? '<spc>' : l:leader
     
-    " Collect ALL items from all modes first
+    " Collect items only from filtered modes
     let l:all_ordered_items = []  " Items with explicit order (< 999)
     let l:all_unordered_items = []  " Items without explicit order (= 999)
     
-    " Process ALL modes (ordered ones first, then remaining)
-    let l:all_modes = copy(l:ordered_modes)
-    for [l:mode, l:mode_data] in items(g:mapdocs)
-        if index(l:all_modes, l:mode) == -1
-            call add(l:all_modes, l:mode)
-        endif
-    endfor
-    
-    " Process all modes
-    for l:mode in l:all_modes
+    " Process only filtered modes
+    for l:mode in l:ordered_modes
         " Skip if this mode doesn't exist in mapdocs
         if !has_key(g:mapdocs, l:mode)
             continue
