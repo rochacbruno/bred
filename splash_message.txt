@@ -13,9 +13,9 @@
 • *[b* or *]b*       Cycle `b`uffers
 • `Ctrl` + */*       Comment
 • `spc` + *h*        Mappings `h`elp
-• `:e filename`    Open a file    
-• `i`              Start editing       
-• `:q`             Exit           
+• `spc` + *o*        `O`pen a file    
+• `i`              Start ed`i`ting       
+• `:q`             `Q`uit 
 ────────────────────────────────────────────
 Author: Bruno C Rocha http://rochacbruno.com
 Docs: https://github.com/rochacbruno/bred
