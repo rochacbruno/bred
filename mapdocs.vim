@@ -785,7 +785,7 @@ function! s:ShowDocsBuffer(position) abort
     if empty(g:mapdocs)
         let l:lines = ['No mappings documented yet.']
     else
-        call add(l:lines, '# Vim Keybinding Documentation')
+        call add(l:lines, '# Keybinding Documentation')
         call add(l:lines, '')
         call add(l:lines, 'Leader key: `' . l:leader_display . '`  ')
         call add(l:lines, '<!-- Open in Browser: `<space>mp` or `:ComposerStart` -->')

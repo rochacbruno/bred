@@ -1,63 +1,70 @@
 # Vim Keybinding Documentation
 
-Leader key: `<spc>`
-Open in Browser: `<space>mp` or `:ComposerStart`
+Leader key: `<spc>`  
+<!-- Open in Browser: `<space>mp` or `:ComposerStart` -->
 
 ## Normal Mode
 
 ### Buffers
 
-| Key          | Description                    |
-|--------------|--------------------------------|
-| `<spc>b`     | list                           |
-| `<spc><Tab>` | alternate                      |
-| `<spc>bc`    | Close buffer (save first)      |
-| `<spc>bd`    | close all                      |
-| `<spc>bx`    | Force close buffer (no save)   |
-| `[b`         | previous                       |
-| `[q`         | previous                       |
-| `]b`         | next                           |
-| `]q`         | next                           |
-| `<spc>1`     | switch to 1-9                  |
-| `<spc>bh`    | close all hidden               |
-| `<spc>bl`    | list and jump to one           |
-
-### Buffers Scratch
-
-| Key   | Description                          |
-|-------|--------------------------------------|
-| `gs`  | Open scratch buffer in insert mode   |
+| Key          | Description                          |
+|--------------|--------------------------------------|
+| `<spc>b`     | list                                 |
+| `<spc><Tab>` | alternate                            |
+| `<spc>ba`    | close all                            |
+| `<spc>bc`    | Close buffer (save first)            |
+| `<spc>bx`    | Force close buffer (no save)         |
+| `[b`         | previous                             |
+| `[q`         | previous                             |
+| `]b`         | next                                 |
+| `]q`         | next                                 |
+| `<spc>1`     | switch to 1-9                        |
+| `<spc>bh`    | close all hidden                     |
+| `<spc>bl`    | list and jump to one                 |
+| `gs`         | Open scratch buffer in insert mode   |
 
 ### Config
 
-| Key            | Description    |
-|----------------|----------------|
-| `<spc><spc>so` | reload vimrc   |
+| Key         | Description    |
+|-------------|----------------|
+| `<spc>,`    | open config    |
+| `<spc><cr>` | reload vimrc   |
 
 ### Edit
 
-| Key       | Description                          |
-|-----------|--------------------------------------|
-| `<C-/>`   | comment                              |
-| `<spc>cb` | changes on buffers                   |
-| `<spc>j`  | jumplist                             |
-| `<C-a>`   | Increment number/date under cursor   |
-| `<C-x>`   | Decrement number/date under cursor   |
-| `<C-z>`   | Undo                                 |
-| `<spc>tw` | remove / trim trailing whitespace    |
-| `A`       | insert at end of line                |
-| `a`       | append after cursor                  |
-| `gcu`     | uncomment adjacent commented lines   |
-| `I`       | insert before cursor                 |
-| `N<<`     | outdent N lines                      |
-| `N==`     | restore Indentation N Lines          |
-| `N>>`     | indent N lines                       |
-| `Ncc`     | delete N lines and start insert      |
-| `O`       | new line above current line          |
-| `o`       | new line below current line          |
-| `x`       | Cut (delete to register)             |
-| `X`       | Cut to end of line                   |
-| `xx`      | Cut entire line                      |
+| Key          | Description                                |
+|--------------|--------------------------------------------|
+| `<C-/>`      | comment                                    |
+| `<spc>cb`    | changes on buffers                         |
+| `<spc>j`     | jumplist                                   |
+| `<spc>u`     | Toggle UndoTree                            |
+| `<C-a>`      | Increment number/date under cursor         |
+| `<C-R><C-A>` | pull Word under cursor into command line   |
+| `<C-R><C-L>` | pull line under cursor into command line   |
+| `<C-R><C-W>` | pull word under cursor into command line   |
+| `<C-x>`      | Decrement number/date under cursor         |
+| `<C-z>`      | Undo                                       |
+| `<spc>dt`    | insert date                                |
+| `<spc>id`    | insert uuid                                |
+| `<spc>tw`    | remove / trim trailing whitespace          |
+| `a`          | append after cursor                        |
+| `A`          | insert at end of line                      |
+| `gcu`        | uncomment adjacent commented lines         |
+| `gU$`        | uppercase to end of line                   |
+| `gUU`        | uppercase line                             |
+| `guu`        | lowercase line                             |
+| `I`          | insert before cursor                       |
+| `N<<`        | outdent N lines                            |
+| `N==`        | restore Indentation N Lines                |
+| `N>>`        | indent N lines                             |
+| `Ncc`        | delete N lines and start insert            |
+| `O`          | new line above current line                |
+| `o`          | new line below current line                |
+| `viwu`       | lowercase word                             |
+| `viwU`       | uppercase word                             |
+| `x`          | Cut (delete to register)                   |
+| `X`          | Cut to end of line                         |
+| `xx`         | Cut entire line                            |
 
 ### Edit Color
 
@@ -102,16 +109,6 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 | `mp`     | Jump to prev mark (window-aware)     |
 | `mq`     | Quick jump to mark (prompt)          |
 | `mt`     | Toggle between last two flag marks   |
-
-### Edit Motion
-
-| Key                 | Description                         |
-|---------------------|-------------------------------------|
-| `<spc><spc>`        | Trigger EasyMotion for any motion   |
-| `<spc><spc>f{char}` | Find character with hints           |
-| `<spc><spc>j`       | Jump to lines below                 |
-| `<spc><spc>k`       | Jump to lines above                 |
-| `<spc><spc>w`       | Jump to word beginnings             |
 
 ### Edit Paste
 
@@ -159,11 +156,15 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 | Key           | Description                                    |
 |---------------|------------------------------------------------|
 | `<spc>f`      | find                                           |
+| `<spc>fd`     | in current dir                                 |
 | `<spc>rf`     | recent                                         |
 | `<spc>e`      | Open explorer on left                          |
 | `<C-s>`       | save                                           |
+| `<spc>.`      | set local working directory to current file    |
 | `<spc><spc>x` | make executable                                |
 | `<spc>E`      | Open explorer in vertical split                |
+| `<spc>fp`     | copy current file path                         |
+| `<spc>o`      | open file explorer at current file path        |
 | `<spc>q`      | quit                                           |
 | `<spc>w`      | save                                           |
 | `<spc>x`      | save and quit                                  |
@@ -172,26 +173,29 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 
 ### Git
 
-| Key       | Description            |
-|-----------|------------------------|
-| `<spc>g`  | tracked files          |
-| `<spc>gc` | commits                |
-| `<spc>gs` | status                 |
-| `<spc>gm` | Show git commit info   |
+| Key       | Description                   |
+|-----------|-------------------------------|
+| `<spc>g`  | tracked files                 |
+| `<spc>gc` | commits                       |
+| `<spc>gs` | status                        |
+| `<spc>gb` | Open current line on GitHub   |
+| `<spc>gm` | Show git commit info          |
 
 ### Help
 
 | Key      | Description                              |
 |----------|------------------------------------------|
 | `<spc>h` | open mapping documentation on a buffer   |
+| `K`      | help for word under cursor               |
 
 ### LSP
 
-| Key      | Description              |
-|----------|--------------------------|
-| `<spc>a` | Show code actions        |
-| `<spc>d` | Go to definition         |
-| `<spc>k` | Show hover information   |
+| Key       | Description              |
+|-----------|--------------------------|
+| `<spc>ac` | Show code actions        |
+| `<spc>k`  | Show hover information   |
+| `gd`      | Go to definition         |
+| `gr`      | Go to references         |
 
 ### Lines
 
@@ -202,21 +206,31 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 | `<M-k>`    | move up       |
 | `<M-Up>`   | move up       |
 
+### Linter
+
+| Key       | Description          |
+|-----------|----------------------|
+| `<spc>af` | Fix current file     |
+| `<spc>at` | Toggle ALE linting   |
+
 ### Navigation
 
-| Key   | Description                               |
-|-------|-------------------------------------------|
-| `$`   | go to end of line                         |
-| `%`   | go to matching bracket                    |
-| `0`   | go to beginning of line                   |
-| `^`   | go to first non-blank character of line   |
-| `G`   | go to last line of file                   |
-| `gf`  | go to file under cursor                   |
-| `gg`  | go to first line of file                  |
-| `H`   | cursor to the top of the screen           |
-| `L`   | cursor to the bottom of the screen        |
-| `M`   | cursor to the middle of the screen        |
-| `Ngg` | go to line N                              |
+| Key     | Description                               |
+|---------|-------------------------------------------|
+| `$`     | go to end of line                         |
+| `%`     | go to matching bracket                    |
+| `0`     | go to beginning of line                   |
+| `<C-I>` | previous jump in jumplist                 |
+| `<C-O>` | next jump in jumplist                     |
+| `^`     | go to first non-blank character of line   |
+| `G`     | go to last line of file                   |
+| `gF`    | open or create file under cursor          |
+| `gf`    | go to file under cursor                   |
+| `gg`    | go to first line of file                  |
+| `H`     | cursor to the top of the screen           |
+| `L`     | cursor to the bottom of the screen        |
+| `M`     | cursor to the middle of the screen        |
+| `Ngg`   | go to line N                              |
 
 ### REST
 
@@ -226,12 +240,16 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 
 ### Search
 
-| Key              | Description                         |
-|------------------|-------------------------------------|
-| `<silent><spc>r` | text with ripgrep                   |
-| `<spc>l`         | lines in current buffer             |
-| `<spc>re`        | replace word under cursor           |
-| `<spc>rl`        | replace word under cursor in line   |
+| Key               | Description                              |
+|-------------------|------------------------------------------|
+| `<silent><spc>r`  | text with ripgrep                        |
+| `<silent><spc>rL` | text with line under cursor              |
+| `<silent><spc>rw` | text with word under cursor              |
+| `<spc>l`          | lines in current buffer                  |
+| `<spc>lL`         | lines in buffer with line under cursor   |
+| `<spc>lw`         | lines in buffer with word under cursor   |
+| `<spc>re`         | replace word under cursor                |
+| `<spc>rl`         | replace word under cursor in line        |
 
 ### Tabs
 
@@ -257,48 +275,52 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 
 ### Windows
 
-| Key           | Description                              |
-|---------------|------------------------------------------|
-| `-`           | Open window chooser                      |
-| `--`          | Jump Windows                             |
-| `--s<ID>`     | Swap Window                              |
-| `--ss`        | Swap with previous window                |
-| `<C-w>ARROWS` | go to another                            |
-| `<C-w>c`      | close current                            |
-| `<C-w>m`      | Toggle window zoom (maximize/restore)    |
-| `<C-w>o`      | close all other                          |
-| `<C-w>r`      | rotate down                              |
-| `<C-w>s`      | split horizontally                       |
-| `<C-w>v`      | split vertically                         |
-| `<Esc><Esc>`  | close quick action and clear highlight   |
-| `<C-w>=`      | equalize sizes                           |
-| `<C-w>]`      | split and jump to symbol                 |
-| `<C-w>f`      | split and go to file under cursor        |
-| `<C-w>g`      | Toggle Goyo mode                         |
-| `<C-w>gr`     | Resize window to selection               |
-| `<C-w>gsa`    | Split above with selection               |
-| `<C-w>gsb`    | Split below with selection               |
-| `<C-w>gss`    | Split right with selection               |
-| `<C-w>h`      | move focus left                          |
-| `<C-w>H`      | move current to left                     |
-| `<C-w>j`      | move focus down                          |
-| `<C-w>J`      | move current to bottom                   |
-| `<C-w>k`      | move focus up                            |
-| `<C-w>K`      | move current to top                      |
-| `<C-w>l`      | move focus right                         |
-| `<C-w>L`      | move current to right                    |
-| `<C-w>N`      | go to Nth                                |
-| `<C-w>p`      | go to previous                           |
-| `<C-w>q`      | quit current                             |
-| `<C-w>R`      | rotate up                                |
-| `<C-w>T`      | move current to new tab                  |
-| `<C-w>W`      | go to last                               |
-| `<C-w>x`      | exchanges                                |
-| `<spc>-`      | decrease height                          |
-| `<spc><`      | decrease width                           |
-| `<spc>=`      | increase height                          |
-| `<spc>>`      | increase width                           |
-| `<spc>rs`     | resize mode                              |
+| Key             | Description                              |
+|-----------------|------------------------------------------|
+| `-`             | Open window chooser                      |
+| `--`            | Jump Windows                             |
+| `--s<ID>`       | Swap Window                              |
+| `--ss`          | Swap with previous window                |
+| `<C-w>ARROWS`   | go to another                            |
+| `<C-w>c`        | close current                            |
+| `<C-w>m`        | Toggle window zoom (maximize/restore)    |
+| `<C-w>o`        | close all other                          |
+| `<C-w>Q`        | force quit all with confirmation         |
+| `<C-w>r`        | rotate down                              |
+| `<C-w>s`        | split horizontally                       |
+| `<C-w>v`        | split vertically                         |
+| `<silent><C-\>` | close quick action and clear highlight   |
+| `<C-w>=`        | equalize sizes                           |
+| `<C-w>]`        | split and jump to symbol                 |
+| `<C-w>f`        | split and go to file under cursor        |
+| `<C-w>g`        | Toggle Goyo mode                         |
+| `<C-w>gr`       | Resize window to selection               |
+| `<C-w>gsa`      | Split above with selection               |
+| `<C-w>gsb`      | Split below with selection               |
+| `<C-w>gss`      | Split right with selection               |
+| `<C-w>H`        | move current to left                     |
+| `<C-w>h`        | move focus left                          |
+| `<C-w>J`        | move current to bottom                   |
+| `<C-w>j`        | move focus down                          |
+| `<C-w>K`        | move current to top                      |
+| `<C-w>k`        | move focus up                            |
+| `<C-w>L`        | move current to right                    |
+| `<C-w>l`        | move focus right                         |
+| `<C-w>N`        | go to Nth                                |
+| `<C-w>n`        | new empty                                |
+| `<C-w>p`        | go to previous                           |
+| `<C-w>q`        | quit current                             |
+| `<C-w>R`        | rotate up                                |
+| `<C-w>T`        | move current to new tab                  |
+| `<C-w>W`        | go to last                               |
+| `<C-w>x`        | exchanges                                |
+| `<spc>-`        | decrease height                          |
+| `<spc><`        | decrease width                           |
+| `<spc>=`        | increase height                          |
+| `<spc>>`        | increase width                           |
+| `<spc>cc`       | close quickfix list                      |
+| `<spc>co`       | open quickfix list                       |
+| `<spc>rs`       | resize mode                              |
 
 ## Visual Mode
 
@@ -322,7 +344,7 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 
 ## Visual Mode (Line)
 
-### Buffers Scratch
+### Buffers
 
 | Key   | Description                          |
 |-------|--------------------------------------|
@@ -400,28 +422,33 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 
 | Key           | Description                 |
 |---------------|-----------------------------|
-| `<M-[>`       | Cycle previous suggestion   |
 | `<M-\>`       | Request suggestion          |
-| `<M-]>`       | Cycle next suggestion       |
+| `<M-\[>`      | Cycle previous suggestion   |
+| `<M-\]>`      | Cycle next suggestion       |
 | `<M-C-Right>` | Accept next line            |
 | `<M-Right>`   | Accept next word            |
 | `<Tab>`       | Accept suggestion           |
 
 ### Edit
 
-| Key     | Description                                 |
-|---------|---------------------------------------------|
-| `<C-/>` | comment                                     |
-| `<C-A>` | repeat last Insert                          |
-| `<C-D>` | outdent                                     |
-| `<C-E>` | insert char below cursor                    |
-| `<C-N>` | next Completion                             |
-| `<C-P>` | previous Completion                         |
-| `<C-T>` | indent                                      |
-| `<C-U>` | delete to last insert in the current line   |
-| `<C-W>` | delete word backward                        |
-| `<C-Y>` | insert char above cursor                    |
-| `<C-z>` | Undo                                        |
+| Key          | Description                                 |
+|--------------|---------------------------------------------|
+| `<C-/>`      | comment                                     |
+| `<C-A>`      | repeat last Insert                          |
+| `<C-D>`      | outdent                                     |
+| `<C-E>`      | cancel completion                           |
+| `<C-N>`      | word completion                             |
+| `<C-o>`      | execute a command                           |
+| `<C-P>`      | word completion                             |
+| `<C-R>=`     | calculator                                  |
+| `<C-T>`      | indent                                      |
+| `<C-U>`      | delete to last insert in the current line   |
+| `<C-W>`      | delete word backward                        |
+| `<C-X><C-F>` | file name completion                        |
+| `<C-X><C-L>` | line completion                             |
+| `<C-X><C-U>` | snippets                                    |
+| `<C-Y>`      | insert char above cursor                    |
+| `<C-z>`      | Undo                                        |
 
 ### Edit Color
 
@@ -465,6 +492,12 @@ Open in Browser: `<space>mp` or `:ComposerStart`
 | `<C-w>g` | Toggle Goyo mode   |
 
 ## Command Mode
+
+### Edit
+
+| Key       | Description        |
+|-----------|--------------------|
+| `:e!<cr>` | undo all changes   |
 
 ### Emacs
 
