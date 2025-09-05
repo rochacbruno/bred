@@ -279,6 +279,7 @@ Plug 'tpope/vim-fugitive'
 " Repository: https://github.com/tpope/vim-rhubarb
 " Required by Fugitive for :Gbrowse command to open files/commits on GitHub
 Plug 'tpope/vim-rhubarb'
+Nmap 'Open current line on GitHub|Git|2' <leader>gb :.Gbrowse<CR>
 
 " Git Messenger - Show commit info under cursor
 " Repository: https://github.com/rhysd/git-messenger.vim
@@ -322,6 +323,9 @@ let g:undotree_SetFocusWhenToggle = 1  " Focus undo tree when opened
 " :UndotreeToggle - Toggle undo tree window
 " j/k             - Navigate through undo states
 " <Enter>         - Revert to selected state
+
+Nmap 'Toggle UndoTree|Edit|2' <leader>u :UndotreeToggle<CR>
+
 
 " }}}
 " ===============================================================================

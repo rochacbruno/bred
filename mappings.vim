@@ -96,7 +96,7 @@ Nmap 'replace word under cursor in line|Search' <leader>rl :s/\<<C-r><C-w>\>/<C-
 " -------------------------------------------------------------------------
 " Configuration Reload {{{
 " -------------------------------------------------------------------------
-Nmap 'reload vimrc|Config' <leader><leader>so :source $MYVIMRC<CR>
+Nmap 'reload vimrc|Config' <leader><cr> :source $MYVIMRC<CR>
 
 " }}}
 " -------------------------------------------------------------------------
@@ -210,6 +210,14 @@ Nmap 'copy current file path|Files' <leader>fp :let@+=expand('%:p')<CR>
 
 Nmap 'open or create file under cursor|Navigation' gF :e <cfile><CR>
 
+" Set working directory
+" nnoremap <leader>. :lcd %:p:h<CR>
+Nmap 'set local working directory to current file|Files' <leader>. :lcd %:p:h<CR>
+
+" Open file cur path
+" noremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+Nmap 'open file explorer at current file path|Files' <leader>o :e <C-R>=expand("%:p:h") . "/" <CR>
+
 " }}}
 " -------------------------------------------------------------------------
 " MapDocs System {{{
@@ -305,6 +313,9 @@ Nmap 'split and go to file under cursor|Windows' <C-w>f
 Nmap 'go to another|Windows|3' <C-w>ARROWS
 Nmap 'exchanges|Windows' <C-w>x
 
+Nmap 'help for word under cursor|Help' K
+
+
 " Commands
 Cmap 'undo all changes|Edit' :e!<cr>
 Nmap 'open config|Config' <leader>,  :Files $MYVIMDIR<cr>
@@ -315,6 +326,9 @@ Nmap 'open config|Config' <leader>,  :Files $MYVIMDIR<cr>
 " Easter Eggs and Fun Mappings {{{
 " =========================================================================
 nnoremap <leader>sm :smile<CR>
+Nmap 'insert uuid|Edit' <leader>id :read !uuidgen<esc>k :join<esc>
+Nmap 'insert date|Edit' <leader>dt i<C-R>=strftime("%Y-%m-%d %a %I:%M %p")<CR><Esc> 
+
 " =========================================================================
 " }}}
 " -------------------------------------------------------------------------
