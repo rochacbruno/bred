@@ -37,8 +37,9 @@ endif
 packadd lsp                               " Load LSP plugin
 source ~/.vim/lsp.vim                     " Load LSP configuration
 " Key mappings:
-Nmap 'Show code actions|LSP' <leader>a :LspCodeAction<CR>
-Nmap 'Go to definition|LSP' <leader>d :LspGotoDefinition<CR>
+Nmap 'Go to definition|LSP' gd :LspGotoDefinition<CR>
+Nmap 'Go to references|LSP' gr :LspPeekReferences<CR>
+Nmap 'Show code actions|LSP' <leader>ac :LspCodeAction<CR>
 Nmap 'Show hover information|LSP' <leader>k :LspHover<CR>
 
 " }}}
@@ -225,13 +226,8 @@ let g:ale_python_ruff_auto_uv = v:true
 let g:ale_python_ruff_use_global = v:true
 let g:ale_python_ruff_options = '--line-length=80'
 
-
-
-Nmap 'Toggle ALE linting|ALE|2' <leader>Lt :ALEToggle<CR>
-Nmap 'Fix current file|Linter|2' <leader>L :ALEFix<CR>
-
-
-
+Nmap 'Toggle ALE linting|Linter|2' <leader>at :ALEToggle<CR>
+Nmap 'Fix current file|Linter|2' <leader>af :ALEFix<CR>
 
 " }}}
 " ===============================================================================
@@ -393,8 +389,8 @@ Plug 'mtth/scratch.vim'
 let g:scratch_persistence_file = '~/.vim/scratch.md'  " Persist across sessions
 
 " Document Scratch mappings without overriding them
-Nmap 'Open scratch buffer in insert mode|Buffers Scratch' gs
-Xmap 'Open scratch buffer with selection|Buffers Scratch' gs
+Nmap 'Open scratch buffer in insert mode|Buffers' gs
+Xmap 'Open scratch buffer with selection|Buffers' gs
 " :Scratch    - Open scratch buffer in normal mode
 
 " }}}

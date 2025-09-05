@@ -238,6 +238,7 @@ Imap 'word completion|Edit' <C-P>
 Imap 'cancel completion|Edit' <C-E>
 Imap 'line completion|Edit' <C-X><C-L>
 Imap 'file name completion|Edit' <C-X><C-F>
+Imap 'snippets|Edit' <C-X><C-U>
 
 Imap 'calculator|Edit' <C-R>=
 Imap 'execute a command|Edit' <C-o>
@@ -304,8 +305,9 @@ Nmap 'split and go to file under cursor|Windows' <C-w>f
 Nmap 'go to another|Windows|3' <C-w>ARROWS
 Nmap 'exchanges|Windows' <C-w>x
 
-
+" Commands
 Cmap 'undo all changes|Edit' :e!<cr>
+Nmap 'open config|Config' <leader>,  :Files $MYVIMDIR<cr>
 
 
 " }}}
