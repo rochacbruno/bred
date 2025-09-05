@@ -405,32 +405,6 @@ function! s:ConvertKeyNotation(key) abort
     return l:key_seq
 endfunction
 
-" Handler for FZF sink* which receives list of selections
-function! s:HandleFZFSelectionStar(lines) abort
-    " FZF sink* passes the selected line(s)
-    " Empty list means user cancelled
-    if len(a:lines) == 0
-        " No selection (user cancelled) - restore cursor position
-        if exists('s:saved_cursor')
-            call setpos('.', s:saved_cursor)
-        endif
-    else
-        " A selection was made - process it
-        let s:selection_made = 1
-        " The selected line is the last item in the list
-        call s:HandleFZFSelection(a:lines[-1])
-    endif
-    
-    " Clean up
-    if exists('s:saved_cursor')
-        unlet s:saved_cursor
-    endif
-    if exists('s:selection_made')
-        unlet s:selection_made
-    endif
-endfunction
-
-
 " Original handler for FZF selection
 function! s:HandleFZFSelection(line) abort
     " Extract the mode and key from the selected line
@@ -585,10 +559,6 @@ function! s:ShowDocsWithFZF(modes) abort
         return
     endif
     
-    " Save current cursor position
-    let s:saved_cursor = getpos('.')
-    let s:selection_made = 0
-    
     " Save visual selection if we're in visual mode or have a range
     if mode() =~# '[vV\<C-v>]' || line("'<") > 0
         " Save the actual positions, not just the marks
@@ -645,7 +615,7 @@ function! s:ShowDocsWithFZF(modes) abort
     " Create FZF options
     let l:fzf_options = {
         \ 'source': l:source,
-        \ 'sink*': function('s:HandleFZFSelectionStar'),
+        \ 'sink': function('s:HandleFZFSelection'),
         \ 'options': [
             \ '--prompt', 'Mappings> ',
             \ '--header', l:header_text,
@@ -664,7 +634,6 @@ function! s:ShowDocsWithFZF(modes) abort
     " Launch FZF
     call fzf#run(fzf#wrap('MapDocs', l:fzf_options))
 endfunction
-
 
 " Helper function to get short mode name
 function! s:GetModeShort(mode) abort
