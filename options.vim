@@ -40,7 +40,7 @@ set cc=80                     " Highlight column 80 for line length guidance
 set cursorline                " Highlight the current line
 set fillchars+=vert:\▏        " Use thin vertical line for splits
 set vb                        " Enable visual bell instead of beeping
-set t_vb=.                    " Disable visual bell flash
+set t_vb=                     " Disable visual bell flash
 
 " }}}
 " -------------------------------------------------------------------------
