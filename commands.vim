@@ -94,6 +94,7 @@ augroup AutoNormalOnWindowSwitch
 augroup END
 " }}}
 " Auto-highlight word under cursor {{{
+
 augroup HighlightWordUnderCursor
     autocmd!
     autocmd CursorMoved,CursorMovedI * call HighlightWord()
