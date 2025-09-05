@@ -405,6 +405,62 @@ function! s:ConvertKeyNotation(key) abort
     return l:key_seq
 endfunction
 
+" Handler for visual mode FZF selection
+function! s:HandleFZFVisualSelection(line) abort
+    " Extract the mode and key from the selected line
+    " Format: display|mode|key
+    let l:parts = split(a:line, '|')
+    if len(l:parts) >= 3
+        let l:mode = l:parts[-2]
+        let l:key_orig = l:parts[-1]
+        
+        " Ignore separator lines
+        if l:mode == 'separator'
+            return
+        endif
+        
+        " Replace <leader> with actual leader key in the key sequence
+        let l:leader = get(g:, 'mapleader', '\')
+        let l:key = substitute(l:key_orig, '<leader>', l:leader, 'g')
+        
+        " Check if this was a mapping we created or just documented
+        let l:was_created = 0
+        if exists('g:mapdocs_created') && has_key(g:mapdocs_created, l:mode)
+            let l:was_created = index(g:mapdocs_created[l:mode], l:key_orig) >= 0
+        endif
+        
+        " Always restore the visual selection for this command
+        " Build the restore sequence
+        let l:restore_seq = "\<Esc>"
+        
+        " Go to start position
+        let l:restore_seq .= s:visual_start_line . "G" . s:visual_start_col . "|"
+        
+        " Enter the appropriate visual mode
+        if s:visual_mode_type == 'V'
+            let l:restore_seq .= "V"
+        elseif s:visual_mode_type == "\<C-v>"
+            let l:restore_seq .= "\<C-v>"
+        else
+            let l:restore_seq .= "v"
+        endif
+        
+        " Go to end position
+        let l:restore_seq .= s:visual_end_line . "G" . s:visual_end_col . "|"
+        
+        " Send the restore sequence first
+        call feedkeys(l:restore_seq, 'n')
+        
+        " Then send the actual command
+        if l:key =~ '<.*>'
+            let l:converted = s:ConvertKeyNotation(l:key)
+            call feedkeys(eval('"' . l:converted . '"'), l:was_created ? 'mt' : 'm')
+        else
+            call feedkeys(l:key, l:was_created ? 'mt' : 'm')
+        endif
+    endif
+endfunction
+
 " Original handler for FZF selection
 function! s:HandleFZFSelection(line) abort
     " Save current cursor position before doing anything
@@ -524,6 +580,84 @@ endfunction
 " ShowDocs command using FZF
 " Usage: :ShowDocs [modes] - where modes is a string like 'n', 'ni', 'nix', etc.
 command! -nargs=? ShowDocs call s:ShowDocsWithFZF(<q-args>)
+
+" ShowDocsV command for visual mode operations
+" Usage: :ShowDocsV - shows only visual mode mappings and works with selections
+" Can be called from visual mode or normal mode (uses last selection)
+command! -nargs=0 -range ShowDocsV call s:ShowDocsVisual()
+
+" ShowDocsVisual - specifically for visual mode operations
+function! s:ShowDocsVisual() abort
+    " Check if FZF is available
+    if !exists(':FZF')
+        echoerr "FZF is not available. Please install fzf.vim"
+        return
+    endif
+    
+    " Save visual selection marks and mode
+    " These marks exist whether we're in visual mode or not (last selection)
+    let s:visual_start_line = line("'<")
+    let s:visual_start_col = col("'<")
+    let s:visual_end_line = line("'>")
+    let s:visual_end_col = col("'>") 
+    
+    " Determine visual mode type
+    if mode() =~# '[vV\<C-v>]'
+        " Currently in visual mode
+        let s:visual_mode_type = visualmode()
+        let s:from_visual = 1
+    else
+        " In normal mode, using last selection
+        " Try to detect the type from the last visual mode
+        let s:visual_mode_type = 'v'  " Default to character-wise
+        let s:from_visual = 0
+    endif
+    
+    " Only show visual and visual-line modes
+    let l:mode_filter = ['v', 'x']
+    
+    " Build the source list
+    let l:source = s:BuildFZFSourceFiltered(l:mode_filter)
+    
+    if empty(l:source)
+        echo "No visual mode mappings documented yet."
+        return
+    endif
+    
+    " Extract display parts (without the hidden mode|key data)
+    let l:display_source = []
+    for l:item in l:source
+        let l:parts = split(l:item, '|')
+        if len(l:parts) > 0
+            call add(l:display_source, l:parts[0])
+        endif
+    endfor
+    
+    " Build header text
+    let l:header_text = 'Visual Mode Mappings | Selection: L' . s:visual_start_line . '-L' . s:visual_end_line
+    
+    " Create FZF options
+    let l:fzf_options = {
+        \ 'source': l:source,
+        \ 'sink': function('s:HandleFZFVisualSelection'),
+        \ 'options': [
+            \ '--prompt', 'Visual> ',
+            \ '--header', l:header_text,
+            \ '--preview-window', 'hidden',
+            \ '--with-nth', '1',
+            \ '--delimiter', '|',
+            \ '--tiebreak', 'begin',
+            \ '--ansi',
+            \ '--info=inline',
+            \ '--layout=reverse',
+            \ '--height', '60%'
+        \ ],
+        \ 'window': {'width': 0.9, 'height': 0.6}
+    \ }
+    
+    " Launch FZF
+    call fzf#run(fzf#wrap('MapDocsVisual', l:fzf_options))
+endfunction
 
 function! s:ShowDocsWithFZF(modes) abort
     " Check if FZF is available

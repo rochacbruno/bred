@@ -217,8 +217,8 @@ Nmap 'open or create file under cursor|Navigation' gF :e <cfile><CR>
 " Access the mapping documentation and interactive menu
 Nmap 'open mapping documentation on a buffer|Help' <leader>h :BufferDocs<CR>
 nnoremap <silent> <leader> :ShowDocs<CR>
-
-
+vnoremap <silent> <leader> :ShowDocsV<CR>
+xnoremap <silent> <leader> :ShowDocsV<CR>
 
 " ---------------------------------------------------------------
 "  Docs Only For The MapDocs System (do not remove these lines)
