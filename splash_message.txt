@@ -37,23 +37,19 @@ Press enter for more info {
     *vim-devicons*  Cool icons on status bar
     *vim-mistfly-statusline*  Status line
     *matchit*  Improved % motions
-    *vim-diminactive*  Set unfocused buffers to dim
     *vim-gtfo*  Open files in external apps
     *vim-zoom*  Zoom current window
-    *mru*  List recent files
     *targets.vim*  More text objects
     *vim-rhubarb*  GitHub support for fugitive.vim
     *undotree*  Visualize undo history
     *vim-indent-object*  Text objects for indentations
     *vim-eunuch*  Helper commands for UNIX files
     *vim-table-mode*  Create tables and align tables
-    *vim-clap*  Fuzzy finder alternative to fzf
     *copilot.vim*  GitHub Copilot integration
     *vim-repeat*  Repeat plugin commands with
     *vim-commentary*  Comment stuff out
     *goyo.vim*  Distraction-free writing
     *visual-split.vim*  Easily resize windows based on visual selection
-    *vim-easymotion*  Jump to any word in the visible buffer
     *vim-sleuth*  Detect tabstop and shiftwidth automatically
     *Colorizer*  Color highlighter
     *vCoolor.vim*  Color picker
@@ -78,7 +74,6 @@ Press enter for more info {
     *vim-visual-multi*  Multiple cursors
     *vim-over*  Find Replace with preview
     *vim-abolish*  Smart case manipulation
-    *vim-illuminate*  Highlight other uses of the word under the cursor
     *vim-surround*  Surround text with parentheses, brackets, quotes, etc.
     *auto-pairs*  Automatically insert matching parentheses, brackets, quotes, etc.
     *vim-bbye*  Better buffer closing
