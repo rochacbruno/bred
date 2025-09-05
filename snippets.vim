@@ -38,8 +38,7 @@ function! CompleteAbbrev(findstart, base)
             if abbrev =~ '^' . a:base
                 call add(l:completions, {
                     \ 'word': abbrev,
-                    \ 'menu': '→ ' . expansion,
-                    \ 'abbr': abbrev . ' → ' . expansion
+                    \ 'menu': '→ ' . expansion
                     \ })
             endif
         endfor
