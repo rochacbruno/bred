@@ -4,29 +4,47 @@
 " To cancel abbreviation press C-v before typing the space
 " e.g: teh<C-v><Space> will result in 'teh ' instead of 'the '
 
-function! GetAbbrevList()
-    let l:abbrev_list = []
+function! GetAbbrevDict()
+    let l:abbrev_dict = {}
     redir => l:iab_output
     silent iab
     redir END
     " Parse each line of iab output - format: "i  abbreviation  expansion"
     for line in split(l:iab_output, '\n')
-        " Match lines that start with i followed by abbreviation name
-        let match = matchstr(line, '^\s*i\s\+\zs\k\+')
-        if !empty(match)
-            call add(l:abbrev_list, match)
+        " Match lines that contain abbreviation and expansion
+        let parts = matchlist(line, '^\s*i\s\+\(\k\+\)\s\+\(.\+\)')
+        if len(parts) >= 3
+            let l:abbrev_dict[parts[1]] = parts[2]
         endif
     endfor
-    return l:abbrev_list
+    return l:abbrev_dict
 endfunction
 
 set completefunc=CompleteAbbrev
+set completeopt=menu,menuone,noinsert,noselect
 function! CompleteAbbrev(findstart, base)
     if a:findstart
-        return searchpos('\<\k', 'bcnW', line('.'))[1] - 1
+        " Find the start of the word to complete
+        let line = getline('.')
+        let start = col('.') - 1
+        while start > 0 && line[start - 1] =~ '\k'
+            let start -= 1
+        endwhile
+        return start
     else
-        let s:abbrev_list = GetAbbrevList()
-        return filter(copy(s:abbrev_list), 'v:val =~ "^" . a:base')
+        let l:abbrev_dict = GetAbbrevDict()
+        let l:completions = []
+        for [abbrev, expansion] in items(l:abbrev_dict)
+            if abbrev =~ '^' . a:base
+                call add(l:completions, {
+                    \ 'word': abbrev,
+                    \ 'menu': '→ ' . expansion,
+                    \ 'abbr': abbrev . ' → ' . expansion
+                    \ })
+            endif
+        endfor
+        " Sort completions alphabetically by abbreviation
+        return sort(l:completions, {a, b -> a.word == b.word ? 0 : a.word > b.word ? 1 : -1})
     endif
 endfunction
 
