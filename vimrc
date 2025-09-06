@@ -21,32 +21,32 @@ else
         " =========================================================================
         " VIM CONFIGURATION - Use original files to preserve existing behavior
         " =========================================================================
-        source ~/.vim/kitty.vim          " Kitty terminal integration
-        source ~/.vim/mapdocs.vim        " Documentation for custom mappings
-        source ~/.vim/functions.vim      " Custom utility functions
-        source ~/.vim/commands.vim       " Custom commands and autocommands
-        source ~/.vim/plugins.vim        " Plugin management and configuration
-        source ~/.vim/flagmarks.vim      " Custom global marks management system
-        source ~/.vim/options.vim        " Core Vim options and settings
-        source ~/.vim/custom_colors.vim  " Color scheme fixes and customizations
-        source ~/.vim/mappings.vim       " Key mappings and shortcuts
-        source ~/.vim/splash.vim         " Splash screen for empty Vim startup
-        source ~/.vim/snippets.vim       " Snippets from abbreviations
-        source ~/.vim/newwin.vim         " Custom new window command
+        source ~/.vim/bred/kitty.vim          " Kitty terminal integration
+        source ~/.vim/bred/mapdocs.vim        " Documentation for custom mappings
+        source ~/.vim/bred/functions.vim      " Custom utility functions
+        source ~/.vim/bred/commands.vim       " Custom commands and autocommands
+        source ~/.vim/bred/plugins.vim        " Plugin management and configuration
+        source ~/.vim/bred/flagmarks.vim      " Custom global marks management system
+        source ~/.vim/bred/options.vim        " Core Vim options and settings
+        source ~/.vim/bred/custom_colors.vim  " Color scheme fixes and customizations
+        source ~/.vim/bred/mappings.vim       " Key mappings and shortcuts
+        source ~/.vim/bred/splash.vim         " Splash screen for empty Vim startup
+        source ~/.vim/bred/snippets.vim       " Snippets from abbreviations
+        source ~/.vim/bred/newwin.vim         " Custom new window command
     else
         " =========================================================================
         " NEOVIM CONFIGURATION - Use compatibility versions
         " =========================================================================
         source ~/.vim/nvim_compat/functions.vim         " Compatibility layer for Vim/Neovim
-        source ~/.vim/mapdocs.vim                       " Documentation for custom mappings
+        source ~/.vim/bred/mapdocs.vim                       " Documentation for custom mappings
         source ~/.vim/nvim_compat/functions.vim         " Custom utility functions
         source ~/.vim/nvim_compat/commands.vim          " Custom commands and autocommands
         source ~/.vim/nvim_compat/plugins.vim           " Neovim-specific settings
         source ~/.vim/nvim_compat/flagmarks.vim         " Custom marks with popup compatibility
         source ~/.vim/nvim_compat/options.vim           " Neovim-specific options
-        source ~/.vim/custom_colors.vim                 " Color scheme fixes and customizations
-        source ~/.vim/mappings.vim                      " Key mappings and shortcuts
-        source ~/.vim/splash.vim                        " Splash screen for empty startup
-        source ~/.vim/snippets.vim                      " Snippets from abbreviations
+        source ~/.vim/bred/custom_colors.vim                 " Color scheme fixes and customizations
+        source ~/.vim/bred/mappings.vim                      " Key mappings and shortcuts
+        source ~/.vim/bred/splash.vim                        " Splash screen for empty startup
+        source ~/.vim/bred/snippets.vim                      " Snippets from abbreviations
     endif
 endif
