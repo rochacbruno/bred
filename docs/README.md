@@ -1,14 +1,14 @@
 # Bred - A Modular Vim 9 Configuration
 
-![Splash](./docs/screenshots/splash.png)
+![Splash](./screenshots/splash.png)
 
 
-**MORE [SCREENSHOTS](./docs/screenshots)**
+**MORE [SCREENSHOTS](./screenshots)**
 
 > [!WARNING]  
 > This configuration is optimized for **vim 9** and may not fully work with earlier versions of Vim or Neovim.
 
-> [!INFO]  
+> [!NOTE]  
 > This configuration does not affect neovim as it is located in `~/.vim` and not in `~/.config/nvim`, as long as you don't symlink it and don have a ~/.vimrc it must allow you to use both Vim and Neovim with different configurations. If you want to try it out with Neovim at your own risk `nvim -u ~/.vim/vimrc` should work with limited functionality.
 
 **If you are just starting with Vim I recommend reading** https://vimhelp.org/
