@@ -3,11 +3,10 @@
 
 ![Splash](./screenshots/splash.png)
 
-
 **[VIEW SCREENSHOTS GALLERY](./screenshots.md)**
 
 > [!WARNING]  
-> This configuration is optimized for **vim 9** and may not fully work with earlier versions of Vim or Neovim.
+> This configuration is optimized for **vim 9+** and may not fully work with earlier versions of Vim (Neovim compatibility is a best effort basis, may not work as expected).
 
 > [!NOTE]  
 > This configuration does not affect neovim as it is located in `~/.vim` and not in `~/.config/nvim`, as long as you don't symlink it and don have a ~/.vimrc it must allow you to use both Vim and Neovim with different configurations. If you want to try it out with Neovim at your own risk `nvim -u ~/.vim/vimrc` should work with limited functionality.
@@ -99,6 +98,10 @@
 
 </details>
 
+
+> [!WARNING]
+> Some features depends on which features your vim9 was compiled with, if you run into issues check `:version`
+> if you are on Arch Linux I recommend installing `gvim` as it comes with more features enabled and also install the additional `vim-runtime` package from AUR.
 
 
 1. **Backup your existing Vim configuration:**
