@@ -32,10 +32,10 @@ Nmap 'go to previous|Tabs' <leader>th :tabprevious<CR>
 " Buffer Management {{{
 " -------------------------------------------------------------------------
 Nmap 'list and jump to one|Buffers' <leader>bl :ls<CR>:b<Space>
-Nmap 'previous|Buffers|2' [b :bp<CR>
-Nmap 'next|Buffers|2' ]b :bn<CR>
-Nmap 'previous|Buffers|2' [q :bp<CR>
-Nmap 'next|Buffers|2' ]q :bn<CR>
+Nmap 'previous|Buffers|2' [b :PrevBufferTabLine<CR>
+Nmap 'next|Buffers|2' ]b :NextBufferTabLine<CR>
+Nmap 'previous|Buffers|2' [q :PrevBufferTabLine<CR>
+Nmap 'next|Buffers|2' ]q :NextBufferTabLine<CR>
 Nmap 'close all hidden|Buffers' <leader>bh :DeleteHiddenBuffers<CR>
 Nmap 'close all|Buffers|2' <leader>ba :bufdo bdelete<CR>
 

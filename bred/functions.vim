@@ -25,6 +25,10 @@ function! BufferTabLine() abort
   let s = ''
   " Iterate through all buffers
   for i in range(1, bufnr('$'))
+    " Skip terminal buffers
+    if getbufvar(i, '&buftype') ==# 'terminal'
+      continue
+    endif
     if buflisted(i)
       let name = bufname(i)
       if empty(name)
@@ -48,6 +52,28 @@ function! BufferTabLine() abort
   let s .= '%#TabLineFill#'
   return s
 endfunction
+
+" Functions to go to next/previous buffer in tab line, skipping terminal
+" buffers
+" Args: direction - 'next' or 'prev'
+function! NextBufferTabLine(direction) abort
+  let current = bufnr('%')
+  let bufs = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") !=# "terminal"')
+  if empty(bufs)
+    return
+  endif
+  let idx = index(bufs, current)
+  if a:direction ==# 'next'
+    let next_idx = (idx + 1) % len(bufs)
+  else
+    let next_idx = (idx - 1 + len(bufs)) % len(bufs)
+  endif
+  execute 'buffer' bufs[next_idx]
+endfunction
+
+" Commands to go to next/previous buffer in tab line
+command! NextBufferTabLine call NextBufferTabLine('next')
+command! PrevBufferTabLine call NextBufferTabLine('prev')
 
 " -------------------------------------------------------------------------
 " Delete Hidden Buffers
