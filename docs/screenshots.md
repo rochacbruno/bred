@@ -151,3 +151,12 @@ Live markdown preview with synchronized scrolling for documentation writing.
 ![REST Client](./screenshots/rest_client.png)
 
 Built-in REST client for testing APIs directly from Vim with formatted responses.
+
+## Extras
+
+### Emoji Picker
+
+![Emoji Picker](./screenshots/emoji.png)
+
+Quick emoji insertion with a searchable picker interface, use Ctrl+K on insert mode.
+
