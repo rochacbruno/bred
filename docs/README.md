@@ -3,7 +3,7 @@
 ![Splash](./screenshots/splash.png)
 
 
-**MORE [SCREENSHOTS](./screenshots)**
+**[VIEW SCREENSHOTS GALLERY](./screenshots.md)**
 
 > [!WARNING]  
 > This configuration is optimized for **vim 9** and may not fully work with earlier versions of Vim or Neovim.
