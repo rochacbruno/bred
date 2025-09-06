@@ -609,7 +609,8 @@ Nmap 'Swap with previous window|Windows|3' --ss
 " VRC - Vim REST Console - HTTP client {{{
 " ===============================================================================
 " Execute HTTP requests with results in separate buffer
-Plug 'diepm/vim-rest-console'
+" Plug 'diepm/vim-rest-console'
+Plug 'rochacbruno/vim-rest-console'
 let g:vrc_output_buffer_name = '__VRC_OUTPUT.json'  " Output buffer name
 let g:vrc_curl_opts = {
     \ '-k':'',

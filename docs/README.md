@@ -1,15 +1,19 @@
-# RochaCBruno's Vim 9 Configuration
+# Bred - A Modular Vim 9 Configuration
 
-A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, and a custom global marks management system.
-
-> [!WARNING]
-> This configuration is for Vim 9+ only, NOT for Neovim or older versions of Vim.
-
-> [!INFO]
-> This configuration does not affect neovim as it is located in `~/.vim` and not in `~/.config/nvim`, as long as you don't symlink it and don have a ~/.vimrc it must allow you to use both Vim and Neovim with different configurations.
+![Splash](./docs/screenshots/splash.png)
 
 
-**If you are wondering why Vim 9 and not Neovim, check my blog post: [Why I am using Vim 9](https://rochacbruno.com/why-i-use-vim9.html)**
+**MORE [SCREENSHOTS](./docs/screenshots)**
+
+> [!WARNING]  
+> This configuration is optimized for **vim 9** and may not fully work with earlier versions of Vim or Neovim.
+
+> [!INFO]  
+> This configuration does not affect neovim as it is located in `~/.vim` and not in `~/.config/nvim`, as long as you don't symlink it and don have a ~/.vimrc it must allow you to use both Vim and Neovim with different configurations. If you want to try it out with Neovim at your own risk `nvim -u ~/.vim/vimrc` should work with limited functionality.
+
+**If you are just starting with Vim I recommend reading** https://vimhelp.org/
+
+<!-- **If you are wondering why Vim 9 and not Neovim, check my blog post: [Why I am using Vim 9](https://rochacbruno.com/why-i-use-vim9.html)** -->
 
 ## Table of Contents
 
@@ -40,6 +44,9 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
 - **Auto-Session**: Automatic session save/restore
 - **Distraction-Free Mode**: Goyo for focused writing
 - **Smart Indentation**: Auto-detect and adapt to file's indentation
+- Markdown Preview: Live preview of Markdown files
+- **Color Previews**: Inline color highlighting and picker
+- **Customizable**: Easy to extend with personal settings and plugins
 
 ## Requirements
 
@@ -51,7 +58,7 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
 - fzf (for fuzzy finding)
 - Node.js and npm (for some LSP servers)
 - A Nerd Font (for icons)
-- Rust (for some plugins)
+- Rust (for markdown preview and Rust LSP)
 
 ## Installation
 
@@ -101,7 +108,7 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
 
 2. **Clone this repository:**
    ```bash
-   git clone https://github.com/rochacbruno/vim9 ~/.vim
+   git clone https://github.com/rochacbruno/bred ~/.vim
    ```
 
 3. **Install plugins:**
@@ -114,25 +121,32 @@ A modern, modular Vim 9.1 configuration with LSP support, intelligent plugins, a
 
 The configuration is split into logical modules for maintainability:
 
-| File | Purpose |
-|------|---------|
-| `vimrc` | Main entry point, loads all modules |
-| `options.vim` | Core Vim settings and options |
-| `plugins.vim` | Plugin declarations and configuration |
-| `mappings.vim` | Custom key mappings |
-| `functions.vim` | Utility functions |
-| `commands.vim` | Custom commands and autocommands |
-| `lsp.vim` | Language Server Protocol configuration |
-| `flagmarks.vim` | Custom global marks system |
-| `mapdocs.vim` | Interactive mapping documentation system |
-| `splash.vim` | Welcome screen configuration |
-| `custom_colors.vim` | Color scheme adjustments |
+| File                | Purpose                                  |
+|---------------------|------------------------------------------|
+| `vimrc`             | Main entry point, loads all modules      |
+| `options.vim`       | Core Vim settings and options            |
+| `plugins.vim`       | Plugin declarations and configuration    |
+| `mappings.vim`      | Custom key mappings                      |
+| `functions.vim`     | Utility functions                        |
+| `commands.vim`      | Custom commands and autocommands         |
+| `lsp.vim`           | Language Server Protocol configuration   |
+| `flagmarks.vim`     | Custom global marks system               |
+| `mapdocs.vim`       | Interactive mapping documentation system |
+| `splash.vim`        | Welcome screen configuration             |
+| `custom_colors.vim` | Color scheme adjustments                 |
+| `snippets.vim`      | Abbreviations auto complete              |
+| `newwin.vim`        | New window layout logic                  |
+| `custom.*.vim`      | User customization extensions            |
+| `nvim_compat/*.vim` | Neovim compatibility shims               |
+| `kitty.vim`         | Kitty Keyboard Protocol support          |
 
 ## New Features
 
 ### 📚 MapDocs - Interactive Mapping Documentation
 
 The MapDocs system provides an interactive, searchable interface for all key mappings:
+
+> This is my replacement for which-key and similar plugins that also works as a command palette.
 
 - **Interactive Menu**: Press `<Space>` alone to open FZF-powered mapping search
 - **Buffer Documentation**: Use `<Space>h` or `:BufferDocs` to view all mappings in a buffer
@@ -148,13 +162,15 @@ A customizable welcome screen that appears when starting Vim without arguments:
 
 - **Quick Start Guide**: Shows essential commands and tips
 - **Configuration Info**: Displays Vim version and configuration path
-- **Foldable Sections**: Organized content with fold markers (`>>>` and `<<<`)
+- **Foldable Sections**: Organized content with fold markers (`{` and `}`)
 - **Auto-Dismiss**: Disappears when you start editing or open a file
-- **Customizable**: Edit `~/.vim/splash_message.vim` to personalize
+- **Customizable**: Edit `~/.vim/splash_message.txt` to personalize
 
 ### 🚩 FlagMarks - Enhanced Global Marks
 
 A powerful replacement for Vim's built-in marks with visual indicators and smart navigation:
+
+> This is my replacement for Harpoon and similar plugins.
 
 - **Visual Indicators**: Shows marks in the sign column as `>A`, `>B`, etc.
 - **Window-Aware**: Automatically switches windows when jumping to marks
@@ -176,15 +192,15 @@ A powerful replacement for Vim's built-in marks with visual indicators and smart
 
 ### 🎯 Most Used Commands
 
-| Key | Action | Key | Action |
-|-----|--------|-----|--------|
-| `<Space>` | Open mapping menu | `<Space>w` | Save file |
-| `<Space>ff` | Find files (FZF) | `<Space>fr` | Search text (ripgrep) |
-| `<Space>fb` | List buffers | `<Space>e` | File explorer |
-| `<Space>a` | LSP code actions | `<Space>d` | Go to definition |
-| `<C-d>` | Multi-cursor select | `gcc` | Toggle comment |
-| `ma` | Add flagmark | `mm` | Jump to last mark |
-| `<Space>m` | Flagmarks menu | `<Tab>` | Accept Copilot |
+| Key         | Action              | Key        | Action                |
+|-------------|---------------------|------------|-----------------------|
+| `<Space>`   | Open mapping menu   | `<Space>w` | Save file             |
+| `<Space>f`  | Find files (FZF)    | `<Space>r` | Search text (ripgrep) |
+| `<Space>b`  | List buffers        | `<Space>e` | File explorer         |
+| `<Space>ca` | LSP code actions    | `gd`       | Go to definition      |
+| `<C-d>`     | Multi-cursor select | `Ctrl+/`   | Toggle comment        |
+| `ma`        | Add flagmark        | `mm`       | Jump to last mark     |
+| `<Space>m`  | Flagmarks menu      | `<Tab>`    | Accept Copilot        |
 
 **For the complete key mappings reference, see [mappings.md](mappings.md)**
 
@@ -192,101 +208,95 @@ A powerful replacement for Vim's built-in marks with visual indicators and smart
 
 ### 🎯 Core Enhancements
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **vim-sensible** | Better defaults | Universal settings |
-| **matchit** | Enhanced % matching | Jump pairs, HTML tags |
-| **vim-sleuth** | Auto indentation | Detect file style |
-| **vim-repeat** | Repeat plugin maps | Dot repeat for plugins |
+| Plugin           | Description         | Key Features           |
+|------------------|---------------------|------------------------|
+| **vim-sensible** | Better defaults     | Universal settings     |
+| **matchit**      | Enhanced % matching | Jump pairs, HTML tags  |
+| **vim-sleuth**   | Auto indentation    | Detect file style      |
+| **vim-repeat**   | Repeat plugin maps  | Dot repeat for plugins |
 
 ### 🔍 File Navigation & Search
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
+| Plugin      | Description  | Key Features          |
+|-------------|--------------|-----------------------|
 | **fzf.vim** | Fuzzy finder | Fast file/text search |
-| **vim-clap** | Modern finder | Alternative to FZF |
-| **mru** | Recent files | Most recently used |
 
 ### 💡 Code Intelligence
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **LSP** | Language servers | Completion, diagnostics |
-| **ALE** | Linting engine | Real-time checks |
-| **GitHub Copilot** | AI completion | Context-aware code |
+| Plugin             | Description      | Key Features            |
+|--------------------|------------------|-------------------------|
+| **LSP**            | Language servers | Completion, diagnostics |
+| **ALE**            | Linting engine   | Real-time checks        |
+| **GitHub Copilot** | AI completion    | Context-aware code      |
 
 ### 🔀 Version Control
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **vim-fugitive** | Git wrapper | Complete Git integration |
-| **vim-rhubarb** | GitHub support | Browse on GitHub |
-| **vim-gitgutter** | Diff indicators | Show changes in gutter |
-| **git-messenger** | Commit viewer | Popup commit info |
+| Plugin            | Description     | Key Features             |
+|-------------------|-----------------|--------------------------|
+| **vim-fugitive**  | Git wrapper     | Complete Git integration |
+| **vim-rhubarb**   | GitHub support  | Browse on GitHub         |
+| **vim-gitgutter** | Diff indicators | Show changes in gutter   |
+| **git-messenger** | Commit viewer   | Popup commit info        |
 
 ### ✏️ Editing Power
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **vim-visual-multi** | Multiple cursors | Simultaneous edits |
-| **vim-surround** | Surround text | Quotes, brackets |
-| **vim-commentary** | Comments | Quick commenting |
-| **auto-pairs** | Auto-close | Smart pairing |
-| **vim-subversive** | Substitution | Advanced replace |
-| **vim-abolish** | Case coercion | Smart case handling |
-| **vim-cutlass** | Better delete | Separate cut/delete |
-| **vim-yoink** | Yank history | Cycle through yanks |
+| Plugin               | Description      | Key Features        |
+|----------------------|------------------|---------------------|
+| **vim-visual-multi** | Multiple cursors | Simultaneous edits  |
+| **vim-surround**     | Surround text    | Quotes, brackets    |
+| **vim-commentary**   | Comments         | Quick commenting    |
+| **auto-pairs**       | Auto-close       | Smart pairing       |
+| **vim-subversive**   | Substitution     | Advanced replace    |
+| **vim-abolish**      | Case coercion    | Smart case handling |
+| **vim-cutlass**      | Better delete    | Separate cut/delete |
+| **vim-yoink**        | Yank history     | Cycle through yanks |
 
 ### 🎨 Visual & UI
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **vim-mistfly-statusline** | Status line | Beautiful, informative |
-| **vim-devicons** | File icons | Nerd Font icons |
-| **indentLine** | Indent guides | Visual levels |
-| **vim-highlightedyank** | Highlight yanks | Visual feedback |
-| **vim-illuminate** | Highlight word | Better visibility |
-| **vim-diminactive** | Dim inactive | Focus indicator |
-| **Colorizer** | Color preview | Show hex colors |
+| Plugin                     | Description   | Key Features           |
+|----------------------------|---------------|------------------------|
+| **vim-mistfly-statusline** | Status line   | Beautiful, informative |
+| **vim-devicons**           | File icons    | Nerd Font icons        |
+| **indentLine**             | Indent guides | Visual levels          |
+| **Colorizer**              | Color preview | Show hex colors        |
 
 ### 🪟 Window & Buffer Management
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **vim-choosewin** | Window chooser | Interactive nav |
-| **vim-zoom** | Window zoom | Toggle maximize |
-| **goyo.vim** | Distraction-free | Centered writing |
-| **vim-bbye** | Buffer delete | Preserve layout |
-| **vim-visual-split** | Smart splits | Selection-based |
+| Plugin               | Description      | Key Features     |
+|----------------------|------------------|------------------|
+| **vim-choosewin**    | Window chooser   | Interactive nav  |
+| **vim-zoom**         | Window zoom      | Toggle maximize  |
+| **goyo.vim**         | Distraction-free | Centered writing |
+| **vim-bbye**         | Buffer delete    | Preserve layout  |
+| **vim-visual-split** | Smart splits     | Selection-based  |
 
 ### 🎯 Text Objects & Motion
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **targets.vim** | Extra text objects | More targets |
-| **vim-indent-object** | Indent object | `cii`, `dai` |
-| **vim-easymotion** | Fast navigation | Jump with hints |
+| Plugin                | Description        | Key Features    |
+|-----------------------|--------------------|-----------------|
+| **targets.vim**       | Extra text objects | More targets    |
+| **vim-indent-object** | Indent object      | `cii`, `dai`    |
+| **vim-easymotion**    | Fast navigation    | Jump with hints |
 
 ### 🛠️ Development Tools
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **vim-rest-console** | HTTP client | API testing |
-| **vim-table-mode** | Table formatting | Markdown tables |
-| **vim-markdown-composer** | Markdown preview | Live preview |
-| **vCoolor** | Color picker | Visual selection |
-| **vim-gtfo** | Open externally | Terminal/file manager |
-| **bufferize.vim** | Command output | Interact with output |
+| Plugin                    | Description      | Key Features          |
+|---------------------------|------------------|-----------------------|
+| **vim-rest-console**      | HTTP client      | API testing           |
+| **vim-table-mode**        | Table formatting | Markdown tables       |
+| **vim-markdown-composer** | Markdown preview | Live preview          |
+| **vCoolor**               | Color picker     | Visual selection      |
+| **vim-gtfo**              | Open externally  | Terminal/file manager |
+| **bufferize.vim**         | Command output   | Interact with output  |
 
 ### 📚 Documentation & Help
 
-| Plugin | Description | Key Features |
-|--------|-------------|--------------|
-| **vim-which-key** | Key binding help | Show mappings |
-| **undotree** | Undo history | Visual tree |
-| **scratch.vim** | Scratch buffer | Persistent notes |
-| **vim-over** | Preview substitution | See changes live |
-| **far.vim** | Find and replace | Multi-file ops |
+| Plugin          | Description          | Key Features     |
+|-----------------|----------------------|------------------|
+| **undotree**    | Undo history         | Visual tree      |
+| **scratch.vim** | Scratch buffer       | Persistent notes |
+| **vim-over**    | Preview substitution | See changes live |
+| **far.vim**     | Find and replace     | Multi-file ops   |
 
 ## Custom Functions
 
@@ -327,14 +337,13 @@ Smart file arrangement when opening multiple files:
 
 ### 🖥️ Configured Language Servers
 
-| Language | Server | Installation | Features |
-|----------|--------|-------------|----------|
-| **Rust** | rust-analyzer | `rustup component add rust-analyzer` | Full Rust support |
-| **Python** | Pyright | `npm install -g pyright` | Type checking |
-| **Python** | Doc-LSP | Custom installation | Documentation |
-| **Bash** | bash-language-server | `npm install -g bash-language-server` | Shell scripts |
-| **YAML** | yaml-language-server | `npm install -g yaml-language-server` | Schema validation |
-| **TOML** | Tombi | `cargo install tombi` | TOML support |
+| Language   | Server               | Installation                          | Features          |
+|------------|----------------------|---------------------------------------|-------------------|
+| **Rust**   | rust-analyzer        | `rustup component add rust-analyzer`  | Full Rust support |
+| **Python** | Pyright              | `npm install -g pyright`              | Type checking     |
+| **Bash**   | bash-language-server | `npm install -g bash-language-server` | Shell scripts     |
+| **YAML**   | yaml-language-server | `npm install -g yaml-language-server` | Schema validation |
+| **TOML**   | Tombi                | `cargo install tombi`                 | TOML support      |
 
 ### ⚡ LSP Features
 
@@ -349,14 +358,14 @@ Smart file arrangement when opening multiple files:
 
 ### 🔧 LSP Configuration Options
 
-| Option | Setting | Description |
-|--------|---------|-------------|
-| `autoComplete` | `true` | Enable auto-completion |
-| `autoHighlight` | `false` | Highlight symbol under cursor |
-| `autoHighlightDiags` | `true` | Highlight diagnostic regions |
-| `semanticHighlight` | `true` | Enhanced syntax highlighting |
-| `showDiagInBalloon` | `true` | Show diagnostics in popup |
-| `showSignature` | `true` | Show function signatures |
+| Option               | Setting | Description                   |
+|----------------------|---------|-------------------------------|
+| `autoComplete`       | `true`  | Enable auto-completion        |
+| `autoHighlight`      | `false` | Highlight symbol under cursor |
+| `autoHighlightDiags` | `true`  | Highlight diagnostic regions  |
+| `semanticHighlight`  | `true`  | Enhanced syntax highlighting  |
+| `showDiagInBalloon`  | `true`  | Show diagnostics in popup     |
+| `showSignature`      | `true`  | Show function signatures      |
 
 ## FlagMarks System
 
@@ -373,51 +382,51 @@ A powerful custom global marks manager with enhanced features beyond Vim's built
 
 ### 🎯 Mark Operations
 
-| Key | Action | Window Behavior |
-|-----|--------|-----------------|
-| `ma` | Add mark | Creates at cursor |
-| `md` | Delete mark | Removes from line |
-| `mc` | Clear file marks | Remove all in file |
-| `mC` | Clear all marks | Global cleanup |
-| `ml` | List marks | Show all marks |
-| `mt` | Toggle signs | Show/hide indicators |
-| `mq` | Quickfix list | Populate quickfix |
+| Key  | Action           | Window Behavior      |
+|------|------------------|----------------------|
+| `ma` | Add mark         | Creates at cursor    |
+| `md` | Delete mark      | Removes from line    |
+| `mc` | Clear file marks | Remove all in file   |
+| `mC` | Clear all marks  | Global cleanup       |
+| `ml` | List marks       | Show all marks       |
+| `mt` | Toggle signs     | Show/hide indicators |
+| `mq` | Quickfix list    | Populate quickfix    |
 
 ### 🚀 Navigation (Window-Aware)
 
-| Key | Action | Description |
-|-----|--------|-------------|
-| `mm` | Toggle marks | Jump between last two |
-| `mn` | Next mark | Cycle forward |
-| `mp` | Previous mark | Cycle backward |
-| `,m` | Mark menu | Interactive selector |
-| `mga-z` | Go to mark A-Z | Direct jump |
+| Key     | Action         | Description           |
+|---------|----------------|-----------------------|
+| `mm`    | Toggle marks   | Jump between last two |
+| `mn`    | Next mark      | Cycle forward         |
+| `mp`    | Previous mark  | Cycle backward        |
+| `,m`    | Mark menu      | Interactive selector  |
+| `mga-z` | Go to mark A-Z | Direct jump           |
 
 ### 📌 Navigation (Same-Window)
 
-| Key | Action | Description |
-|-----|--------|-------------|
-| `Mm` | Toggle marks | Stay in window |
-| `Mn` | Next mark | Same window |
-| `Mp` | Previous mark | Same window |
-| `,M` | Mark menu | Same window menu |
+| Key     | Action         | Description      |
+|---------|----------------|------------------|
+| `Mm`    | Toggle marks   | Stay in window   |
+| `Mn`    | Next mark      | Same window      |
+| `Mp`    | Previous mark  | Same window      |
+| `,M`    | Mark menu      | Same window menu |
 | `Mga-z` | Go to mark A-Z | Same window jump |
 
 ### 📋 Commands
 
-| Command | Description |
-|---------|-------------|
-| `:FlagAdd` | Add mark at cursor position |
-| `:FlagDelete` | Delete mark on current line |
-| `:FlagList` | Display all marks in list |
-| `:FlagMenu` | Open interactive menu |
-| `:FlagMenuWindow` | Menu with window awareness |
-| `:FlagMenuSame` | Menu in same window |
-| `:FlagQuick` | Populate quickfix list |
-| `:FlagToggle` | Toggle sign visibility |
-| `:FlagClearFile` | Clear marks in current file |
-| `:FlagClearAll` | Clear all global marks |
-| `:FlagGo [mark]` | Jump to specific mark |
+| Command           | Description                 |
+|-------------------|-----------------------------|
+| `:FlagAdd`        | Add mark at cursor position |
+| `:FlagDelete`     | Delete mark on current line |
+| `:FlagList`       | Display all marks in list   |
+| `:FlagMenu`       | Open interactive menu       |
+| `:FlagMenuWindow` | Menu with window awareness  |
+| `:FlagMenuSame`   | Menu in same window         |
+| `:FlagQuick`      | Populate quickfix list      |
+| `:FlagToggle`     | Toggle sign visibility      |
+| `:FlagClearFile`  | Clear marks in current file |
+| `:FlagClearAll`   | Clear all global marks      |
+| `:FlagGo [mark]`  | Jump to specific mark       |
 
 ## Configuration Files
 
@@ -447,7 +456,6 @@ Key mappings organized by category:
 
 ### 📜 commands.vim
 Custom commands and autocommands:
-- **EHere**: Open file relative to current directory
 - **Line number toggle**: Relative in normal, absolute in insert
 - **Auto-reload**: Detect external file changes
 - **Auto-session**: Save/restore session automatically
@@ -473,12 +481,12 @@ Color scheme adjustments:
 
 The configuration supports custom extensions without modifying core files:
 
-| File | Purpose |
-|------|---------|
-| `custom.options.vim` | Personal Vim settings |
-| `custom.plugins.vim` | Additional plugins |
-| `custom.lsp.vim` | Extra language servers |
-| `custom.mappings.vim` | Personal key bindings |
+| File                  | Purpose                |
+|-----------------------|------------------------|
+| `custom.options.vim`  | Personal Vim settings  |
+| `custom.plugins.vim`  | Additional plugins     |
+| `custom.lsp.vim`      | Extra language servers |
+| `custom.mappings.vim` | Personal key bindings  |
 
 ### 📝 Creating Custom Extensions
 
@@ -513,7 +521,7 @@ The configuration supports custom extensions without modifying core files:
 
 ### 🚀 Productivity Boosters
 
-1. **Quick File Switch**: Use `,<Tab>` to toggle between two files
+1. **Quick File Switch**: Use `<space><Tab>` to toggle between two files
 2. **Multi-Cursor Replace**: `Ctrl+D` then `c` to change all occurrences
 3. **Smart Substitution**: Visual select, then `s` to replace with yanked text
 4. **Quick Save All**: `:wa` to write all modified buffers
@@ -521,16 +529,16 @@ The configuration supports custom extensions without modifying core files:
 
 ### 🔍 Search Techniques
 
-1. **Project Search**: `,F` then type to search entire project
-2. **Buffer Search**: `,l` to search lines in current file
+1. **Project Search**: `<space>f` then type to search entire project
+2. **Buffer Search**: `<space>l` to search lines in current file
 3. **Word Boundary**: Use `\<word\>` in search for exact matches
 4. **Search History**: `/` then `↑` to access search history
 
 ### 💡 LSP Best Practices
 
-1. **Quick Documentation**: Hover with `,k` instead of looking up docs
-2. **Smart Imports**: Use `,a` to auto-import missing modules
-3. **Refactoring**: Use `,a` for rename and extract functions
+1. **Quick Documentation**: Hover with `<space>k` instead of looking up docs
+2. **Smart Imports**: Use `<space>ac` to auto-import missing modules
+3. **Refactoring**: Use `<space>ac` for rename and extract functions
 4. **Error Navigation**: `:LspDiagNext` and `:LspDiagPrev`
 
 ### 🎯 FlagMarks Strategies
@@ -615,13 +623,13 @@ This configuration is provided as-is for personal and commercial use. Feel free 
 
 Special thanks to:
 - All plugin authors for their amazing work
-- The Vim community for continuous innovation
+- The Vim maintainers and community
 - Contributors and users of this configuration
 
 ## Support
 
 For issues, questions, or suggestions:
-- Open an issue on [GitHub](https://github.com/rochacbruno/.vim)
+- Open an issue on [GitHub](https://github.com/rochacbruno/bred/issues)
 - Check existing issues for solutions
 - Provide Vim version and error messages when reporting bugs
 

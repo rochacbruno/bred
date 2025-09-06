@@ -4,6 +4,7 @@
 
 " Prevent hiding of certain markdown syntax elements
 setlocal conceallevel=0
+setlocal concealcursor=
 
 iabbrev <buffer> ppause <!-- pause -->
 iabbrev <buffer> peos <!-- end_slide -->

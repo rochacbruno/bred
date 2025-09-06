@@ -1,0 +1,66 @@
+# put the cursor on any request and hit <Ctrl>+j
+# Global Scope
+# First is the base URL
+https://marmite.blog
+
+# Global Headers
+Accept: application/json
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.
+# Then cURL options
+-s
+-k
+
+# Then variables
+page = /sitemap.xml
+value = 42
+# can use environment variables
+user = $USER 
+
+# optional global pipe
+# | jq .
+# pipe with error handling
+| tee /tmp/fail.log | jq .
+--
+
+# This divider separates the global scope from the requests scope.
+
+--
+GET /marmite.json
+Content-Type: application/json
+
+--
+GET :page
+
+--
+https://httpbin.org
+POST /post
+# JSON body
+{"name": "Bruno", "age": 42}
+
+--
+https://httpbin.org
+GET /get
+# query parameters
+var=:value
+
+--
+
+// more on https://github.com/rochacbruno/vim-rest-console
+// REsponse handlers:
+// #{prefix}{target}<<{pattern]
+// example:
+// POST /token
+// #>Authorization: Bearer << jq -r '.token'
+// GET /protected
+// ########################################
+// userId=
+// --
+// --
+// GET /me
+// #>userId<< jq -r '.id'
+// PUT /users/:userId
+// {...}
+// ########################################
+// Files can be used as data payload
+// POST /endpoint
+// @path/to/file.json
