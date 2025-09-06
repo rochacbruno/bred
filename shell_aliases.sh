@@ -6,3 +6,5 @@ alias vimrc='vim ~/.vim/vimrc'
 alias vimp='vim "+norm Go" "+put +"'
 # open vim without any plugins or custom configurations
 alias vimc='vim --clean'
+# Open fzf with preview and open selected file in vim
+alias vimf='fzf --preview "bat --style=numbers --color=always {} --line-range :500 {}" --height 40% --layout=reverse --border --bind shift-up:preview-page-up,shift-down:preview-page-down | xargs -o -r vim'
