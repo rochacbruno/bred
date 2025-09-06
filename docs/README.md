@@ -1,4 +1,5 @@
-# Bred - A Modular Vim 9 Configuration
+# Bred - Opinionated Vim 9 Configuration
+
 
 ![Splash](./screenshots/splash.png)
 
