@@ -31,7 +31,7 @@ else
         source ~/.vim/bred/custom_colors.vim  " Color scheme fixes and customizations
         source ~/.vim/bred/mappings.vim       " Key mappings and shortcuts
         source ~/.vim/bred/splash.vim         " Splash screen for empty Vim startup
-        source ~/.vim/bred/snippets.vim       " Snippets from abbreviations
+        source ~/.vim/bred/abbrs.vim          " Snippets from abbreviations
         source ~/.vim/bred/newwin.vim         " Custom new window command
     else
         " =========================================================================
@@ -50,6 +50,6 @@ else
         source ~/.vim/bred/custom_colors.vim            " Color scheme fixes and customizations
         source ~/.vim/bred/mappings.vim                 " Key mappings and shortcuts
         source ~/.vim/bred/splash.vim                   " Splash screen for empty startup
-        source ~/.vim/bred/snippets.vim                 " Snippets from abbreviations
+        source ~/.vim/bred/abbrs.vim                    " Snippets from abbreviations
     endif
 endif

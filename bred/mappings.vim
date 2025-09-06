@@ -329,9 +329,21 @@ nnoremap <leader>sm :smile<CR>
 Nmap 'insert uuid|Edit' <leader>id :read !uuidgen<esc>k :join<esc>
 Nmap 'insert date|Edit' <leader>dt i<C-R>=strftime("%Y-%m-%d %a %I:%M %p")<CR><Esc> 
 
+" Emoji picker using fzf and emoji-fzf
+if executable('uvx') && executable('fzf')
+  inoremap <expr> <c-k> fzf#vim#complete(fzf#wrap({
+        \ 'source':  'uvx emoji-fzf preview --prepend',
+        \ 'options': '--header "Emoji Selection" --no-hscroll',
+        \ 'reducer': { lines -> split(lines[0])[0] } }))
+  Imap 'insert emoji 😀|Edit|1' <C-k>
+endif
+
 " =========================================================================
 " }}}
 " -------------------------------------------------------------------------
 " End of Mappings
 " -------------------------------------------------------------------------
 " vim: set foldmethod=marker foldlevel=0:
+
+
+

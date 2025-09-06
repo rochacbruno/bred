@@ -138,7 +138,7 @@ The configuration is split into logical modules for maintainability:
 | `mapdocs.vim`       | Interactive mapping documentation system |
 | `splash.vim`        | Welcome screen configuration             |
 | `custom_colors.vim` | Color scheme adjustments                 |
-| `snippets.vim`      | Abbreviations auto complete              |
+| `abbrs.vim`      | Abbreviations auto complete              |
 | `newwin.vim`        | New window layout logic                  |
 | `custom.*.vim`      | User customization extensions            |
 | `nvim_compat/*.vim` | Neovim compatibility shims               |
