@@ -112,8 +112,9 @@ iab ipd __import__('pdb').set_trace()
 iab shp #!/usr/bin/env python3
 
 " rust
-iab fnm fn main() {
-iab prl println!("");
+iab fnn fn () {<CR>}<Up><Right><Right>
+iab fnm fn main() {<CR>}<Esc>O
+iab prl println!("");<Left><Left><Left>
 
 " load custom abbreviations if the file exists
 if filereadable(expand("~/.vim/custom.abbrs.vim"))

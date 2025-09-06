@@ -32,7 +32,7 @@ iabbrev <buffer> pcolor <span style="color: #ff0000; background-color: transpare
 iabbrev <buffer> pcolortheme <span style="color: palette:primary; background-color: palette:background">themed text</span>
 
 " Multi-line abbreviations
-iabbrev <buffer> ptitle ---<CR>title: ""<CR>sub_title: ""<CR>author: <CR>---
+iabbrev <buffer> ptitle ---<CR>title: ""<CR>sub_title: ""<CR>author: <CR>options: <CR>  implicit_slide_ends: true<CR>end_slide_shorthand: true<CR>incremental_lists: true<CR><BS>---
 iabbrev <buffer> pslide Slide Title<CR>===========
 iabbrev <buffer> pcode ```rust<CR>// Your code here<CR>
 iabbrev <buffer> pcodeln ```rust +line_numbers<CR>// Your code here<CR>
