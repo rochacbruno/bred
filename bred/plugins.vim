@@ -248,17 +248,17 @@ Imap 'Accept suggestion|Copilot' <Tab>
 " Multi-Cursor Editing {{{
 " ===============================================================================
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
-let g:VM_maps = {}
-let g:VM_maps['Find Under']         = '<C-d>'  " Replace default C-n
-let g:VM_maps['Find Subword Under'] = '<C-d>'  " Replace visual C-n
+" let g:VM_maps = {}
+" let g:VM_maps['Find Under']         = '<C-d>'  " Replace default C-n
+" let g:VM_maps['Find Subword Under'] = '<C-d>'  " Replace visual C-n
 
 " n/N         - Next/previous occurrence
 " [/]         - Next/previous cursor
 " q           - Skip current and find next
 " Q           - Remove current cursor
 " \\A         - Select all occurrences
-Nmap 'Select word under cursor / Add next occurrence|Edit Cursor|2' <C-d>
-Xmap 'Add next occurrence|Edit Cursor' <C-d>
+Nmap 'Select word under cursor / Add next occurrence|Edit Cursor|2' <C-n>
+Xmap 'Add next occurrence|Edit Cursor' <C-n>
 " Mouse support:
 Nmap 'Add cursor with Ctrl+Click|Edit Cursor' <C-LeftMouse> <Plug>(VM-Mouse-Cursor)
 Nmap 'Select word with Ctrl+Right|Edit Cursor' <C-RightMouse> <Plug>(VM-Mouse-Word)
@@ -502,10 +502,9 @@ Nmap 'Smart case substitute word across buffer|Edit Replace' <leader><leader>ss 
 Plug 'svermeulen/vim-yoink'
 let g:yoinkIncludeDeleteOperations = 1        " Include delete operations in history
 let g:yoinkMaxItems = 20                      " Keep last 20 yank items
-
-" Post-paste navigation:
-Nmap 'Previous yank after paste|Edit Paste' <c-n> <plug>(YoinkPostPasteSwapBack)
-Nmap 'Next yank after paste|Edit Paste' <c-p> <plug>(YoinkPostPasteSwapForward)
+" Post-paste navigation with Ctrl+Shift:
+Nmap 'Previous yank after paste|Edit Paste' <leader>n <plug>(YoinkPostPasteSwapBack)
+Nmap 'Next yank after paste|Edit Paste' <leader>p <plug>(YoinkPostPasteSwapForward)
 
 " Enhanced paste operations:
 Nmap 'Paste with yoink history|Edit Paste' p <plug>(YoinkPaste_p)
@@ -557,11 +556,17 @@ Omap 'Around indentation level (including blank lines)|Text Objects' aI
 Omap 'Inside indentation level (including blank lines)|Text Objects' iI
 
 " Custom Text Objects
-" Entire buffer text object
-Omap 'Inner entire buffer|Text Objects' ie :exec "normal! ggVG"<cr>
+function! SelectEntireBuffer()
+    normal! ggVG
+endfunction
 
-" Viewable text object (current screen)
-Omap 'Current viewable text|Text Objects' iv :exec "normal! HVL"<cr>
+function! SelectViewableText()
+    normal! HVL
+endfunction
+
+" Map for both operator-pending and visual modes
+Map ox 'Inner entire buffer|Text Objects' ie :<C-U>call SelectEntireBuffer()<CR>
+Map ox 'Current viewable text|Text Objects' iv :<C-U>call SelectViewableText()<CR>
 
 " }}}
 " ===============================================================================

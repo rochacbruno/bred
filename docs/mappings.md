@@ -1,4 +1,4 @@
-# Vim Keybinding Documentation
+# Keybinding Documentation
 
 Leader key: `<spc>`  
 <!-- Open in Browser: `<space>mp` or `:ComposerStart` -->
@@ -76,7 +76,7 @@ Leader key: `<spc>`
 
 | Key                | Description                                      |
 |--------------------|--------------------------------------------------|
-| `<C-d>`            | Select word under cursor / Add next occurrence   |
+| `<C-n>`            | Select word under cursor / Add next occurrence   |
 | `<C-LeftMouse>`    | Add cursor with Ctrl+Click                       |
 | `<C-RightMouse>`   | Select word with Ctrl+Right                      |
 | `<M-C-RightMouse>` | Column selection                                 |
@@ -112,17 +112,17 @@ Leader key: `<spc>`
 
 ### Edit Paste
 
-| Key     | Description                       |
-|---------|-----------------------------------|
-| `<c-n>` | Previous yank after paste         |
-| `<c-p>` | Next yank after paste             |
-| `[y`    | Previous item in yank history     |
-| `]y`    | Next item in yank history         |
-| `gp`    | Paste and move cursor             |
-| `gP`    | Paste before and move cursor      |
-| `p`     | Paste with yoink history          |
-| `P`     | Paste before with yoink history   |
-| `y`     | Yank without moving cursor        |
+| Key      | Description                       |
+|----------|-----------------------------------|
+| `<spc>n` | Previous yank after paste         |
+| `<spc>p` | Next yank after paste             |
+| `[y`     | Previous item in yank history     |
+| `]y`     | Next item in yank history         |
+| `gp`     | Paste and move cursor             |
+| `gP`     | Paste before and move cursor      |
+| `p`      | Paste with yoink history          |
+| `P`      | Paste before with yoink history   |
+| `y`      | Yank without moving cursor        |
 
 ### Edit Replace
 
@@ -365,7 +365,7 @@ Leader key: `<spc>`
 
 | Key     | Description           |
 |---------|-----------------------|
-| `<C-d>` | Add next occurrence   |
+| `<C-n>` | Add next occurrence   |
 
 ### Edit Paste
 
@@ -433,6 +433,7 @@ Leader key: `<spc>`
 
 | Key          | Description                                 |
 |--------------|---------------------------------------------|
+| `<C-k>`      | insert emoji 😀                           |
 | `<C-/>`      | comment                                     |
 | `<C-A>`      | repeat last Insert                          |
 | `<C-D>`      | outdent                                     |
@@ -532,4 +533,5 @@ Leader key: `<spc>`
 | `ii`  | Inside indentation level                           |
 | `iI`  | Inside indentation level (including blank lines)   |
 | `iv`  | Current viewable text                              |
+
 
