@@ -70,6 +70,7 @@ call LspOptionsSet({
         \   'ignoreMissingServer': v:true,
         \   'diagVirtualTextWrap': 'wrap',
         \})
+"         \   'omniComplete': v:null,
 "         \   'showDiagInBalloon': v:true,
 "         \   'showDiagInPopup': v:true,
 "         \   'completionMatcher': 'case',
@@ -87,7 +88,6 @@ call LspOptionsSet({
 "         \   'completionTextEdit': v:true,
 "         \   'diagVirtualTextAlign': 'above',
 "         \   'noNewlineInCompletion': v:false,
-"         \   'omniComplete': v:null,
 "         \   'outlineOnRight': v:false,
 "         \   'outlineWinSize': 20,
 "         \   'popupBorder': v:true,
@@ -115,6 +115,65 @@ call LspOptionsSet({
 "         \   'condensedCompletionMenu': v:false,
         " \ })
 
+
+" echo g:lsp#options#lspOptions
+"
+" {'showDiagWithSign': v:true
+"  'showDiagInBalloon': v:true
+"  'usePopupInCodeAction': v:false
+"  'customCompletionKinds': v:false
+"  'omniComplete': v:null
+"  'noNewlineInCompletion': v:false
+"  'popupBorderHighlight': 'LspPopupBorder'
+"  'autoHighlight': v:false
+"  'outlineOnRight': v:false
+"  'vsnipSupport': v:false
+"  'diagVirtualTextAlign': 'above'
+"  'diagSignInfoText': 'I>'
+"  'showDiagOnStatusLine': v:false
+"  'echoSignature': v:false
+"  'popupBorder': v:false
+"  'completionKinds': {}
+"  'completionMatcher': 'case'
+"  'aleSupport': v:true
+"  'popupHighlight': 'LspPopup'
+"  'diagSignHintText': 'H>'
+"  'useQuickfixForLocations': v:false
+"  'highlightDiagInline': v:true
+"  'hideDisabledCodeActions': v:false
+"  'diagVirtualTextWrap': 'wrap'
+"  'ignoreMissingServer': v:true
+"  'completionTextEdit': v:true
+"  'completionMatcherValue': 1
+"  'showDiagInPopup': v:true
+"  'keepFocusInDiags': v:true
+"  'hoverInPreview': v:false
+"  'autoPopulateDiags': v:true
+"  'outlineWinSize': 20
+"  'showInlayHints': v:false
+"  'autoHighlightDiags': v:false
+"  'useBufferCompletion': v:false
+"  'ignoreCompleteItemsIsIncomplete': []
+"  'keepFocusInReferences': v:true
+"  'snippetSupport': v:false
+"  'diagSignErrorText': 'E>'
+"  'semanticHighlight': v:false
+"  'showSignature': v:true
+"  'popupBorderChars': ['─'
+"  '│'
+"  '─'
+"  '│'
+"  '╭'
+"  '╮'
+"  '╯'
+"  '╰']
+"  'diagSignWarningText': 'W>'
+"  'condensedCompletionMenu': v:false
+"  'autoComplete': v:true
+"  'showDiagWithVirtualText': v:false
+"  'bufferCompletionTimeout': 100
+"  'filterCompletionDuplicates': v:false
+"  'ultisnipsSupport': v:false}
 
 
 " ---------------------------------------------------------------------------
@@ -194,15 +253,33 @@ endif
 "   - Arch Linux: pacman -S pyright
 " Features: Type checking, completion, diagnostics, refactoring for Python
 if executable('/usr/bin/pyright-langserver')
-    call LspAddServer([{'name': 'pyright',
-                 \   'filetype': 'python',
-                 \   'path': '/usr/bin/pyright-langserver',
-                 \   'args': ['--stdio'],
-                 \   'workspaceConfig': {
-                 \     'python': {
-                 \       'pythonPath': '.venv/bin/python'
-                 \   }}
-                 \ }])
+    call LspAddServer([{
+        \ 'name': 'pyright',
+        \ 'filetype': ['python'],
+        \ 'path': '/usr/bin/pyright-langserver',
+        \ 'args': ['--stdio'],
+        \ 'rootSearch': [
+            \ 'pyproject.toml',
+            \ 'setup.py',
+            \ 'setup.cfg',
+            \ 'requirements.txt',
+            \ 'Pipfile',
+            \ 'pyrightconfig.json',
+            \ '.git'
+        \ ],
+        \ 'workspaceConfig': {
+            \ 'settings': {
+                \ 'python': {
+                    \ 'pythonPath': '.venv/bin/python',
+                    \ 'analysis': {
+                        \ 'autoSearchPaths': v:true,
+                        \ 'diagnosticMode': 'openFilesOnly',
+                        \ 'useLibraryCodeForTypes': v:true
+                    \ }
+                \ }
+            \ }
+        \ }
+    \ }])
 else
     call Alert("Pyright language server not found. Please install pyright.")
 endif

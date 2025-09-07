@@ -9,3 +9,4 @@ pack/downloads
 pack/plugins
 pack/colors/start/pure.vim
 autoload
+black
