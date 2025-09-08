@@ -618,6 +618,8 @@ function! s:JumpToMark(mark, window_aware)
                 execute l:target_winnr . 'wincmd w'
                 " Go to the mark in that window
                 execute "normal! '" . a:mark
+                " Open any folds at the destination
+                silent! normal! zv
                 redraw | echo "Went to mark " . a:mark . " in window " . l:target_winnr
                 return 1
             endif
@@ -625,6 +627,8 @@ function! s:JumpToMark(mark, window_aware)
 
         " Normal jump (same window)
         silent! execute "normal! '" . a:mark
+        " Open any folds at the destination
+        silent! normal! zv
         redraw | echo "Went to mark " . a:mark
         return 1
     endif
