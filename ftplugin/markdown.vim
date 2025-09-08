@@ -25,6 +25,7 @@ iabbrev <buffer> palignl <!-- alignment: left -->
 iabbrev <buffer> palignc <!-- alignment: center -->
 iabbrev <buffer> palignr <!-- alignment: right -->
 iabbrev <buffer> psnippetout <!-- snippet_output: identifier -->
+
 iabbrev <buffer> pimg ![image:width:50%](image.png)
 iabbrev <buffer> pcodefile ```rust file:src/main.rs
 iabbrev <buffer> pcodefilerange ```rust file:src/main.rs:10:20
