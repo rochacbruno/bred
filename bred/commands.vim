@@ -123,4 +123,33 @@ augroup cmdcomplete
     autocmd CmdlineChanged : call wildtrigger()
 augroup END
 " }}}
+" Set .viminfo per project when a project is detected {{{
+" a project is detected by the presence of any of
+" .git, .pyproject.toml, setup.py, Cargo.toml, marmite.yaml
+" use finfile to search upwards for each project file until root is reached
+" let &viminfofile=findfile('.viminfo','.;') ?? $HOME . '/.vim/viminfo'
+function! SetViminfoPerProject()
+    " if there is a .viminfo in current directory just use that
+    if filereadable('.viminfo')
+        let &viminfofile = getcwd() . '/.viminfo'
+        return
+    endif
+    " Then, look for project files to set project-specific .viminfo
+    let l:project_files = ['.git/config', 'pyproject.toml', 'setup.py', 'Cargo.toml', 'marmite.yaml']
+    for l:proj_file in l:project_files
+        let l:proj_path = findfile(l:proj_file, '.;')
+        if !empty(l:proj_path)
+            let l:proj_dir = fnamemodify(l:proj_path, ':h')
+            if l:proj_file == '.git/config'
+                let l:proj_dir = fnamemodify(l:proj_dir, ':h')  " Go up one level from .git
+            endif
+            let &viminfofile = l:proj_dir . '/.viminfo'
+            return
+        endif
+    endfor
+    " If no project file found, use default viminfo location
+    let &viminfofile = $HOME . '/.vim/viminfo'
+endfunction
+call SetViminfoPerProject()
+" }}}
 " vim: set foldmethod=marker foldlevel=0:

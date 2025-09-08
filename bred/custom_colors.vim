@@ -26,7 +26,6 @@ function! s:ApplyCustomColors()
     highlight! link BufTabLineModifiedActive IncSearch
     highlight! link BufTabLineHidden ErrorMsg
     highlight! link BufTabLineModifiedHidden ErrorMsg
-
 endfunction
 
 " On Insert mode the BuffTabLineCurrent and BufTabLineModifiedCurrent

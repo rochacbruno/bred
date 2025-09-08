@@ -70,7 +70,7 @@ set showtabline=2             " Always show tab line
 " Vim Info File Location {{{
 " -------------------------------------------------------------------------
 " Search upwards for a project-specific .viminfo file or use default location
-let &viminfofile=findfile('.viminfo','.;') ?? $HOME . '/.vim/viminfo'
+" let &viminfofile=findfile('.viminfo','.;') ?? $HOME . '/.vim/viminfo'
 
 "  }}}
 " -------------------------------------------------------------------------
