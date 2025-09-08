@@ -63,7 +63,7 @@ set ruler                     " Show cursor position in status line
 
 " Tab line shows open buffers as tabs
 set showtabline=2             " Always show tab line
-set tabline=%!BufferTabLine() " Use custom function for buffer tabs
+" set tabline=%!BufferTabLine() " Use custom function for buffer tabs
 
 "  }}}
 " -------------------------------------------------------------------------

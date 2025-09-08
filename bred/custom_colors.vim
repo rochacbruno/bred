@@ -12,13 +12,31 @@ function! s:ApplyCustomColors()
     highlight! link lineflyVisual IncSearch
     highlight! link lineflyCommand WildMenu
     highlight! link lineflyReplace ErrorMsg
-
     
     " Highlight Inlay hints
     highlight! link LspInlayHints Comment
     highlight! link LspInlayHintsType Comment
     highlight! link LspInlayHintsParam Comment
+
+    " BufTabLine
+    highlight! link BufTabLineFill Normal
+    highlight! link BufTabLineCurrent DiffChange
+    highlight! link BufTabLineModifiedCurrent DiffChange
+    highlight! link BufTabLineActive IncSearch
+    highlight! link BufTabLineModifiedActive IncSearch
+    highlight! link BufTabLineHidden ErrorMsg
+    highlight! link BufTabLineModifiedHidden ErrorMsg
+
 endfunction
+
+" On Insert mode the BuffTabLineCurrent and BufTabLineModifiedCurrent
+" should be highlighted differently to indicate the mode
+augroup BufTabLineMode
+  autocmd!
+  autocmd InsertEnter * highlight! link BufTabLineCurrent WildMenu
+  autocmd InsertEnter * highlight! link BufTabLineModifiedCurrent WildMenu
+  autocmd InsertLeave * call s:ApplyCustomColors()
+augroup END
 
 " Apply colors on startup
 call s:ApplyCustomColors()
@@ -71,6 +89,8 @@ augroup END
 " highlight WordUnderCursor cterm=underline gui=underline guibg=#3c3836
 highlight WordUnderCursor cterm=underline gui=underline
 
+" Background for the whole editor
+hi Normal guibg=#14120C ctermbg=234
 
 " -------------------------------------------------------------------------
 " End of Custom Colors

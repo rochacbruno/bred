@@ -136,6 +136,17 @@ Plug 'wellle/context.vim'
 " `:ContextToggle`
 let g:context_enabled = 0
 
+" BufferTabLine - Tab line with buffer tabs
+Plug 'ap/vim-buftabline'
+let g:buftabline_numbers = 1
+let g:buftabline_indicators = v:true
+" let g:buftabline_separators = v:true
+
+
+"" Purify Color Scheme - Clean and minimal color scheme
+Plug 'kyoz/purify', { 'rtp': 'vim' }
+
+
 " }}}
 " ===============================================================================
 " FZF {{{
