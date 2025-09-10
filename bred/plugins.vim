@@ -254,6 +254,12 @@ Imap 'Accept next word|Copilot' <M-Right>
 Imap 'Accept next line|Copilot' <M-C-Right>
 Imap 'Accept suggestion|Copilot' <Tab>
 
+
+let g:claude_code_cli = '/home/rochacbruno/.claude/local/claude'
+let g:claude_verbose = v:true
+Plug 'rochacbruno/claude.vim', {'branch': 'CLI'}
+
+
 " }}}
 " ===============================================================================
 " Multi-Cursor Editing {{{

@@ -34,7 +34,7 @@ else
         source ~/.vim/bred/abbrs.vim          " Snippets from abbreviations
         source ~/.vim/bred/newwin.vim         " Custom new window command
 
-        source ~/.vim/bred/claude.vim         " Integration with Claude AI
+        " source ~/.vim/bred/claude.vim         " Integration with Claude AI
     else
         " =========================================================================
         " NEOVIM COMPAT CONFIGURATION

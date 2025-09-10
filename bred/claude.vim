@@ -52,7 +52,7 @@ function! s:ProcessWithClaude(start_line, end_line, ...) range
   let l:selected_text = join(l:selected_lines, "\n")
   
   " Build the base prompt
-  let l:base_prompt = 'return only the raw output to be piped to directly to vim, DO NOT ADD code fences, no formatting, no reasoning, no explanation just raw output'
+  let l:base_prompt = '. OUTPUT ONLY THE MODIFIED CODE. NO EXPLANATIONS, NO MARKDOWN, NO CODE BLOCKS, NO BACKTICKS, NO COMMENTS ABOUT WHAT YOU DID, JUST THE RAW CODE ITSELF: '
   
   " Add any additional prompt if provided
   let l:additional_prompt = a:0 > 0 ? join(a:000, ' ') . ' ' : ''
@@ -66,7 +66,7 @@ function! s:ProcessWithClaude(start_line, end_line, ...) range
   let l:cmd = g:claude_path . ' -p ' . l:escaped_prompt
   
   " Show status
-  echo "Calling Claude..."
+  echo "AI is thinking"
   
   let l:result = system(l:cmd)
   
@@ -77,9 +77,6 @@ function! s:ProcessWithClaude(start_line, end_line, ...) range
     echoerr "Command was: " . l:cmd
     return
   endif
-  
-  " Clear status message
-  echo ""
   
   " Remove any trailing newline from the result
   let l:result = substitute(l:result, '\n$', '', '')
@@ -106,7 +103,7 @@ function! s:ProcessWithClaude(start_line, end_line, ...) range
     call cursor(a:start_line, 1)
     
     " Show success message
-    echo "Claude: Text replaced successfully"
+    echon "DONE!"
   else
     echohl WarningMsg | echo "Claude returned empty response" | echohl None
   endif
@@ -123,11 +120,11 @@ command! ClaudeCheck echo s:CheckClaudeCLI() ? "Claude CLI found at: " . g:claud
 " vnoremap <leader>C :Claude 
 
 " Display load confirmation (optional, comment out if not wanted)
-if !exists('g:claude_vim_silent')
-  if s:CheckClaudeCLI()
-    echo "claude.vim loaded - Using: " . g:claude_path
-  else
-    echohl WarningMsg | echo "claude.vim loaded but Claude CLI not found at: " . g:claude_path | echohl None
-    echohl WarningMsg | echo "Set g:claude_path in .vimrc or install Claude to ~/.claude/local/claude" | echohl None
-  endif
-endif
+" if !exists('g:claude_vim_silent')
+"   if s:CheckClaudeCLI()
+"     echo "claude.vim loaded - Using: " . g:claude_path
+"   else
+"     echohl WarningMsg | echo "claude.vim loaded but Claude CLI not found at: " . g:claude_path | echohl None
+"     echohl WarningMsg | echo "Set g:claude_path in .vimrc or install Claude to ~/.claude/local/claude" | echohl None
+"   endif
+" endif
