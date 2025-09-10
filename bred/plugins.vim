@@ -533,7 +533,7 @@ Xmap 'Yank selection without moving cursor|Edit Paste' y <plug>(YoinkYankPreserv
 
 " }}}
 " ===============================================================================
-" Far - Multi-file find and replace {{{
+" Multi-file find and replace {{{
 " ===============================================================================
 " Provides interactive find/replace with preview and confirmation
 Plug 'brooth/far.vim'
@@ -543,6 +543,14 @@ Plug 'brooth/far.vim'
 " :Fardo                              - Apply all replacements
 " :Farundo                            - Undo all replacements
 " Example: :Far foo bar **/*.txt      - Replace 'foo' with 'bar' in all txt files
+
+Plug 'yegappan/greplace'
+" Populate the Vim quickfix list using one of the built-in Vim commands like :grep or :vimgrep or using the :Gsearch command or using a command provided by a plugin.
+" Open the quickfix items in a buffer using the :Gqfopen command.
+" Modify/edit the buffer using the regular Vim commands.
+" Merge the changes back to the files using the :Greplace command.
+" Save all the files using the ':bufdo update' command.
+
 
 " }}}
 " ===============================================================================

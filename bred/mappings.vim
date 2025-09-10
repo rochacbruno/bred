@@ -316,6 +316,19 @@ Nmap 'exchanges|Windows' <C-w>x
 Nmap 'help for word under cursor|Help' K
 
 
+"Scrolling page
+Nmap 'scroll Down 1/2 page|Navigation' <C-D>
+Nmap 'scroll Up 1.2 page|Navigation' <C-U>
+Nmap 'scroll down Forward full page|Navigation' <C-F>
+Nmap 'scroll up Backward full page|Navigation' <C-B>
+Nmap 'scroll one line down to End|Navigation' <C-E>
+Nmap 'scroll one line up to Yester|Navigation' <C-Y>
+
+Nmap 'center the cursor|Navigation' z.
+Nmap 'cursor to top of screen|Navigation' z<CR>
+Nmap 'cursor to bottom of screen|Navigation' z-
+
+
 " Commands
 Cmap 'undo all changes|Edit' :e!<cr>
 Nmap 'open config|Config' <leader>,  :Files $MYVIMDIR<cr>
