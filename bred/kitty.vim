@@ -1,20 +1,21 @@
+" Cursor control
+let &t_RC = "\e[?12$p"
+let &t_SH = "\e[%d q"
+let &t_RS = "\eP$q q\e\\"
+let &t_SI = "\e[5 q"
+let &t_SR = "\e[3 q"
+let &t_EI = "\e[1 q"
+let &t_VS = "\e[?12l"
+" For non-blinking cursors
+" let &t_SI = "\e[6 q"
+" let &t_EI = "\e[2 q"
+
 if $TERM_PROGRAM ==# 'WezTerm'
   set balloonevalterm
   for c in range(char2nr('a'), char2nr('z'))
     exe "imap <Esc>" . nr2char(c) . " <M-" . nr2char(c) . ">"
     exe "nmap <Esc>" . nr2char(c) . " <M-" . nr2char(c) . ">"
   endfor
-  " Cursor control
-  let &t_RC = "\e[?12$p"
-  let &t_SH = "\e[%d q"
-  let &t_RS = "\eP$q q\e\\"
-  let &t_SI = "\e[5 q"
-  let &t_SR = "\e[3 q"
-  let &t_EI = "\e[1 q"
-  let &t_VS = "\e[?12l"
-  " For non-blinking cursors
-  " let &t_SI = "\e[6 q"
-  " let &t_EI = "\e[2 q"
 endif
 
 if $TERM =~# 'kitty'

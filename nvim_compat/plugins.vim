@@ -208,6 +208,11 @@ Imap 'Accept Copilot suggestion|AI' <Tab>
 Imap 'Next Copilot suggestion|AI' <M-]>
 Imap 'Previous Copilot suggestion|AI' <M-[>
 
+let g:claude_code_cli = '/home/rochacbruno/.claude/local/claude'
+let g:claude_verbose = v:true
+Plug 'rochacbruno/claude.vim', {'branch': 'CLI'}
+
+
 " }}}
 " ===============================================================================
 " Markdown Support {{{
@@ -232,6 +237,12 @@ Nmap 'Stop markdown preview|Markdown' <leader>ms :MarkdownPreviewStop<CR>
 
 " nvim-lspconfig for native LSP support
 Plug 'neovim/nvim-lspconfig'
+
+
+
+Plug 'kyoz/purify', { 'rtp': 'vim' }
+
+
 
 " End plugin declarations
 call plug#end()
