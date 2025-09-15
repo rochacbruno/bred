@@ -76,17 +76,17 @@ highlight CursorColumn guibg=#252932 cterm=NONE gui=NONE
 " when in other modes it is a solid background
 augroup CursorLineMode
   autocmd!
-  autocmd InsertEnter * highlight CursorLine guibg=NONE cterm=underline gui=underline
+  autocmd InsertEnter * highlight CursorLine guibg=NONE cterm=underdotted gui=underline
   autocmd InsertLeave * highlight CursorLine guibg=#252932 cterm=NONE gui=NONE
-  " when in insertmode the CursorColumn is disabled
-    autocmd InsertEnter * setlocal nocursorcolumn
-    autocmd InsertLeave * setlocal cursorcolumn
+  " when in insertmode the CursorColumn is disabled test_this __init__
+    " autocmd InsertEnter * setlocal nocursorcolumn
+    " autocmd InsertLeave * setlocal cursorcolumn
 augroup END
-
 
 " Underline the word under the cursor
 " highlight WordUnderCursor cterm=underline gui=underline guibg=#3c3836
-highlight WordUnderCursor cterm=underline gui=underline
+" highlight WordUnderCursor cterm=underline gui=underline
+highlight WordUnderCursor guibg=#290833
 
 " Background for the whole editor
 hi Normal guibg=#14120C ctermbg=234

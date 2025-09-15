@@ -135,6 +135,8 @@ Plug 'wellle/context.vim'
 " To enable the context use `:ContextEnable` and `:ContextDisable` and
 " `:ContextToggle`
 let g:context_enabled = 0
+let g:context_add_mappings = 0
+let g:context_filetype_blacklist = ['markdown']
 
 " BufferTabLine - Tab line with buffer tabs
 Plug 'ap/vim-buftabline'
