@@ -246,7 +246,7 @@ Nmap 'Fix current file|Linter|2' <leader>af :ALEFix<CR>
 " ===============================================================================
 " Use :Copilot panel to open the copilot panel
 Plug 'github/copilot.vim'
-
+let g:copilot_enabled = 0
 Imap 'Cycle next suggestion|Copilot' <M-\]>
 Imap 'Cycle previous suggestion|Copilot' <M-\[>
 Imap 'Request suggestion|Copilot' <M-\>
