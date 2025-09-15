@@ -50,46 +50,43 @@ autocmd FileChangedShell * {
 " -----------------------------
 " }}}
 " Autosession - save and restore session {{{
-augroup autosession
-    autocmd!
-    " Load session if Vim was started without files
-    autocmd VimEnter * nested {
-        if len(v:argv) == 1
-            silent! source Session.vim
-        endif
-    }
+" augroup autosession
+"     autocmd!
+"     " Load session if Vim was started without files
+"     autocmd VimEnter * nested {
+"         if len(v:argv) == 1
+"             silent! source Session.vim
+"         endif
+"     }
 
-    " Save session when exiting (only if no files passed)
-    autocmd VimLeave * {
-        if len(v:argv) == 1
-            # Close Splash buffer before saving session to avoid duplication
-            for buf in getbufinfo()
-                if buf.name =~ 'Splash' || bufname(buf.bufnr) =~ 'Splash'
-                    execute 'bdelete! ' .. buf.bufnr
-                endif
-            endfor
-            mksession!
-        endif
-    }
-augroup END
+"     " Save session when exiting (only if no files passed)
+"     autocmd VimLeave * {
+"         if len(v:argv) == 1
+"             # Close Splash buffer before saving session to avoid duplication
+"             for buf in getbufinfo()
+"                 if buf.name =~ 'Splash' || bufname(buf.bufnr) =~ 'Splash'
+"                     execute 'bdelete! ' .. buf.bufnr
+"                 endif
+"             endfor
+"             mksession!
+"         endif
+"     }
+" augroup END
 " }}}
 " When editing git commit messages (make it easy to save/exit) {{{
-augroup GitCommit
-  autocmd!
-  autocmd BufRead,BufNewFile COMMIT_EDITMSG nnoremap <buffer> q :wq<CR>
-  autocmd BufRead,BufNewFile COMMIT_EDITMSG nnoremap <buffer> a :cq<CR>
-  autocmd BufRead,BufNewFile COMMIT_EDITMSG startinsert
-augroup END
+" I actually think it is better to set the editor to `vim -yv`
+" then use Ctrl+s to save, Ctrl +Q to exit or CTRL+o/L to get to normal 
+" augroup GitCommit
+"   autocmd!
+"   autocmd BufRead,BufNewFile COMMIT_EDITMSG nnoremap <buffer> q :wq<CR>
+"   autocmd BufRead,BufNewFile COMMIT_EDITMSG nnoremap <buffer> a :cq<CR>
+"   autocmd BufRead,BufNewFile COMMIT_EDITMSG startinsert
+" augroup END
 " }}}
 " If I am on insert mode and I leave the terminal, when I come back I want to be in normal mode {{{
 augroup AutoNormalOnFocusLost
   autocmd!
   autocmd FocusLost * if mode() ==# 'i' | call feedkeys("\<Esc>", 'n') | endif
-augroup END
-
-" Exit insert mode when switching windows with mouse
-augroup AutoNormalOnWindowSwitch
-  autocmd!
   autocmd WinLeave * if mode() ==# 'i' | call feedkeys("\<Esc>", 'n') | endif
 augroup END
 " }}}

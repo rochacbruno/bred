@@ -55,14 +55,14 @@ augroup CustomColors
 augroup END
 
 " Use colorcolumn to create dimming effect
-augroup DimInactiveWindows
-  autocmd!
-  " save current colorcolumn setting
-  let g:saved_colorcolumn = &l:colorcolumn
-  " set colorcolumn to empty when entering window
-  autocmd WinEnter * execute 'let &l:colorcolumn=g:saved_colorcolumn'
-  autocmd WinLeave * let &l:colorcolumn=join(range(1,999),',')
-augroup END
+" augroup DimInactiveWindows
+"   autocmd!
+"   " save current colorcolumn setting
+"   let g:saved_colorcolumn = &l:colorcolumn
+"   " set colorcolumn to empty when entering window
+"   autocmd WinEnter * execute 'let &l:colorcolumn=g:saved_colorcolumn'
+"   autocmd WinLeave * let &l:colorcolumn=join(range(1,999),',')
+" augroup END
 
 " Very subtle dim - adjust the color to your preference
 " This works well with the purify colorscheme

@@ -21,37 +21,38 @@ endfunction
 " Creates a custom tab line that displays all listed buffers as tabs
 " Shows buffer number, name, and modification status (*)
 " Returns: String formatted for use with tabline
-function! BufferTabLine() abort
-  let s = ''
-  " Iterate through all buffers
-  for i in range(1, bufnr('$'))
-    " Skip terminal buffers
-    if getbufvar(i, '&buftype') ==# 'terminal'
-      continue
-    endif
-    if buflisted(i)
-      let name = bufname(i)
-      if empty(name)
-        let name = '[No Name]'
-      else
-        let name = fnamemodify(name, ':t') " Get just the filename
-      endif
-      " Add * indicator for modified buffers
-      if getbufvar(i, '&modified')
-        let name .= '*'
-      endif
-      " Highlight current buffer differently
-      if i == bufnr('%')
-        let s .= '%#TabLineSel#'
-      else
-        let s .= '%#TabLine#'
-      endif
-      let s .= ' ' . i . ': ' . name . ' '
-    endif
-  endfor
-  let s .= '%#TabLineFill#'
-  return s
-endfunction
+" Not using, plugin is making the Bufferline
+" function! BufferTabLine() abort
+"   let s = ''
+"   " Iterate through all buffers
+"   for i in range(1, bufnr('$'))
+"     " Skip terminal buffers
+"     if getbufvar(i, '&buftype') ==# 'terminal'
+"       continue
+"     endif
+"     if buflisted(i)
+"       let name = bufname(i)
+"       if empty(name)
+"         let name = '[No Name]'
+"       else
+"         let name = fnamemodify(name, ':t') " Get just the filename
+"       endif
+"       " Add * indicator for modified buffers
+"       if getbufvar(i, '&modified')
+"         let name .= '*'
+"       endif
+"       " Highlight current buffer differently
+"       if i == bufnr('%')
+"         let s .= '%#TabLineSel#'
+"       else
+"         let s .= '%#TabLine#'
+"       endif
+"       let s .= ' ' . i . ': ' . name . ' '
+"     endif
+"   endfor
+"   let s .= '%#TabLineFill#'
+"   return s
+" endfunction
 
 " Functions to go to next/previous buffer in tab line, skipping terminal
 " buffers
