@@ -23,10 +23,10 @@ user = $USER
 --
 
 # This divider separates the global scope from the requests scope.
-
+# headers must come before the verb
 --
-GET /marmite.json
 Content-Type: application/json
+GET /marmite.json
 
 --
 GET :page

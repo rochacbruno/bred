@@ -101,6 +101,8 @@ Plug 'chrisbra/Colorizer'
 " IndentLine - Show indentation guides
 Plug 'Yggdroot/indentLine'
 let g:indentLine_FileTypeExclude = ['help', 'nerdtree', 'vista', 'markdown', 'text']
+let g:markdown_syntax_conceal=0
+let g:vim_json_conceal=0
 " let g:indentLine_char = '│'
 " let g:indentLine_char = '┊'
 " let g:indentLine_char = '┆'
@@ -131,6 +133,7 @@ Plug 'tpope/vim-sleuth'
 " - Based on analysis of current buffer content
 
 " Shows current context of the file on the top
+" Interesting but annoying, it messes with conceallevel
 Plug 'wellle/context.vim'
 " To enable the context use `:ContextEnable` and `:ContextDisable` and
 " `:ContextToggle`
