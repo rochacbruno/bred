@@ -337,16 +337,16 @@ onoremap <silent> <C-_> <Plug>Commentary
 " Repository: https://github.com/mbbill/undotree
 " Visual undo history browser with branching support
 " Navigate through complex undo/redo history with ease
-Plug 'mbbill/undotree'
-let g:undotree_WindowLayout = 2        " Vertical layout with diff window
-let g:undotree_ShortIndicators = 1     " Use short time indicators
-let g:undotree_SetFocusWhenToggle = 1  " Focus undo tree when opened
+" Plug 'mbbill/undotree'
+" let g:undotree_WindowLayout = 2        " Vertical layout with diff window
+" let g:undotree_ShortIndicators = 1     " Use short time indicators
+" let g:undotree_SetFocusWhenToggle = 1  " Focus undo tree when opened
 " Key mappings:
 " :UndotreeToggle - Toggle undo tree window
 " j/k             - Navigate through undo states
 " <Enter>         - Revert to selected state
 
-Nmap 'Toggle UndoTree|Edit|2' <leader>u :UndotreeToggle<CR>
+" Nmap 'Toggle UndoTree|Edit|2' <leader>u :UndotreeToggle<CR>
 
 
 " }}}
