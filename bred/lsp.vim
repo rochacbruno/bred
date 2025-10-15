@@ -331,6 +331,23 @@ else
 endif
 
 " ---------------------------------------------------------------------------
+" QML Language Server (qmlls)
+" ---------------------------------------------------------------------------
+" Requirements: Install qmlls (comes with Qt 6)
+"   - Via Qt installation: Part of Qt 6.2+ development tools
+"   - Arch Linux: pacman -S qt6-declarative (includes qmlls)
+" Features: QML syntax checking, completion, diagnostics, hover information
+if executable('qmlls')
+    call LspAddServer([{'name': 'qmlls',
+                 \   'filetype': 'qml',
+                 \   'path': 'qmlls',
+                 \   'args': []
+                 \ }])
+else
+    call Alert("QML language server not found. Please install qmlls (Qt 6 declarative tools).")
+endif
+
+" ---------------------------------------------------------------------------
 " Custom LSP Configuration Extension
 " ---------------------------------------------------------------------------
 " This section allows for additional custom LSP server configurations
