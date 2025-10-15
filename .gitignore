@@ -1,5 +1,6 @@
 *.bck
 *.un~
+undo
 .netrwhist
 viminfo
 Session.vim
