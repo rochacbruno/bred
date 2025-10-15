@@ -7,7 +7,7 @@ alias vimp='vim "+norm Go" "+put +"'
 # open vim without any plugins or custom configurations
 alias vimc='vim --clean'
 # Open fzf with preview and open selected file in vim
-alias vimf='fzf --preview "bat --style=numbers --color=always {} --line-range :500 {}" --height 40% --layout=reverse --border --bind shift-up:preview-page-up,shift-down:preview-page-down | xargs -o -r vim'
+alias vimf='fzf --preview "bat --style=numbers --color=always --line-range :500 {}" --height 90% --layout=reverse --border --bind shift-up:preview-page-up,shift-down:preview-page-down | xargs -o -r vim'
 alias vimrg='rg --line-number --no-heading --color=always "" | fzf --ansi --delimiter : --nth 1,2,3 | awk -F: "{print \"+\"\$2\" \"\$1}" | xargs -o -r vim'
 
 

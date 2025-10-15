@@ -190,11 +190,11 @@ call LspOptionsSet({
 "   - Arch Linux: pacman -S rust-analyzer
 "   - Via rustup: rustup component add rust-analyzer
 " Features: Code completion, diagnostics, goto definition, inlay hints
-if executable('/usr/lib/rustup/bin/rust-analyzer')
+" if executable('~/.cargo/bin/rust-analyzer')
     call LspAddServer([{
 	\    'name': 'rustlang',
 	\    'filetype': ['rust'],
-	\    'path': '/usr/lib/rustup/bin/rust-analyzer',
+	\    'path': '/home/rochacbruno/.cargo/bin/rust-analyzer',
 	\    'args': [],
 	\    'syncInit': v:true,
     \  'initializationOptions': {
@@ -208,9 +208,9 @@ if executable('/usr/lib/rustup/bin/rust-analyzer')
     \    },
     \  }
 	\  }])
-else
-    call Alert("Rust language server not found. Please install rust-analyzer.")
-endif
+" else
+    " call Alert("Rust language server not found. Please install rust-analyzer.")
+" endif
 
 " ---------------------------------------------------------------------------
 " Bash Language Server
@@ -252,11 +252,11 @@ endif
 "   - Via npm: npm install -g pyright
 "   - Arch Linux: pacman -S pyright
 " Features: Type checking, completion, diagnostics, refactoring for Python
-if executable('/usr/bin/pyright-langserver')
+" if executable('pyright-python-langserver')
     call LspAddServer([{
         \ 'name': 'pyright',
         \ 'filetype': ['python'],
-        \ 'path': '/usr/bin/pyright-langserver',
+        \ 'path': '/home/rochacbruno/.local/bin/pyright-python-langserver',
         \ 'args': ['--stdio'],
         \ 'rootSearch': [
             \ 'pyproject.toml',
@@ -280,9 +280,9 @@ if executable('/usr/bin/pyright-langserver')
             \ }
         \ }
     \ }])
-else
-    call Alert("Pyright language server not found. Please install pyright.")
-endif
+" else
+    " call Alert("Pyright language server not found. Please install pyright.")
+" endif
 
 " ---------------------------------------------------------------------------
 " YAML Language Server

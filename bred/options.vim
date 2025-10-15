@@ -25,6 +25,7 @@ set splitbelow splitright     " Open new splits below and to the right
 set termguicolors             " Enable 24-bit RGB colors
 set signcolumn=auto           " Show sign column when needed (for git, diagnostics)
 set undofile                  " Persist undo history between sessions
+set undodir=~/.vim/undo/      " undo save
 set wildmenu                  " Enhanced command-line completion
 " set wildmode=longest:full,full  " Complete longest common match, then full
 set wildmode=noselect:lastused,full " Command-line completion mode
@@ -41,6 +42,7 @@ set cursorline                " Highlight the current line
 set fillchars+=vert:\▏        " Use thin vertical line for splits
 set vb                        " Enable visual bell instead of beeping
 set t_vb=                     " Disable visual bell flash
+set noswapfile              " Disable swap files
 
 " }}}
 " -------------------------------------------------------------------------
