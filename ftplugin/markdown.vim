@@ -6,6 +6,9 @@
 setlocal conceallevel=0
 setlocal concealcursor=
 
+autocmd FileType markdown hi markdownError ctermbg=NONE guibg=NONE
+
+
 iabbrev <buffer> ppause <!-- pause -->
 iabbrev <buffer> peos <!-- end_slide -->
 iabbrev <buffer> pcolayout <!-- column_layout: [3, 2] -->

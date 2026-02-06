@@ -151,6 +151,9 @@ let g:buftabline_indicators = v:true
 "" Purify Color Scheme - Clean and minimal color scheme
 Plug 'kyoz/purify', { 'rtp': 'vim' }
 
+"" KDL Support
+Plug 'imsnif/kdl.vim'
+
 
 " }}}
 " ===============================================================================
