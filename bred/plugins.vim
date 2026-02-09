@@ -212,6 +212,7 @@ let g:ale_linters = {
 let g:ale_fixers = {
     \ 'python': ['ruff_format', 'isort', 'black', 'ruff', 'add_blank_lines_for_python_control_statements', 'remove_trailing_lines', 'trim_whitespace'],
     \ 'rust': ['rustfmt'],
+    \ 'go': ['gofmt'],
 \ }
 
 " let g:ale_set_balloons = 1                           " Show error messages in balloons

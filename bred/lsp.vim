@@ -348,6 +348,35 @@ else
 endif
 
 " ---------------------------------------------------------------------------
+" Go Language Server (gopls)
+" ---------------------------------------------------------------------------
+" Requirements: Install gopls via go install
+"   - Via go: go install golang.org/x/tools/gopls@latest
+" Features: Code completion, diagnostics, goto definition, formatting, imports
+if executable('gopls')
+    call LspAddServer([{
+        \   'name': 'gopls',
+        \   'filetype': ['go', 'gomod'],
+        \   'path': 'gopls',
+        \   'args': ['serve'],
+        \   'syncInit': v:true,
+        \   'workspaceConfig': {
+        \       'gopls': {
+        \           'semanticTokens': v:true,
+        \           'hints': {
+        \               'assignVariableTypes': v:true,
+        \               'compositeLiteralFields': v:true,
+        \               'functionTypeParameters': v:true,
+        \               'parameterNames': v:true,
+        \           }
+        \       }
+        \   }
+        \ }])
+else
+    call Alert("Go language server not found. Install with: go install golang.org/x/tools/gopls@latest")
+endif
+
+" ---------------------------------------------------------------------------
 " Custom LSP Configuration Extension
 " ---------------------------------------------------------------------------
 " This section allows for additional custom LSP server configurations
